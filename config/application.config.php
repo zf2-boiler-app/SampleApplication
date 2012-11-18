@@ -2,7 +2,7 @@
 return array(
     'modules' => array(
         'Application',
-    	'AssetsBundle'
+    	'Neilime\AssetsBundle'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array( 'config/autoload/{,*.}{global,local}.php'),
