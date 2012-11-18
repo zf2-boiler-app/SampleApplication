@@ -1,0 +1,30 @@
+{
+    "name": "Neilime/ZF2Base",
+    "description": "ZF2 base project",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Neilime"
+        }
+    ],
+    "repositories":[
+    	{
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "twitter/bootstrap",
+                "source": {
+                    "url": "https://github.com/twitter/bootstrap.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
+    "require": {
+        "zendframework/zendframework": "dev-develop",
+        "neilime/zf2-assets-bundle": "dev-master",
+        "twitter/bootstrap": "dev-master",
+        "zf-commons/zfc-user": "dev-master"
+    }
+}
