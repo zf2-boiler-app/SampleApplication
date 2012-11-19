@@ -25,6 +25,8 @@
         "zendframework/zendframework": "dev-develop",
         "neilime/zf2-assets-bundle": "dev-master",
         "twitter/bootstrap": "dev-master",
-        "zf-commons/zfc-user": "dev-master"
+        "dino/dompdf-module": "dev-master",
+        "zf-commons/zfc-user": "dev-master",
+        "cdli/CdliTwoStageSignup": "dev-master"
     }
 }
