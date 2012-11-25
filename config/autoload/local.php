@@ -12,5 +12,9 @@
  */
 
 return array(
-    // ...
+    'social' => array(
+    	\Application\View\Helper\Social::GOOGLE_ANALYTICS => array(
+    		'id'=>'analytics_id'
+    	)
+    )
 );

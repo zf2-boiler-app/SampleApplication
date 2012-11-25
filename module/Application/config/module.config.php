@@ -52,18 +52,32 @@ return array(
             ),
         ),
     ),
+    'asset_bundle' => array(
+    	'assets' => array(
+    		'application' => array(
+    			'less' => array('@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less'),
+    			'js' => array(
+    				'js/mootools/mootools-core-1.4.5.js',
+    				'js/mootools',
+    				'js/modernizr.min.js'
+    			),
+    			'img' => array('@zfRootPath/vendor/twitter/bootstrap/img')
+    		)
+    	)
+    ),
     'service_manager' => array(
         'factories' => array(
             'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
+
         ),
     ),
     'translator' => array(
-        'locale' => 'en_US',
+        'locale' => 'fr_FR',
         'translation_file_patterns' => array(
             array(
-                'type'     => 'gettext',
+                'type'     => 'phparray',
                 'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
+                'pattern'  => '%s.php',
             ),
         ),
     ),
@@ -88,4 +102,13 @@ return array(
             __DIR__ . '/../view',
         ),
     ),
+    'view_helpers' => array(
+        'factories' => array(
+            'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+    			$aConfiguration = $oServiceManager->getServiceLocator()->get('config');
+				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
+            	return new \Application\View\Helper\Social($aConfiguration['social']);
+    		}
+        )
+    )
 );

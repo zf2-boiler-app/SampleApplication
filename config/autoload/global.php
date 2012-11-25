@@ -10,7 +10,11 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-
 return array(
-    // ...
+	'asset_bundle' => array(
+		'production' => true,
+		'cachePath' => '@zfRootPath/public/assets/cache',
+		'assetPath' => '@zfRootPath/public/assets',
+		'cacheUrl' => '@zfBaseUrl/assets/cache/',
+	)
 );

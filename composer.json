@@ -19,14 +19,16 @@
                     "reference": "master"
                 }
             }
-        }
+        },
+        {
+		    "type": "vcs",
+		    "url": "http://github.com/Nodge/lessphp"
+		}
     ],
     "require": {
         "zendframework/zendframework": "dev-develop",
         "neilime/zf2-assets-bundle": "dev-master",
         "twitter/bootstrap": "dev-master",
-        "dino/dompdf-module": "dev-master",
-        "zf-commons/zfc-user": "dev-master",
-        "cdli/CdliTwoStageSignup": "dev-master"
+        "dino/dompdf-module": "dev-master"
     }
 }
