@@ -7,5 +7,9 @@ return array(
 
 	'error_occurred' => 'An error occurred',
 
+	'new_user' => 'New to ZF2Base',
+
 	'outdated_browser' => 'You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.',
+
+	'sign_up' => 'Sign up',
 );
