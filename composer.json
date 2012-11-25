@@ -26,9 +26,10 @@
 		}
     ],
     "require": {
-        "zendframework/zendframework": "dev-develop",
+        "zendframework/zendframework": "dev-master",
         "neilime/zf2-assets-bundle": "dev-master",
         "twitter/bootstrap": "dev-master",
+        "dlu/dlutwbootstrap": "dev-master",
         "dino/dompdf-module": "dev-master"
     }
 }

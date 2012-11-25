@@ -2,7 +2,9 @@
 return array(
     'modules' => array(
         'Application',
-    	'Neilime\AssetsBundle'
+    	'Neilime\AssetsBundle',
+    	'DluTwBootstrap',
+    	'ZF2User'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array( 'config/autoload/{,*.}{global,local}.php'),
