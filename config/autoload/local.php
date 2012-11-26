@@ -16,5 +16,10 @@ return array(
     	\Application\View\Helper\Social::GOOGLE_ANALYTICS => array(
     		'id'=>'analytics_id'
     	)
-    )
+    ),
+	'db' => array(
+		'username' => 'root',
+		'password' => '',
+		'dsn' => 'mysql:dbname=zf2base;host=localhost'
+	)
 );

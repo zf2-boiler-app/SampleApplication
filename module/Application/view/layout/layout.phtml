@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
  	<head>
 <?php
-        echo $this->headTitle($this->translate('application_name'))->setSeparator(' - ')->setAutoEscape(false).
+        echo $this->headTitle($this->translate('application_name'))->__invoke($this->layout()->title)->setSeparator(' - ')->setAutoEscape(false).
 	 	$this->headMeta()
 	 	->appendName('charset','utf-8')
 	 	->appendName('viewport','width=device-width, initial-scale=1.0')

@@ -54,6 +54,18 @@ return array(
 			'UserService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				$oUserService = new \ZF2User\Service\UserService();
 				return $oUserService->setServiceManager($oServiceManager);
+			},
+			'AuthAdapter' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				return new \Zend\Authentication\Adapter\DbTable(
+					$oServiceManager->get('Zend\Db\Adapter\Adapter'),
+					$oServiceManager->get('UserModel')->getTable(),
+					'user_email',
+					'user_password',
+					'MD5(?) AND user_state = "'.\ZF2User\Model\UserModel::USER_STATUS_ACTIVE.'"'
+				);
+			},
+			'UserModel' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				return new \ZF2User\Model\UserModel($oServiceManager->get('Zend\Db\Adapter\Adapter'));
 			}
 		)
 	)
