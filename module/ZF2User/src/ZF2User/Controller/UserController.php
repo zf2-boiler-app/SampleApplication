@@ -23,4 +23,8 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		return $this->view;
 	}
+
+	public function hybridauthAction(){
+		\Hybrid_Endpoint::process();
+	}
 }

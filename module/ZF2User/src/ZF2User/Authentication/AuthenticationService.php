@@ -8,6 +8,8 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
 
 	const AUTH_SERVICE_LOCAL = 'local';
 	const AUTH_SERVICE_FACEBOOK = 'facebook';
+	const AUTH_SERVICE_GOOGLE = 'google';
+	const AUTH_SERVICE_TWITTER = 'twitter';
 
 	/**
 	 * @var \Hybrid_Auth
@@ -96,6 +98,8 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
 		switch($sService){
 			case self::AUTH_SERVICE_LOCAL:
 			case self::AUTH_SERVICE_FACEBOOK:
+			case self::AUTH_SERVICE_GOOGLE:
+			case self::AUTH_SERVICE_TWITTER:
 				return true;
 			default:
 				return false;

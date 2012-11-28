@@ -3,6 +3,7 @@ namespace Application\View\Helper;
 class Social extends \Zend\View\Helper\AbstractHelper{
 	const FACEBOOK = 'facebook';
 	const TWITTER = 'twitter';
+	const GOOGLE = 'google';
 	const GOOGLE_PLUS = 'google_plus';
 	const GOOGLE_ANALYTICS = 'google_analytics';
 
@@ -28,12 +29,19 @@ class Social extends \Zend\View\Helper\AbstractHelper{
 	private static function serviceExists($sService){
 		switch($sService){
 			case self::FACEBOOK:
+			case self::GOOGLE:
 			case self::GOOGLE_PLUS:
-			case self::TWITTER:
 			case self::GOOGLE_ANALYTICS:
+			case self::TWITTER:
 				return true;
 		}
 		return false;
+	}
+
+	public function getServiceConfig($sService){
+		if(!self::serviceExists($sService))throw new \Exception('Service is not valid : '.$sService);
+		if(!isset($this->configuration[$sService]))throw new \Exception('Configuration for service '.$sService.' is not defined');
+		return $this->configuration[$sService];
 	}
 
 	/**

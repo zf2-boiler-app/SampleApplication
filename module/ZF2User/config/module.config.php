@@ -22,16 +22,26 @@ return array(
 							)
 						)
 					),
-					'logout' => array(
+					'hybridauth' => array(
 						'type' => 'Literal',
 						'options' => array(
-							'route' => '/logout',
+							'route' => '/hybridauth',
 							'defaults' => array(
 								'controller' => 'ZF2User\Controller\User',
-								'action' => 'logout'
+								'action' => 'hybridauth'
 							)
 						)
 					),
+                	'logout' => array(
+                		'type' => 'Literal',
+                		'options' => array(
+                			'route' => '/logout',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'logout'
+                			)
+                		)
+                	),
 					'register' => array(
 						'type' => 'Literal',
 						'options' => array(
@@ -47,25 +57,24 @@ return array(
         )
     ),
 	'hybrid_auth' =>  array(
-		// "base_url" the url that point to HybridAuth Endpoint (where index.php and config.php are found)
-		'base_url' => "http://mywebsite/path/to/hybridauth/",
+		'base_url' => "zf2user/hybridauth",
 
-		"providers" => array (
-			"Google" => array ( // 'id' is your google client id
-				"enabled" => true,
-				"keys" => array ( "id" => "", "secret" => "" ),
+		'providers' => array (
+			'Google' => array ( // 'id' is your google client id
+				'enabled' => true,
+				'keys' => array ( 'id' => '', 'secret' => '' ),
 			),
-			"Facebook" => array ( // 'id' is your facebook application id
-				"enabled" => true,
-				"keys" => array ( "id" => "", "secret" => "" ),
-				"scope" => array ( "email, user_about_me, offline_access" )
+			'Facebook' => array ( // 'id' is your facebook application id
+				'enabled' => true,
+				'keys' => array ( 'id' => '', 'secret' => '' ),
+				'scope' => array ( 'email, user_about_me, offline_access' )
 			),
-			"Twitter" => array ( // 'key' is your twitter application consumer key
-				"enabled" => true,
-				"keys" => array ( "key" => "", "secret" => "" )
+			'Twitter' => array ( // 'key' is your twitter application consumer key
+				'enabled' => true,
+				'keys' => array ( 'key' => '', 'secret' => '' )
 			)
 		),
-		"debug_mode" => false ,
+		'debug_mode' => false ,
 	),
 
     'view_manager' => array(
@@ -89,13 +98,7 @@ return array(
 			'AuthStorage' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \Zend\Authentication\Storage\Session();
 			},
-			'HybridAuthAdapter' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				$aConfiguration = $oServiceManager->get('Config');
-				return new \Hybrid_Auth(isset($aConfiguration['hybryd_auth']) && is_array($aConfiguration['hybryd_auth'])
-					?$aConfiguration['hybryd_auth']
-					:array()
-				);
-			},
+			'HybridAuthAdapter' => '\ZF2User\Factory\HybridAuthAdapterFactory',
 			'AuthService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \ZF2User\Authentication\AuthenticationService(
 					$oServiceManager->get('AuthStorage'),
