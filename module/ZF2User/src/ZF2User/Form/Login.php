@@ -6,15 +6,14 @@ class Login extends \Zend\Form\Form{
 	*/
 	public function __construct(){
 		parent::__construct('login');
+		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		$this->setAttribute('method', 'post')
 		->add(array(
 			'name' => 'user_email',
 			'attributes' => array(
-				'type' => 'text',
+				'type' => 'Zend\Form\Element\Email',
 				'placeholder'   => 'email',
-			),
-			'options' => array(
-				'prependIcon' => 'icon-email'
+				'required' => true
 			)
 		))
 		->add(array(
@@ -22,6 +21,7 @@ class Login extends \Zend\Form\Form{
 			'attributes' => array(
 				'type'  => 'password',
 				'placeholder'   => 'password',
+				'required' => true
 			)
 		))
 		->add(array(
@@ -34,11 +34,12 @@ class Login extends \Zend\Form\Form{
 				'primary' => true
 			)
 		))
-		->getInputFilter()->add(array(
-			'name' => 'user_email',
-			'required' => true,
-			'validators' => array(
-				array('name'=> 'EmailAddress')
+		->setInputFilter($oInputFilter->add(
+			array(
+				'name' => 'user_email',
+				'required' => true,
+				'filters' => array(array('name' => 'StringTrim')),
+				'validators' => array(array('name'=> 'EmailAddress'))
 			)
 		));
 	}

@@ -6,6 +6,7 @@ return array(
 	'application_description' => 'Projet de base pour construire une application ZF2',
 
 	'email' => 'Adresse email',
+	'email_or_password_wrong' => 'L\'adresse email et/ou le mot de passe semblent incorrects',
 	'error_occurred' => 'Une erreur s\'est produite',
 
 	'new_user' => 'Nouveau sur ZF2Base',
@@ -16,5 +17,10 @@ return array(
 
 	'sign_in' => 'Connexion',
 	'sign_up' => 'Inscrivez-vous',
+
+	'unregistered_user_please_sign_in' => 'Votre compte %s doit être enregistré sur ZF2Base, merci de vous inscrire.',
+	'user_state_pending' => 'Le compte est en attente de confirmation',
+
+	'or_use_another_service' => 'Ou utiliser un autre service'
 
 );

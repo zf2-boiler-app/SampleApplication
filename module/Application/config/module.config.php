@@ -59,13 +59,19 @@ return array(
     'asset_bundle' => array(
     	'assets' => array(
     		'application' => array(
-    			'less' => array('@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less'),
-    			'js' => array(
-    				'js/mootools/mootools-core-1.4.5.js',
-    				'js/mootools',
-    				'js/modernizr.min.js'
+    			'less' => array(
+    				'@zfRootPath/vendor/fortawesome/font-awesome/less/font-awesome.less',
+    				'@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less',
     			),
-    			'img' => array('@zfRootPath/vendor/twitter/bootstrap/img')
+    			'js' => array(
+    				/*'js/mootools/mootools-core-1.4.5.js',
+    				'js/mootools',
+    				'js/modernizr.min.js'*/
+    			),
+    			'media' => array(
+    				//'@zfRootPath/vendor/twitter/bootstrap/img',
+    				'@zfRootPath/vendor/fortawesome/font-awesome/font'
+    			)
     		)
     	)
     ),
@@ -77,13 +83,29 @@ return array(
     ),
     'translator' => array(
         'locale' => 'fr_FR',
+        //'cache' => array('adapter'=> 'Zend\Cache\Storage\Adapter\Memcached'),
         'translation_file_patterns' => array(
             array(
                 'type'     => 'phparray',
                 'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.php',
-            ),
+                'pattern'  => '%s.php'
+            )
         ),
+        //Zend translations
+        'translation_files' => array(
+	        array(
+        		'type' => 'phparray',
+        		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/fr/Zend_Validate.php',
+        		'locale'  => 'fr_FR',
+        		'text_domain' => 'validator'
+	        ),
+	        array(
+        		'type' => 'phparray',
+        		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/en/Zend_Validate.php',
+        		'locale'  => 'en_US',
+        		'text_domain' => 'validator'
+	        )
+        )
     ),
     'controllers' => array(
         'invokables' => array(

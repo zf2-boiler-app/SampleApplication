@@ -12,10 +12,10 @@ return array(
             	'options' => array('route' => '/user'),
                 'may_terminate' => true,
                 'child_routes' => array(
-					'login' => array(
-						'type' => 'Literal',
+                	'login' => array(
+						'type' => 'Zend\Mvc\Router\Http\Segment',
 						'options' => array(
-							'route' => '/login',
+							'route' => '/login[/:service]',
 							'defaults' => array(
 								'controller' => 'ZF2User\Controller\User',
 								'action'  => 'login'
@@ -46,6 +46,28 @@ return array(
             )
         )
     ),
+	'hybrid_auth' =>  array(
+		// "base_url" the url that point to HybridAuth Endpoint (where index.php and config.php are found)
+		'base_url' => "http://mywebsite/path/to/hybridauth/",
+
+		"providers" => array (
+			"Google" => array ( // 'id' is your google client id
+				"enabled" => true,
+				"keys" => array ( "id" => "", "secret" => "" ),
+			),
+			"Facebook" => array ( // 'id' is your facebook application id
+				"enabled" => true,
+				"keys" => array ( "id" => "", "secret" => "" ),
+				"scope" => array ( "email, user_about_me, offline_access" )
+			),
+			"Twitter" => array ( // 'key' is your twitter application consumer key
+				"enabled" => true,
+				"keys" => array ( "key" => "", "secret" => "" )
+			)
+		),
+		"debug_mode" => false ,
+	),
+
     'view_manager' => array(
     	'template_path_stack' => array('ZF2User' => __DIR__ . '/../view')
     ),
@@ -61,7 +83,23 @@ return array(
 					$oServiceManager->get('UserModel')->getTable(),
 					'user_email',
 					'user_password',
-					'MD5(?) AND user_state = "'.\ZF2User\Model\UserModel::USER_STATUS_ACTIVE.'"'
+					'MD5(?)'
+				);
+			},
+			'AuthStorage' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				return new \Zend\Authentication\Storage\Session();
+			},
+			'HybridAuthAdapter' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				$aConfiguration = $oServiceManager->get('Config');
+				return new \Hybrid_Auth(isset($aConfiguration['hybryd_auth']) && is_array($aConfiguration['hybryd_auth'])
+					?$aConfiguration['hybryd_auth']
+					:array()
+				);
+			},
+			'AuthService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				return new \ZF2User\Authentication\AuthenticationService(
+					$oServiceManager->get('AuthStorage'),
+					$oServiceManager->get('AuthAdapter')
 				);
 			},
 			'UserModel' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
