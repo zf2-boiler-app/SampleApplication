@@ -78,7 +78,12 @@ return array(
     'service_manager' => array(
         'factories' => array(
             'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
-            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory'
+            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+            'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+            	$aConfiguration = $oServiceManager->get('config');
+            	if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
+            	return new \Application\View\Helper\Social($aConfiguration['social']);
+            }
         ),
     ),
     'translator' => array(
@@ -131,9 +136,7 @@ return array(
     'view_helpers' => array(
         'factories' => array(
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-    			$aConfiguration = $oServiceManager->getServiceLocator()->get('config');
-				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
-            	return new \Application\View\Helper\Social($aConfiguration['social']);
+            	return $oServiceManager->getServiceLocator()->get('social');
     		}
         )
     )
