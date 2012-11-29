@@ -60,17 +60,18 @@ return array(
     	'assets' => array(
     		'application' => array(
     			'less' => array(
+    				'less/global.less',
     				'@zfRootPath/vendor/fortawesome/font-awesome/less/font-awesome.less',
-    				'@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less',
+    				'@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less'
     			),
     			'js' => array(
-    				/*'js/mootools/mootools-core-1.4.5.js',
+    				'js/mootools/mootools-core-1.4.5.js',
     				'js/mootools',
-    				'js/modernizr.min.js'*/
+    				'js/modernizr.min.js'
     			),
     			'media' => array(
-    				//'@zfRootPath/vendor/twitter/bootstrap/img',
-    				'@zfRootPath/vendor/fortawesome/font-awesome/font'
+    				'@zfRootPath/vendor/fortawesome/font-awesome/font',
+    				'images'
     			)
     		)
     	)
@@ -84,7 +85,7 @@ return array(
             	if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
             	return new \Application\View\Helper\Social($aConfiguration['social']);
             }
-        ),
+        )
     ),
     'translator' => array(
         'locale' => 'fr_FR',

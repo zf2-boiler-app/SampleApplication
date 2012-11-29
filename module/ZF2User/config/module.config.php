@@ -59,12 +59,16 @@ return array(
 	'hybrid_auth' =>  array(
 		'base_url' => "zf2user/hybridauth",
 
-		'providers' => array (
-			'Google' => array ( // 'id' is your google client id
+		'providers' => array(
+			//Set Redirect URIs = "http://xxxxx/user/hybridauth?hauth.done=Google" in google APIs console
+			'Google' => array(
 				'enabled' => true,
-				'keys' => array ( 'id' => '', 'secret' => '' ),
+				'keys' => array('id' => '','secret' => ''),
+				'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+				'access_type' => 'online',
+				'approval_prompt' => 'force'
 			),
-			'Facebook' => array ( // 'id' is your facebook application id
+			'Facebook' => array (
 				'enabled' => true,
 				'keys' => array ( 'id' => '', 'secret' => '' ),
 				'scope' => array ( 'email, user_about_me, offline_access' )
@@ -96,7 +100,7 @@ return array(
 				);
 			},
 			'AuthStorage' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \Zend\Authentication\Storage\Session();
+				return new \Zend\Authentication\Storage\Session(null,null,$oServiceManager->get('SessionManager'));
 			},
 			'HybridAuthAdapter' => '\ZF2User\Factory\HybridAuthAdapterFactory',
 			'AuthService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
@@ -107,6 +111,9 @@ return array(
 			},
 			'UserModel' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \ZF2User\Model\UserModel($oServiceManager->get('Zend\Db\Adapter\Adapter'));
+			},
+			'SessionManager' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				return new \Zend\Session\SessionManager();
 			}
 		)
 	)
