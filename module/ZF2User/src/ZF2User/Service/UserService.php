@@ -25,12 +25,6 @@ class UserService implements \Zend\ServiceManager\ServiceManagerAwareInterface{
 		throw new \Exception('Service Manager is undefined');
 	}
 
-	public function getLoginForm(){
-		if(isset($this->forms['login']))return $this->forms['login'];
-		$this->forms['login'] = new \ZF2User\Form\Login();
-		return $this->forms['login']->prepare();
-	}
-
 	public function login($sUserEmail = null,$sUserPassword = null,$sService = \ZF2User\Authentication\AuthenticationService::AUTH_SERVICE_LOCAL){
 		if(!is_string($sService))throw new \Exception('Authentication service ('.gettype($sService).') is not a string');
 

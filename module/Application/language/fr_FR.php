@@ -5,15 +5,20 @@ return array(
 	'application_name' => 'ZF2Base',
 	'application_description' => 'Projet de base pour construire une application ZF2',
 
+	'confirm_password' => 'Confirmation',
+
 	'email' => 'Adresse email',
 	'email_or_password_wrong' => 'L\'adresse email et/ou le mot de passe semblent incorrects',
 	'error_occurred' => 'Une erreur s\'est produite',
 
+	'im_not_a_robot' => 'Je ne suis pas un robot',
 	'new_user' => 'Nouveau sur ZF2Base',
 
 	'outdated_browser' => 'Vous utilisez un navigateur obsolète. <a href="http://browsehappy.com/">Mettez votre navigateur à jour</a> ou <a href="http://www.google.com/chromeframe/?redirect=true">installez Google Chrome Frame</a> pour mieux visualiser ce site.',
 
 	'password' => 'Mot de passe',
+
+	'register' => 'Inscription',
 
 	'sign_in' => 'Connexion',
 	'sign_up' => 'Inscrivez-vous',

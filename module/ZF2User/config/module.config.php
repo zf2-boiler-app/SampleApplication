@@ -43,12 +43,12 @@ return array(
                 		)
                 	),
 					'register' => array(
-						'type' => 'Literal',
+						'type' => 'Zend\Mvc\Router\Http\Segment',
 						'options' => array(
-							'route' => '/register',
+							'route' => '/register[/:service]',
 							'defaults' => array(
 								'controller' => 'ZF2User\Controller\User',
-								'action' => 'register',
+								'action'  => 'register'
 							)
 						)
 					)
@@ -114,7 +114,20 @@ return array(
 			},
 			'SessionManager' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \Zend\Session\SessionManager();
-			}
+			},
+			'LoginForm' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				$oForm = new \ZF2User\Form\Login();
+				return $oForm->prepare();
+			},
+			'RegisterForm' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				try{
+					$oForm = new \ZF2User\Form\Register();
+					return $oForm->prepare();
+				}
+				catch(\Exception $oException){
+					var_dump($oException->__toString());
+				}
+			},
 		)
 	)
 );
