@@ -1,0 +1,32 @@
+<h3><?=$this->translate('informations')?></h3>
+<h3><?=get_class($this->exception)?></h3>
+<dl>
+	<dt><?=$this->translate('file')?> :</dt>
+	<dd><pre><?=$this->exception->getFile().' : '.$this->exception->getLine()?></pre></dd>
+	<dt><?=$this->translate('message')?> :</dt>
+	<dd><pre><?=$this->exception->getMessage()?></pre></dd>
+	<dt><?=$this->translate('stack_trace')?> :</dt>
+	<dd><pre><?=$this->exception->getTraceAsString()?></pre></dd>
+</dl>
+<?php if(($oPreviousException = $this->exception->getPrevious()) instanceof \Exception){ ?>
+<hr/>
+<h2><?=$this->translate('previous_exceptions')?> :</h2>
+<ul>
+<?php while($oPreviousException){ ?>
+	<li>
+		<h3><?=get_class($oPreviousException)?></h3>
+		<dl>
+			<dt><?=$this->translate('file')?> :</dt>
+			<dd><pre><?=$oPreviousException->getFile().' : '.$oPreviousException->getLine()?></pre></dd>
+			<dt><?=$this->translate('message')?>:</dt>
+			<dd><pre><?=$oPreviousException->getMessage()?></pre></dd>
+			<dt><?=$this->translate('stack_trace')?> :</dt>
+			<dd><pre><?=$oPreviousException->getTraceAsString()?></pre></dd>
+		</dl>
+	</li>
+<?php
+	$oPreviousException = $oPreviousException->getPrevious();
+}
+?>
+</ul>
+<?php } ?>
