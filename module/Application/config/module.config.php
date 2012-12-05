@@ -43,7 +43,7 @@ return array(
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/[:controller[/:action]]',
+                            'route' => '/[:controller[/:action]]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -61,24 +61,30 @@ return array(
     		'application' => array(
     			'less' => array(
     				'less/global.less',
+    				'less/bootstrap-custom.less',
     				'@zfRootPath/vendor/fortawesome/font-awesome/less/font-awesome.less',
     				'@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less'
     			),
     			'js' => array(
     				'js/mootools/mootools-core-1.4.5.js',
+    				'js/mootools/mootools-more-1.4.0.1.js',
     				'js/mootools',
-    				'js/modernizr.min.js'
+    				'js/modernizr.min.js',
+    				'js/meioMask/Meio.Mask.js',
+    				'js/meioMask',
+    				'js/controller.js'
     			),
     			'media' => array(
     				'@zfRootPath/vendor/fortawesome/font-awesome/font',
-    				'images'
+    				'images',
+    				'@zfRootPath/vendor/twitter/bootstrap/img'
     			)
     		)
     	)
     ),
     'service_manager' => array(
         'factories' => array(
-            'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
+            'translator' => 'Application\Translator\TranslatorServiceFactory',
             'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
             	$aConfiguration = $oServiceManager->get('config');
@@ -125,20 +131,24 @@ return array(
         'not_found_template'       => 'error/404',
         'exception_template'       => 'error/index',
         'template_map' => array(
-            'layout/layout'           => __DIR__ . '/../view/layout/layout.phtml',
+            'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+        	'header/logged' => __DIR__ . '/../view/application/header/logged.phtml',
+        	'header/unlogged' => __DIR__ . '/../view/application/header/unlogged.phtml',
             'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
-            'error/404'               => __DIR__ . '/../view/error/404.phtml',
-            'error/index'             => __DIR__ . '/../view/error/index.phtml',
+            'error/404' => __DIR__ . '/../view/error/404.phtml',
+            'error/index' => __DIR__ . '/../view/error/index.phtml'
         ),
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
+        'template_path_stack' => array(__DIR__ . '/../view')
     ),
     'view_helpers' => array(
         'factories' => array(
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
             	return $oServiceManager->getServiceLocator()->get('social');
     		}
-        )
+        ),
+       	'invokables' => array(
+        	'escapeJson' => 'Application\View\Helper\EscapeJson',
+       		'jsController' => 'Application\View\Helper\JsController'
+       	)
     )
 );

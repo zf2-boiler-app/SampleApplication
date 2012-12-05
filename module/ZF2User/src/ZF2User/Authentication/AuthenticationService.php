@@ -1,6 +1,9 @@
 <?php
 namespace ZF2User\Authentication;
 class AuthenticationService extends \Zend\Authentication\AuthenticationService{
+	const AUTH_RESULT_HYBRID_AUTH_USER_NOT_CONNECTED = -5;
+	const AUTH_RESULT_HYBRID_AUTH_CANCELED = -4;
+	const AUTH_RESULT_HYBRID_AUTH_UNAVAILABLE = -3;
 	const AUTH_RESULT_UNREGISTERED_USER = -2;
 	const AUTH_RESULT_USER_STATE_PENDING = -1;
 	const AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG = 0;
@@ -12,9 +15,9 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
 	const AUTH_SERVICE_TWITTER = 'twitter';
 
 	/**
-	 * @var \Hybrid_Auth
+	 * @var \ZF2User\Service\UserService
 	 */
-	private $hybridAuthAdapter;
+	private $userService;
 
     /**
      * Constructor
@@ -26,12 +29,12 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
     }
 
     /**
-     * @param \Hybrid_Auth $oAdapter
+     * @param \ZF2User\Service\UserService $oUserService
      * @return \ZF2User\Authentication\AuthenticationService
      */
-    public function setHybridAuthAdapter(\Hybrid_Auth $oAdapter){
-		$this->hybridAuthAdapter = $oAdapter;
-		return $this;
+    public function setUserService(\ZF2User\Service\UserService $oUserService){
+    	$this->userService = $oUserService;
+    	return $this;
     }
 
     public function login($sIdentity,$sCredential, $sService = self::AUTH_SERVICE_LOCAL){
@@ -57,26 +60,35 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
 	        		throw new \Exception('Unknown result failure code : '.$oAuthResult->getCode());
 	        }
         }
-        elseif($this->hybridAuthAdapter){
+        elseif($this->userService){
+        	$oHybridAuthAdapter = $this->userService->getServiceLocator()->get('HybridAuthAdapter');
+        	if($oHybridAuthAdapter instanceof \Exception)return self::AUTH_RESULT_HYBRID_AUTH_UNAVAILABLE;
+
+        	//Clear providers storage
+        	$oHybridAuthAdapter->logoutAllProviders();
         	try{
-        		$oUserProfile = $this->hybridAuthAdapter->authenticate($sService)->getUserProfile();
-				//Retrieve user
-
-        		$iUserId = get_user_by_provider_and_uid( $provider_name, $user_profile->identifier );
-
-
-        		if( $user_id ){ // if user exist on database
-        			// create a session for the user whithin your application
-        			// and redirect him back to the profile or dashboard page
-        			// ...
-        		}
-        		else return self::AUTH_RESULT_UNREGISTERED_USER;
+        		$oHybridProvider = $oHybridAuthAdapter->authenticate($sService);
+        		$oUserProfile = $oHybridProvider->getUserProfile();
         	}
         	catch(\Exception $oException){
-        		throw new \Exception('Error append during authentication with HybridAuth : '.$oException->getMessage());
+        		$oHybridProvider->logout();
+        		switch($oException->getCode()){
+        			case 5 : return self::AUTH_RESULT_HYBRID_AUTH_CANCELED;
+        			case 6 :
+        			case 7 : return self::AUTH_RESULT_HYBRID_AUTH_USER_NOT_CONNECTED;
+        			default:
+        				throw new \Exception('Unexpected hybrid auth excecption return code : '.$oException->getCode());
+        		}
         	}
+
+        	//Try to register user
+        	if(($oUser = $this->userService->getUserFromProvider($oUserProfile,$sService)) instanceof \ZF2User\Entity\UserEntity){
+        		$iUserId = $oUser->getUserId();
+        		$sUserState = $oUser->getUserState();
+        	}
+        	else return self::AUTH_RESULT_UNREGISTERED_USER;
         }
-        else throw new \Exception('Hybrid Auth adapter is undefined');
+        else throw new \Exception('User service is undefined');
 
         //Authentication is valid, check user state
         if(!isset($iUserId,$sUserState))throw new \Exception('User\'s id or user\'s state are undefined');

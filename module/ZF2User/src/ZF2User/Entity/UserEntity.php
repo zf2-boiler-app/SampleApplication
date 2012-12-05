@@ -23,6 +23,24 @@ class UserEntity{
 	 * @throws \Exception
 	 * @return string
 	 */
+	public function getUserId(){
+		if(!isset($this->user_id))throw new\Exception('user_id is undefined');
+		return $this->user_id;
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return string
+	 */
+	public function getUserEmail(){
+		if(!isset($this->user_email))throw new\Exception('user_email is undefined');
+		return $this->user_email;
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return string
+	 */
 	public function getUserState(){
 		if(!isset($this->user_state))throw new\Exception('user_state is undefined');
 		return $this->user_state;

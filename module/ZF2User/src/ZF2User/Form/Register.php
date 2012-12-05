@@ -1,11 +1,12 @@
 <?php
 namespace ZF2User\Form;
-class Register extends \Zend\Form\Form{
+class Register extends \Application\Form\AbstractForm{
+
 	/**
-	* Constructor
-	*/
-	public function __construct(){
-		parent::__construct('login');
+	 * Constructor
+	 */
+	public function __construct($sName = null,$aOptions = null){
+		parent::__construct('login',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 
 		$oCaptchaImage = new \Zend\Captcha\Image(array(
@@ -21,7 +22,6 @@ class Register extends \Zend\Form\Form{
 		$this->setAttribute('method', 'post')
 		->add(array(
 			'name' => 'user_email',
-			'type' => 'Zend\Form\Element\Email',
 			'attributes' => array(
 				'required' => true
 			),
@@ -53,7 +53,8 @@ class Register extends \Zend\Form\Form{
 			'name' => 'user_captcha',
 			'type'  => 'Zend\Form\Element\Captcha',
 			'attributes' => array(
-				'required' => true
+				'required' => true,
+				'placeholder' => sprintf($this->translate('enter_the_x_characters'),$oCaptchaImage->getWordlen()),
 			),
 			'options' => array(
 				'label' => 'im_not_a_robot',

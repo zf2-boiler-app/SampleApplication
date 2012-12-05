@@ -68,17 +68,17 @@ return array(
 				'access_type' => 'online',
 				'approval_prompt' => 'force'
 			),
-			'Facebook' => array (
+			'Facebook' => array(
 				'enabled' => true,
-				'keys' => array ( 'id' => '', 'secret' => '' ),
-				'scope' => array ( 'email, user_about_me, offline_access' )
+				'keys' => array( 'id' => '', 'secret' => ''),
+				'scope' => array( 'email, user_about_me, offline_access')
 			),
-			'Twitter' => array ( // 'key' is your twitter application consumer key
+			'Twitter' => array(
 				'enabled' => true,
-				'keys' => array ( 'key' => '', 'secret' => '' )
+				'keys' => array('key' => '', 'secret' => '')
 			)
 		),
-		'debug_mode' => false ,
+		'debug_mode' => false
 	),
 
     'view_manager' => array(
@@ -86,48 +86,16 @@ return array(
     ),
 	'service_manager' => array(
 		'factories' => array(
-			'UserService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				$oUserService = new \ZF2User\Service\UserService();
-				return $oUserService->setServiceManager($oServiceManager);
-			},
-			'AuthAdapter' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \Zend\Authentication\Adapter\DbTable(
-					$oServiceManager->get('Zend\Db\Adapter\Adapter'),
-					$oServiceManager->get('UserModel')->getTable(),
-					'user_email',
-					'user_password',
-					'MD5(?)'
-				);
-			},
-			'AuthStorage' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \Zend\Authentication\Storage\Session(null,null,$oServiceManager->get('SessionManager'));
-			},
+			'UserService' => '\ZF2User\Factory\UserServiceFactory',
+			'AuthAdapter' => '\ZF2User\Factory\AuthAdapterFactory',
+			'AuthStorage' => '\ZF2User\Factory\AuthStorageFactory',
 			'HybridAuthAdapter' => '\ZF2User\Factory\HybridAuthAdapterFactory',
-			'AuthService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \ZF2User\Authentication\AuthenticationService(
-					$oServiceManager->get('AuthStorage'),
-					$oServiceManager->get('AuthAdapter')
-				);
-			},
-			'UserModel' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \ZF2User\Model\UserModel($oServiceManager->get('Zend\Db\Adapter\Adapter'));
-			},
-			'SessionManager' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \Zend\Session\SessionManager();
-			},
-			'LoginForm' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				$oForm = new \ZF2User\Form\Login();
-				return $oForm->prepare();
-			},
-			'RegisterForm' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				try{
-					$oForm = new \ZF2User\Form\Register();
-					return $oForm->prepare();
-				}
-				catch(\Exception $oException){
-					var_dump($oException->__toString());
-				}
-			},
+			'AuthService' => '\ZF2User\Factory\AuthServiceFactory',
+			'UserModel' => '\ZF2User\Factory\UserModelFactory',
+			'UserProviderModel' => '\ZF2User\Factory\UserProviderModelFactory',
+			'SessionManager' => '\ZF2User\Factory\SessionManagerFactory',
+			'LoginForm' => '\ZF2User\Factory\LoginFormFactory',
+			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory'
 		)
 	)
 );

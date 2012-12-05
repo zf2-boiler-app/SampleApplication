@@ -23,8 +23,7 @@ class HybridAuthAdapterFactory implements \Zend\ServiceManager\FactoryInterface{
 			return new \Hybrid_Auth($aConfiguration);
 		}
 		catch(\Exception $oException){
-			error_log(print_r($oException->getMessage(),true));
-			throw new \Exception('Error append during Hybrid_Auth service creation : '.$oException->getMessage());
+			return $oException;
 		}
     }
 }

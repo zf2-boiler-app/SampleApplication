@@ -56,14 +56,12 @@ class Social extends \Zend\View\Helper\AbstractHelper{
 		switch($sService){
 			case self::GOOGLE_ANALYTICS:
 				if(empty($this->configuration[self::GOOGLE_ANALYTICS]['id']))throw new \Exception('Google analytics id is not defined');
-				return '
-					<script>
-			            var _gaq=[[\'_setAccount\',\''.$this->configuration[self::GOOGLE_ANALYTICS]['id'].'\'],[\'_trackPageview\']];
-			            (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-			            g.src=(\'https:\'==location.protocol?\'//ssl\':\'//www\')+\'.google-analytics.com/ga.js\';
-			            s.parentNode.insertBefore(g,s)}(document,\'script\'));
-			        </script>
-			    ';
+				return $this->getView()->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT)->appendScript('
+		        	var _gaq=[[\'_setAccount\',\''.$this->configuration[self::GOOGLE_ANALYTICS]['id'].'\'],[\'_trackPageview\']];
+					(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+					g.src=(\'https:\'==location.protocol?\'//ssl\':\'//www\')+\'.google-analytics.com/ga.js\';
+					s.parentNode.insertBefore(g,s)}(document,\'script\'));
+			    ');
 		}
 
 	}

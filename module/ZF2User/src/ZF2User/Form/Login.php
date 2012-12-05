@@ -11,8 +11,7 @@ class Login extends \Zend\Form\Form{
 		->add(array(
 			'name' => 'user_email',
 			'attributes' => array(
-				'type' => 'Zend\Form\Element\Email',
-				'placeholder'   => 'email',
+				'placeholder' => 'email',
 				'required' => true
 			)
 		))
@@ -20,7 +19,7 @@ class Login extends \Zend\Form\Form{
 			'name' => 'user_password',
 			'attributes' => array(
 				'type'  => 'password',
-				'placeholder'   => 'password',
+				'placeholder' => 'password',
 				'required' => true
 			)
 		))

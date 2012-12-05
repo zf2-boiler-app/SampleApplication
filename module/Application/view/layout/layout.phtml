@@ -15,10 +15,10 @@
        	$this->headScript();
 ?>
 	</head>
-	<body>
-        <!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
-        <?=$this->layout()->header?>
-        <div class="container">
+	<body data-behavior="BS.Dropdown">
+        <header data-behavior="BS.Dropdown FormValidator"><?=$this->layout()->header?></header>
+        <div class="container" data-behavior="BS.Dropdown FormValidator">
+	        <!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
 			<?=$this->layout()->content?>
 			<hr>
             <footer>
@@ -27,6 +27,15 @@
 
         </div>
         <!-- /container -->
-        <?=$this->inlineScript().$this->social(\Application\View\Helper\Social::GOOGLE_ANALYTICS)?>
+        <?php
+        	//Javascript files
+       	 	echo $this->inlineScript();
+
+       	 	//Google analytics
+        	$this->social(\Application\View\Helper\Social::GOOGLE_ANALYTICS);
+
+        	//Initalise js Controller
+        	echo $this->jsController();
+        ?>
     </body>
 </html>
