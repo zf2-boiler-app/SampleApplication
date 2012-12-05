@@ -1,12 +1,20 @@
 <?php
-namespace Medias\Managers;
-class Mail{
+namespace Mail\Service;
+class MailService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+	const MEDIA_INTERNAL = 'internal';
+	const MEDIA_MAIL = 'mail';
+	
 	const MAIL_DEFAULT = 'DEFAULT';
 	const MAIL_SYSTEME = 'SYSTEME';
 	const MAIL_NOREPLY = 'NOREPLY';
-
+	
 	const TEMPLATE_DEFAULT = 'mail/default';
 	const TEMPLATE_EXCEPTION = 'mail/exception';
+	
+	/**
+	 * @var \Zend\ServiceManager\ServiceLocatorInterface
+	 */
+	private $serviceLocator;
 
 	/**
 	 * @var array
@@ -20,18 +28,8 @@ class Mail{
 
 	/**
 	 * @var \Zend\View\Model\ViewModel
-	*/
+	 */
 	private $layout;
-
-	/**
-	 * @var \Zend\Mail\Message
-	 */
-	private $message;
-
-	/**
-	 * @var string
-	 */
-	private $urlLogo;
 
 	/**
 	 * Constructor
@@ -42,6 +40,24 @@ class Mail{
 		if(!isset($aConfiguration['view_manager'],$this->configuration['view_manager']['template_map'],$aConfiguration['sender'])
 		|| !is_array($aConfiguration['view_manager']['template_map']) || !is_array($aConfiguration['sender']))throw new \Exception('Configuration is invalid');
 		$this->configuration = $aConfiguration;
+	}
+	
+	/**
+	 * @param \Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator
+	 * @return \ZF2User\Service\UserService
+	 */
+	public function setServiceLocator(\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
+		$this->serviceLocator = $oServiceLocator;
+		return $this;
+	}
+	
+	/**
+	 * @throws \Exception
+	 * @return \Zend\ServiceManager\ServiceManager
+	 */
+	public function getServiceLocator(){
+		if($this->serviceLocator instanceof \Zend\ServiceManager\ServiceLocatorInterface)return $this->serviceLocator;
+		throw new \Exception('Service Locator is undefined');
 	}
 
 	/**

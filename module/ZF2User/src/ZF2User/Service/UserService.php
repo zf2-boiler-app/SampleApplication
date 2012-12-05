@@ -1,15 +1,14 @@
 <?php
 namespace ZF2User\Service;
 class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+	public function __construct(){
+		
+	}
+	
 	/**
 	 * @var \Zend\ServiceManager\ServiceLocatorInterface
 	 */
 	private $serviceLocator;
-
-	/**
-	 * @var array
-	 */
-	private $forms;
 
 	/**
 	 * @param \Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator

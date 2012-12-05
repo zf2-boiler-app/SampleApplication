@@ -1,5 +1,5 @@
 <?php
-namespace Medias;
+namespace Mail;
 use Zend\Mvc\MvcEvent,
 Zend\Mvc\ModuleRouteListener,
 Zend\Mvc\Router\RouteStackInterface,

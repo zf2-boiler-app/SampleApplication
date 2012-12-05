@@ -1,5 +1,5 @@
 <?php
-namespace Messenger\Managers;
+namespace Mail\Transport;
 use \Zend\Mail\Transport\Sendmail as OriginalSendmail;
 class Sendmail extends OriginalSendmail{
 
@@ -58,7 +58,7 @@ class Sendmail extends OriginalSendmail{
 
 	/**
 	 * Send mail
-	 * @param \Zend\Mail\Message $message
+	 * @param \Zend\Mail\Message $oMessage
 	 */
 	public function send(\Zend\Mail\Message $oMessage){
         $this->prepareAttachements($oMessage);
@@ -66,10 +66,12 @@ class Sendmail extends OriginalSendmail{
 	}
 
 	/**
-	 * Add message attachements
+	 * Add message attachments
 	 * @param \Zend\Mail\Message $oMessage
+	 * @return \Mail\Transport\Sendmail
 	 */
-	protected function prepareAttachements (\Zend\Mail\Message $oMessage){
+	protected function prepareAttachements(\Zend\Mail\Message $oMessage){
 		if($oMessage->hasAttachment())foreach($oMessage->getAttachments() as $sFilePath)$this->addAttachment($sFilePath);
+		return $this;
 	}
 }

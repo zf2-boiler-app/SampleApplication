@@ -1,5 +1,5 @@
 <?php
-namespace Messenger\Managers;
+namespace Mail;
 use \Zend\Mail\Message as OriginalMessage;
 class Message extends OriginalMessage{
 
@@ -13,7 +13,7 @@ class Message extends OriginalMessage{
 	 * @param string|array $aFilesPath
 	 * @throws \Exception
 	 */
-	public function addAttachements(array $aFilesPath){
+	public function addAttachments(array $aFilesPath){
 		if(empty($aFilesPath))throw new \Exception('Files path is empty');
 		foreach($aFilesPath as $sFilePath){
 			if(!file_exists($sFilePath))throw new \Exception('Attachment file not found');

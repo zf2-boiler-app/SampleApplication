@@ -10,7 +10,7 @@ return array(
     		},
     	)
     ),
-    'mailer' => array(
+    'mail' => array(
     	'sender' => array(
     		'DEFAULT' => 'default@void.com',
     		'NOREPLY' => 'noreply@void.com',
