@@ -1,10 +1,15 @@
 <?php
 namespace Logger\Service;
-class LoggerService{
+class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterface{
 	const LOG_TYPE_DEFAULT = 'default';
 	const LOG_TYPE_MVC_ACTION = 'mvc_action';
 	const LOG_TYPE_ENTITY = 'entity';
 	const LOG_TYPE_ERROR = 'error';
+	
+	/**
+	 * @var \Zend\EventManager\SharedEventManagerInterface
+	 */
+	protected $sharedEventManager;
 	
 	/**
 	 * Plugin manager for logging adapters.
@@ -24,18 +29,49 @@ class LoggerService{
 	protected static $currentId;
 	
 	
+	/**
+	 * Constructor
+	 */
 	private function __construct(){
 		self::$currentId = uniqid(time());
 	}
 	
 	/**
+	 * Inject a SharedEventManager instance
+	 * @param \Zend\EventManager\SharedEventManagerInterface $oSharedEventManager
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function setSharedManager(\Zend\EventManager\SharedEventManagerInterface $oSharedEventManager){
+		$this->sharedEventManager = $oSharedEventManager;
+		return $this;
+	}
+	
+	/**
+	 * Get shared collections container
+	 * @return \Zend\EventManager\SharedEventManagerInterface
+	*/
+	public function getSharedManager(){
+		if(!($this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface))$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
+		return $this->getSharedManager();
+	}
+	
+	/**
+	 * Remove any shared collections
+	 * @return \Logger\Service\LoggerService
+	*/
+	public function unsetSharedManager(){
+		$this->sharedEventManager = null;
+		return $this;
+	}
+	
+	/**
 	 * Instantiate a logger
-	 * @param  array|Traversable $options
-	 * @return Translator
-	 * @throws Exception\InvalidArgumentException
+	 * @param  array|Traversable $oOptions
+	 * @throws \Exception
+	 * @return \Logger\Service\LoggerService
 	 */
 	public static function factory($oOptions){
-		if($oOptions instanceof Traversable)$oOptions = ArrayUtils::iteratorToArray($options);
+		if($oOptions instanceof Traversable)$oOptions = ArrayUtils::iteratorToArray($oOptions);
 		elseif(!is_array($oOptions))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($options)?get_class($options):gettype($options)).'"');
 		$oLogger = new static();
 		if(!isset($oOptions['adapters']))throw new \Exception('Adapters option is undefined');
