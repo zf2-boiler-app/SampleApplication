@@ -1,13 +1,12 @@
 <?php
 namespace Application;
-use Zend\Mvc\ModuleRouteListener;
 class Module{
 
     /**
-     * @param \Zend\EventManager\EventInterface $oEvent
+     * @param \Zend\Mvc\MvcEvent $oEvent
      */
     public function onBootstrap(\Zend\Mvc\MvcEvent $oEvent){
-    	$oModuleRouteListener = new ModuleRouteListener();
+    	$oModuleRouteListener = new \Zend\Mvc\ModuleRouteListener();
     	$oModuleRouteListener->attach($oEventManager = $oEvent->getApplication()->getEventManager());
 
     	$oServiceManager = $oEvent->getApplication()->getServiceManager();

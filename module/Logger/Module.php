@@ -1,5 +1,5 @@
 <?php
-namespace ZF2User;
+namespace Logger;
 class Module{
 	/**
      * @return array
