@@ -1,41 +1,51 @@
 <?php
 namespace Logger\Service;
 class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterface{
+	const LOG_EVENT_CREATE_ENTITY = 'CREATE_ENTITY';
+	const LOG_EVENT_UPDATE_ENTITY = 'UPDATE_ENTITY';
+	const LOG_EVENT_DELETE_ENTITY = 'DELETE_ENTITY';
+
 	const LOG_TYPE_DEFAULT = 'default';
 	const LOG_TYPE_MVC_ACTION = 'mvc_action';
 	const LOG_TYPE_ENTITY = 'entity';
 	const LOG_TYPE_ERROR = 'error';
-	
+
 	/**
 	 * @var \Zend\EventManager\SharedEventManagerInterface
 	 */
 	protected $sharedEventManager;
-	
-	/**
-	 * Plugin manager for logging adapters.
-	 * @var \Logger\Service\AdapterPluginManager
-	 */
-	protected $pluginManager;
-	
+
 	/**
 	 * Adapters
 	 * @var array
 	 */
 	protected $adapters = array();
-	
+
 	/**
 	 * @var string
 	 */
 	protected static $currentId;
-	
-	
+
 	/**
 	 * Constructor
 	 */
 	private function __construct(){
+		//Define current id
 		self::$currentId = uniqid(time());
+
+		$this->getSharedManager()->attach('Zend\Mvc\Application', \Zend\Mvc\MvcEvent::EVENT_ROUTE,array($this,'logMvcAction'));
+		$this->getSharedManager()->attach('Zend\Mvc\Application', \Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,array($this,'logError'));
+		$this->getSharedManager()->attach('*', self::LOG_EVENT_CREATE_ENTITY,array($this,'logCreateEntity'));
+		$this->getSharedManager()->attach('*', self::LOG_EVENT_UPDATE_ENTITY,array($this,'logUpdateEntity'));
+		$this->getSharedManager()->attach('*', self::LOG_EVENT_DELETE_ENTITY,array($this,'logDeleteEntity'));
 	}
-	
+
+	public function __destruct(){
+		//Stop logger
+		$this->getAdapter(self::LOG_TYPE_MVC_ACTION)->completed(self::$currentId,new \DateTime());
+		self::$currentId = null;
+	}
+
 	/**
 	 * Inject a SharedEventManager instance
 	 * @param \Zend\EventManager\SharedEventManagerInterface $oSharedEventManager
@@ -45,16 +55,16 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 		$this->sharedEventManager = $oSharedEventManager;
 		return $this;
 	}
-	
+
 	/**
 	 * Get shared collections container
 	 * @return \Zend\EventManager\SharedEventManagerInterface
 	*/
 	public function getSharedManager(){
 		if(!($this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface))$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
-		return $this->getSharedManager();
+		return $this->sharedEventManager;
 	}
-	
+
 	/**
 	 * Remove any shared collections
 	 * @return \Logger\Service\LoggerService
@@ -63,7 +73,7 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 		$this->sharedEventManager = null;
 		return $this;
 	}
-	
+
 	/**
 	 * Instantiate a logger
 	 * @param  array|Traversable $oOptions
@@ -71,38 +81,35 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\LoggerService
 	 */
 	public static function factory($oOptions){
-		if($oOptions instanceof Traversable)$oOptions = ArrayUtils::iteratorToArray($oOptions);
-		elseif(!is_array($oOptions))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($options)?get_class($options):gettype($options)).'"');
+		if($oOptions instanceof \Traversable)$oOptions = \Zend\Stdlib\ArrayUtils::iteratorToArray($oOptions);
+		elseif(!is_array($oOptions))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($oOptions)?get_class($oOptions):gettype($oOptions)).'"');
 		$oLogger = new static();
 		if(!isset($oOptions['adapters']))throw new \Exception('Adapters option is undefined');
-		if(is_array($oOptions['adapters']))foreach($oOptions['adapters'] as $sType => $oAdapter){			
-			if(is_string($sType))$this->setAdapters($sType,$oAdapter);
-			else $this->setAdapters($oAdapter);
+		if(is_array($oOptions['adapters']))foreach($oOptions['adapters'] as $sType => $oAdapter){
+			if(is_string($sType))$oLogger->setAdapters($sType,$oAdapter);
+			else $oLogger->setAdapters($oAdapter);
 		}
-		else $this->setAdapter(self::LOG_TYPE_DEFAULT,$oOptions['adapters']);
+		else $oLogger->setAdapter(self::LOG_TYPE_DEFAULT,$oOptions['adapters']);
 		return $oLogger;
 	}
-	
+
 	/**
-	 * Set the plugin manager for logging adapters
-	 * @param \Logger\Service\AdapterPluginManager $oPluginManager
-	 * @return \Logger\Service\LoggerService
+	 * Check if log type exists
+	 * @param string $sLogType
+	 * @return boolean
 	 */
-	public function setPluginManager(\Logger\Service\AdapterPluginManager $oPluginManager){
-		$this->pluginManager = $oPluginManager;
-		return $this;
+	protected static function logTypeExists($sLogType){
+		switch($sLogType){
+			case self::LOG_TYPE_MVC_ACTION:
+			case self::LOG_TYPE_ERROR:
+			case self::LOG_TYPE_ENTITY:
+			case self::LOG_TYPE_DEFAULT:
+				return true;
+			default:
+				return false;
+		}
 	}
-	
-	/**
-	 * Retrieve the plugin manager for translation loaders.
-	 * Lazy loads an instance if none currently set.
-	 * @return \Logger\Service\AdapterPluginManager
-	 */
-	public function getPluginManager(){
-		if(!$this->pluginManager instanceof \Logger\Service\AdapterPluginManager)$this->setPluginManager(new \Logger\Service\AdapterPluginManager());
-		return $this->pluginManager;
-	}
-	
+
 	/**
 	 * Set adapter
 	 * @param string|array $sLogType
@@ -118,21 +125,21 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 			}
 			else throw new \Exception('Adapter config  expects an array with "type" and "adapter" keys.');
 		}
-		
+
 		if(!self::logTypeExists($sLogType))throw new \Exception('Log type expects to be defined; recieved "'.(is_string($sLogType)?$sLogType:gettype($sLogType)).'"');
 		if($oAdapter instanceof \Logger\Service\Adapter\LogAdapterInterface)$this->adapters[$sLogType] = $oAdapter;
 		elseif(is_string($oAdapter)){
-			if(class_exists($oAdapter)){
-				$oAdapter = new $oAdapter();
-				if(!($oAdapter instanceof \Logger\Service\Adapter\LogAdapterInterface)) throw new \Exception('Log adapter expects to be instance of \Logger\Service\Adapter\LogAdapterInterface; recieved "'.get_class($oAdapter).'"');
-			}
-			else $oAdapter = $this->getPluginManager()->get($oAdapter);
-			$this->adapters[$sLogType] = $oAdapter;
+			if(!class_exists($oAdapter))throw new \Exception('Undefined class name "'.$oAdapter.'"');
+			elseif(!($oAdapter instanceof \Logger\Service\Adapter\LogAdapterInterface))throw new \Exception(sprintf(
+				'Log adapter expects to be instance of \Logger\Service\Adapter\LogAdapterInterface; recieved "%s"',
+				get_class($oAdapter)
+			));
+			$this->adapters[$sLogType] = new $oAdapter();
 		}
 		else throw new \Exception('Log adapter expects a string or be instance of \Logger\Service\Adapter\LogAdapterInterface; recieved "'.(is_object($oAdapter)?get_class($oAdapter):gettype($oAdapter)).'"');
 		return $this;
 	}
-	
+
 	/**
 	 * Retrieve log adapater for log type, default if not exist
 	 * @param string $sLogType
@@ -140,22 +147,91 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\Adapter\LogAdapterInterface
 	 */
 	protected function getAdapter($sLogType){
-		if(isset($this->adapters[$sLogType]))$this->adapters[$sLogType];
+		if(!is_string($sLogType))throw new \Exception('Log type must be string; recieved "'.gettype($sLogType).'"');
+		elseif(!self::logTypeExists($sLogType))throw new \Exception('Log type "'.$sLogType.'" is undefined');
+		elseif(isset($this->adapters[$sLogType]))return $this->adapters[$sLogType];
 		elseif(isset($this->adapters[self::LOG_TYPE_DEFAULT]))return $this->adapters[self::LOG_TYPE_DEFAULT];
 		else throw new \Exception('"'.$sLogType.'" Log adapters is undefined. Define at least "default" Log adapter');
 	}
-	
-	protected function logMvcAction(\Zend\Mvc\MvcEvent $oEvent){
-		$this->getAdapter(self::LOG_TYPE_MVC_ACTION)->log(self::$currentId,time(),$oEvent->getRouteMatch());
+
+	/**
+	 * Start loggin process
+	 * @param \Zend\Stdlib\RequestInterface $oRequest
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function start(\Zend\Stdlib\RequestInterface $oRequest){
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_MVC_ACTION)->started(self::$currentId,new \DateTime(),$oRequest)->getLogId();
 		return $this;
 	}
-	
-	protected function logEntity(\Zend\EventManager\Event $oEvent){
-		$this->getAdapter(self::LOG_TYPE_ENTITY)->log(self::$currentId,time(),$oEvent->getParam('entity'));
-		return $this;		
+
+	/**
+	 * Log Mvc actions
+	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function logMvcAction(\Zend\Mvc\MvcEvent $oEvent){
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_MVC_ACTION)->log(self::$currentId,new \DateTime(),$oEvent->getRouteMatch())->getLogId();
+		return $this;
 	}
-	
-	protected function logError(\Zend\Mvc\MvcEvent $oEvent){
-		return $this->getAdapter(self::LOG_TYPE_ERROR)->log(self::$currentId,time(),$oEvent->getParam('error'),$oEvent->getParam('exception'));
+
+	/**
+	 * Log entities creates
+	 * @param \Zend\EventManager\Event $oEvent
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function logCreateEntity(\Zend\EventManager\Event $oEvent){
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
+			self::$currentId,
+			new \DateTime(),
+			$oEvent->getParam('entity'),
+			self::LOG_EVENT_CREATE_ENTITY
+		)->getLogId();
+		return $this;
+	}
+
+	/**
+	 * Log entities updates
+	 * @param \Zend\EventManager\Event $oEvent
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function logUpdateEntity(\Zend\EventManager\Event $oEvent){
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
+			self::$currentId,
+			new \DateTime(),
+			$oEvent->getParam('entity'),
+			self::LOG_EVENT_UPDATE_ENTITY
+		)->getLogId();
+		return $this;
+	}
+
+	/**
+	 * Log entities deletes
+	 * @param \Zend\EventManager\Event $oEvent
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function logDeleteEntity(\Zend\EventManager\Event $oEvent){
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
+			self::$currentId,
+			new \DateTime(),
+			$oEvent->getParam('entity'),
+			self::LOG_EVENT_DELETE_ENTITY
+		)->getLogId();
+		return $this;
+	}
+
+	/**
+	 * Log errors
+	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 * @return \Logger\Service\LoggerService
+	 */
+	public function logError(\Zend\Mvc\MvcEvent $oEvent){
+		if(!($oException = $oEvent->getParam('exception')) instanceof \Exception)$oException = new \Exception();
+		self::$currentId = $this->getAdapter(self::LOG_TYPE_ERROR)->log(
+			self::$currentId,
+			new \DateTime(),
+			$oException,
+			$oEvent->getParam('error')
+		)->getLogId();
+		return $this;
 	}
 }

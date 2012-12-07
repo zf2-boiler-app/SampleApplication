@@ -13,8 +13,8 @@ class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\Ser
 	private $serviceLocator;
 
 
-	public function __construct(\Zend\Mvc\Router\Http\RouteMatch $oRouteMatch){
-		$this->routeMatch = $oRouteMatch;
+	public function __construct($oRouteMatch = null){
+		if($oRouteMatch instanceof \Zend\Mvc\Router\Http\RouteMatch)$this->routeMatch = $oRouteMatch;
 	}
 
 	/**
@@ -38,7 +38,7 @@ class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\Ser
 	public function __invoke(){
 		/* @var $oTranslator \Application\Translator\Translator */
 		$oTranslator = $this->getServiceLocator()->getServiceLocator()->get('translator');
-		$sControllerName = str_ireplace('\\','',$this->routeMatch->getParam('controller'));
+		$sControllerName = $this->routeMatch?str_ireplace('\\','',$this->routeMatch->getParam('controller')):'NoController';
 		return $this->getServiceLocator()->get('inlineScript')->__invoke(\Zend\View\Helper\HeadScript::SCRIPT)->appendScript('
 			var oControllerOptions = {
 				\'locale\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getLocale()).',

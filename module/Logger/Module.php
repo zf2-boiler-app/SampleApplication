@@ -2,6 +2,16 @@
 namespace Logger;
 class Module{
 	/**
+	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 */
+	public function onBootstrap($oEvent){
+		$oServiceManager = $oEvent->getApplication()->getServiceManager();
+
+		//Initialize Logger service
+		$oServiceManager->get('LoggerService')->start($oEvent->getRequest());
+	}
+
+	/**
      * @return array
      */
     public function getConfig(){
