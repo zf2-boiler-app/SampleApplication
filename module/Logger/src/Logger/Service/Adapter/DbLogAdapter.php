@@ -46,17 +46,21 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
 		else{
 			if(isset(self::$logs[$this->logId]['errors'])){
-				foreach(self::$logs[$this->logId]['errors'] as $aErrorInfos){
-					if(!$this->sql->insert('errors')
-					->columns(array_keys($aErrorInfos))
-					->values($aErrorInfos))throw new \Exception('Error occured during log insertion');
-				}
+				$aErrors = self::$logs[$this->logId]['errors'];
 				unset(self::$logs[$this->logId]['errors']);
 			}
 			if(!$this->insert(array_merge(
 				self::$logs[$this->logId],
 				array('log_ending' => $oDateTime->format(\DateTime::ISO8601)))
 			))throw new \Exception('Error occured during log insertion');
+			
+			$sRealLogId = $this->getLastInsertValue();
+			if(!empty($aErrors))foreach($aErrors as $aErrorInfos){
+				$aErrorInfos['log_id'] = $sRealLogId;
+				if(!$this->sql->prepareStatementForSqlObject($this->sql->insert()->into('errors')
+				->columns(array_keys($aErrorInfos))
+				->values($aErrorInfos))->execute())throw new \Exception('Error occured during log insertion');
+			}
 		}
 		unset(self::$logs[$this->logId]);
 		$this->logId = null;
@@ -103,7 +107,7 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 		self::$logs[$this->logId] = array_merge(self::$logs[$this->logId],array(
 			'log_request_uri' => $oRequest->getRequestUri(),
 			'log_request_method' => $oRequest->getMethod(),
-			'log_user_agent' => $oRequest->getHeader('User-Agent')->toString(),
+			'log_user_agent' => $oRequest->getHeader('User-Agent')->getFieldValue(),
 			'log_is_ajax' => $oRequest->isXmlHttpRequest(),
 			'log_user_id' => $this->getUserId()
 		));
