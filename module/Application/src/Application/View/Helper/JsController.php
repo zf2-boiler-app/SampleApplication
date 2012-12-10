@@ -42,7 +42,7 @@ class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\Ser
 		$sControllerName = $this->routeMatch?str_ireplace('\\','',$this->routeMatch->getParam('controller')):'NoController';
 		return $this->getServiceLocator()->get('inlineScript')->__invoke(\Zend\View\Helper\HeadScript::SCRIPT)->appendScript('
 			var oControllerOptions = {
-				\'locale\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getLocale()).',
+				\'locale\':'.$this->getServiceLocator()->get('escapeJson')->__invoke(str_ireplace('_','-',$oTranslator->getLocale())).',
 	            \'texts\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getMessages()).',
 				\'urls\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($this->routeMatch?array():array()).',
 			};
