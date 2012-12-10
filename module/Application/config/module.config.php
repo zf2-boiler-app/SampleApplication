@@ -71,7 +71,7 @@ return array(
     				'js/mootools',
     				'js/modernizr.min.js',
     				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
-    				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/',
+    				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source',
     				'js/MeioMask/behavior.js',
     				'js/controller.js'
     			),

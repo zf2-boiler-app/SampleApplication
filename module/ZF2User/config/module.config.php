@@ -51,11 +51,32 @@ return array(
 								'action'  => 'register'
 							)
 						)
-					)
+					),
+                	'checkuseremailavailability' => array(
+                		'type' => 'Literal',
+                		'options' => array(
+                			'route' => '/checkuseremailavailability',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'checkuseremailavailability'
+                			)
+                		)
+                	),
                 )
             )
         )
     ),
+	'asset_bundle' => array(
+    	'assets' => array(
+    		'zf2user' => array(
+    			'ZF2User\Controller\User' => array(
+    				'js' => array(
+	    				'js/Zf2User/Controller/UserController.js',
+	    			)
+    			)
+    		)
+    	)
+	),
 	'hybrid_auth' =>  array(
 		'base_url' => "zf2user/hybridauth",
 

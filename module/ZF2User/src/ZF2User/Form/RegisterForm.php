@@ -6,7 +6,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 	 * Constructor
 	 */
 	public function __construct($sName = null,$aOptions = null){
-		parent::__construct('login',$aOptions);
+		parent::__construct('register',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 
 		$oCaptchaImage = new \Zend\Captcha\Image(array(
@@ -24,7 +24,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'name' => 'user_email',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'validate-email'
+				'class' => 'required validate-email',
+				'onblur' => 'oController.checkUserEmailAvailability(document.id(this));'
 			),
 			'options' => array(
 				'label' => 'email'
@@ -33,9 +34,9 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		->add(array(
 			'name' => 'user_password',
 			'attributes' => array(
-			'type'  => 'password',
+				'type'  => 'password',
 				'required' => true,
-				'class' => 'maxLength:32'
+				'class' => 'required maxLength:32'
 			),
 			'options' => array(
 				'label' => 'password'
@@ -44,7 +45,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		->add(array(
 			'name' => 'user_confirm_password',
 			'attributes' => array(
-			'type'  => 'password',
+				'type'  => 'password',
+				'class' => 'required validate-match matchInput:\'user_password\' matchName:\''.$this->translate('password').'\'',
 				'required' => true
 			),
 			'options' => array(
@@ -60,7 +62,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			),
 			'options' => array(
 				'label' => 'im_not_a_robot',
-				'captcha' => $oCaptchaImage->setImgDir('./public/assets/captcha')->setImgUrl('/assets/captcha/')
+				'captcha' => $oCaptchaImage->setImgDir('./public/assets/captcha')->setImgUrl('/assets/captcha/'),
+				'class' => 'required'
 			)
 		))
 		->add(array(

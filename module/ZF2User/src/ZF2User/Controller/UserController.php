@@ -57,6 +57,10 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		return $this->view;
 	}
+	
+	public function checkuseremailavailabilityAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed');
+	}
 
 	public function hybridauthAction(){
 		if(($sProvider = $this->params()->fromQuery('hauth_done')) && $this->params()->fromQuery('error') === 'access_denied'){

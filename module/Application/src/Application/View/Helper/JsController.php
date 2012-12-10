@@ -38,11 +38,13 @@ class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\Ser
 	public function __invoke(){
 		/* @var $oTranslator \Application\Translator\Translator */
 		$oTranslator = $this->getServiceLocator()->getServiceLocator()->get('translator');
+		error_log($this->routeMatch->getParam('controller'));
 		$sControllerName = $this->routeMatch?str_ireplace('\\','',$this->routeMatch->getParam('controller')):'NoController';
 		return $this->getServiceLocator()->get('inlineScript')->__invoke(\Zend\View\Helper\HeadScript::SCRIPT)->appendScript('
 			var oControllerOptions = {
 				\'locale\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getLocale()).',
-	            \'texts\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getMessages()).'
+	            \'texts\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($oTranslator->getMessages()).',
+				\'urls\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($this->routeMatch?array():array()).',
 			};
 			oController = (\'undefined\' === typeof '.$sControllerName.')?new Controller(oControllerOptions):new '.$sControllerName.'(oControllerOptions);
 		');
