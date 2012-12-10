@@ -13,11 +13,7 @@
             "package": {
                 "version": "dev-master",
                 "name": "twitter/bootstrap",
-                "source": {
-                    "url": "https://github.com/twitter/bootstrap.git",
-                    "type": "git",
-                    "reference": "master"
-                }
+                "source": {"url": "https://github.com/twitter/bootstrap.git","type": "git","reference": "master"}
             }
         },
         {
@@ -25,11 +21,15 @@
             "package": {
                 "version": "dev-master",
                 "name": "fortawesome/font-awesome",
-                "source": {
-                    "url": "https://github.com/FortAwesome/Font-Awesome.git",
-                    "type": "git",
-                    "reference": "master"
-                }
+                "source": {"url": "https://github.com/FortAwesome/Font-Awesome.git","type": "git","reference": "master"}
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "fabiomcosta/mootools-meio-mask",
+                "source": {"url": "https://github.com/fabiomcosta/mootools-meio-mask.git","type": "git","reference": "master"}
             }
         },
         {
@@ -44,6 +44,7 @@
         "fortawesome/font-awesome": "dev-master",
         "dlu/dlutwbootstrap": "dev-master",
         "dino/dompdf-module": "dev-master",
-        "hybridauth/hybridauth": "dev-master"
+        "hybridauth/hybridauth": "dev-master",
+        "fabiomcosta/mootools-meio-mask": "dev-master"
     }
 }

@@ -3,7 +3,7 @@ namespace ZF2User\Model;
 class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	/** User model events **/
 	const EVENT_USER_CREATED = 'user_created';
-	
+
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
@@ -32,11 +32,10 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		|| $sUserEmail = filter_var($aUserInfos['user_email'],FILTER_VALIDATE_EMAIL) === false
 		|| (isset($aUserInfos['user_state']) && !self::userStateExists($aUserInfos['user_state'])))throw new \Exception('Infos for creating user infos are invalid');
 
-		if(!$this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_state')))))throw new \Exception('An error occurred when creating a new user');
-		$oUser = $this->select(array('user_id' => $this->getLastInsertValue()))->current();
+		if(!($iUserId = $this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_state'))))))throw new \Exception('An error occurred when creating a new user');
+		$oUser = $this->select(array('user_id' => $iUserId))->current();
 		if(!($oUser instanceof \ZF2User\Entity\UserEntity))throw new \Exception('An error occurred when creating a new user');
-		
-		$this->getEventManager()->trigger(self::EVENT_USER_CREATED,$this,array('user' => $oUser));
+
 		return $oUser;
 	}
 

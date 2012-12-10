@@ -70,8 +70,9 @@ return array(
     				'js/mootools/mootools-more-1.4.0.1.js',
     				'js/mootools',
     				'js/modernizr.min.js',
-    				'js/meioMask/Meio.Mask.js',
-    				'js/meioMask',
+    				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
+    				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/',
+    				'js/MeioMask/behavior.js',
     				'js/controller.js'
     			),
     			'media' => array(

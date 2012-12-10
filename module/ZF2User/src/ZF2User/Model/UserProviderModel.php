@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Model;
-class UserProviderModel extends \Zend\Db\TableGateway\TableGateway{
+class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	private $userModel;
 
 	/**
@@ -38,15 +38,14 @@ class UserProviderModel extends \Zend\Db\TableGateway\TableGateway{
 	}
 
 	/**
-	 * @param array $aUserInfos
+	 * @param array $aUserProviderInfos
 	 * @throws \Exception
-	 * @return \ZF2User\Entity\UserEntity
+	 * @return \ZF2User\Model\UserProviderModel
 	 */
 	public function create(array $aUserProviderInfos){
 		//Check values
-		if(!isset($aUserProviderInfos['provider'],$aUserProviderInfos['provider_id'],$aUserProviderInfos['user_id']))throw new \Exception('Infos for creating user provider infos are invalid');
-
-		if(!$this->insert(array_intersect_key($aUserProviderInfos, array_flip(array('provider','provider_id','user_id')))))throw new \Exception('An error occurred when creating a new user');
-		return $this->select(array('user_id' => $this->getLastInsertValue()))->current();
+		if(!isset($aUserProviderInfos['provider_name'],$aUserProviderInfos['provider_id'],$aUserProviderInfos['user_id']))throw new \Exception('Infos for creating user provider infos are invalid');
+		if(!$this->insert(array_intersect_key($aUserProviderInfos, array_flip(array('provider_name','provider_id','user_id')))))throw new \Exception('An error occurred when creating a new user provider');
+		return $this;
 	}
 }

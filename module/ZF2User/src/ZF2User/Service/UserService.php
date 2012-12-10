@@ -2,9 +2,9 @@
 namespace ZF2User\Service;
 class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function __construct(){
-		
+
 	}
-	
+
 	/**
 	 * @var \Zend\ServiceManager\ServiceLocatorInterface
 	 */
@@ -28,6 +28,19 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		throw new \Exception('Service Locator is undefined');
 	}
 
+	public function register($sUserEmail,$sUserPassword){
+		if(empty($sUserEmail) || empty($sUserPassword) || !is_string($sUserEmail) || !is_string($sUserPassword))throw new \Exception('User\'s email ('.gettype($sUserEmail).') and/or user\'s ('.gettype($sUserPassword).') password are not strings or are empty');
+		return true;
+	}
+
+	/**
+	 * Login user
+	 * @param string $sUserEmail
+	 * @param string $sUserPassword
+	 * @param string $sService
+	 * @throws \Exception
+	 * @return string|boolean
+	 */
 	public function login($sUserEmail = null,$sUserPassword = null,$sService = \ZF2User\Authentication\AuthenticationService::AUTH_SERVICE_LOCAL){
 		if(!is_string($sService))throw new \Exception('Authentication service ('.gettype($sService).') is not a string');
 
@@ -83,6 +96,13 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		return true;
 	}
 
+	/**
+	 * Get user entity from provider id
+	 * @param \Hybrid_User_Profile $oUserProfile
+	 * @param string $sService
+	 * @throws \Exception
+	 * @return \ZF2User\Entity\UserEntity
+	 */
 	public function getUserFromProvider(\Hybrid_User_Profile $oUserProfile,$sService){
 		if(!is_string($sService))throw new \Exception('Authentication service ('.gettype($sService).') is not a string');
 		if(($oUser = $this->getServiceLocator()->get('UserProviderModel')->getUser($oUserProfile->identifier,$sService)) instanceof \ZF2User\Entity\UserEntity)return $oUser;
@@ -95,9 +115,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 		//Link to user provider
 		$this->getServiceLocator()->get('UserProviderModel')->create(array(
-			'provider' => $sService,
+			'user_id' => $oUser->getUserId(),
 			'provider_id' => $oUserProfile->identifier,
-			'user_id' => $oUser->getUserId()
+			'provider_name' => $sService
 		));
 
 		return $oUser;

@@ -5,25 +5,44 @@
 -- --------------------------------------------------------
 
 --
--- Table `errors`
+-- Table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `errors` (
-  `error_id` int(11) NOT NULL AUTO_INCREMENT,
-  `error_name` varchar(250) NOT NULL,
-  `error_exception` text NOT NULL,
-  `log_id` int(11) NOT NULL,
-  PRIMARY KEY (`error_id`),
-  KEY `log_id` (`log_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_email` varchar(250) NOT NULL,
+  `user_password` varchar(32) NOT NULL,
+  `user_state` enum('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING',
+  `user_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_update` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+--
+-- Table `users_providers`
+--
+
+CREATE TABLE IF NOT EXISTS `users_providers`(
+  `user_id` int(11) NOT NULL,
+  `provider_id` varchar(50) NOT NULL,
+  `provider_name` varchar(255) NOT NULL,
+  `provider_state` enum('ACTIVE','DELETE') NOT NULL DEFAULT 'ACTIVE',
+  `provider_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `provider_update` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`provider_id`),
+  UNIQUE KEY `provider_id` (`provider_id`,`provider_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Constraints for table `users_providers`
+--
+ALTER TABLE `users_providers` ADD CONSTRAINT `users_providers_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Table `logs`
 --
 
-CREATE TABLE IF NOT EXISTS `logs` (
+CREATE TABLE IF NOT EXISTS `logs`(
   `log_id` int(11) NOT NULL AUTO_INCREMENT,
   `log_creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `log_request_uri` varchar(250) NOT NULL,
@@ -37,29 +56,27 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `log_ending` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`log_id`),
   KEY `log_user_id` (`log_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
--- Table `users`
+-- Constraints for table `logs`
 --
-
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_email` varchar(250) NOT NULL,
-  `user_password` varchar(32) NOT NULL,
-  `user_state` enum('PENDING','ACTIVE') NOT NULL DEFAULT 'PENDING',
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `user_email` (`user_email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+ALTER TABLE `logs` ADD CONSTRAINT `logs_users_user_id` FOREIGN KEY (`log_user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 --
---  Table `errors` constraints
+-- Table `errors`
 --
-ALTER TABLE `errors` ADD CONSTRAINT `errors_ibfk_1` FOREIGN KEY (`log_id`) REFERENCES `logs` (`log_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `errors` (
+  `error_id` int(11) NOT NULL AUTO_INCREMENT,
+  `error_name` varchar(250) NOT NULL,
+  `error_exception` text NOT NULL,
+  `error_log_id` int(11) NOT NULL,
+  PRIMARY KEY (`error_id`),
+  KEY `log_id` (`error_log_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
--- Table `logs` constraints
+--   Constraints for table `errors`
 --
-ALTER TABLE `logs` ADD CONSTRAINT `logs_ibfk_1` FOREIGN KEY (`log_user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE NO ACTION;
+ALTER TABLE `errors` ADD CONSTRAINT `errors_logs_log_id` FOREIGN KEY (`error_log_id`) REFERENCES `logs` (`log_id`) ON DELETE CASCADE ON UPDATE CASCADE;

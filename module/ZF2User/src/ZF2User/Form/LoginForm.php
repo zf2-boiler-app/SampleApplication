@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Form;
-class Login extends \Zend\Form\Form{
+class LoginForm extends \Zend\Form\Form{
 	/**
 	* Constructor
 	*/
@@ -33,13 +33,11 @@ class Login extends \Zend\Form\Form{
 				'primary' => true
 			)
 		))
-		->setInputFilter($oInputFilter->add(
-			array(
-				'name' => 'user_email',
-				'required' => true,
-				'filters' => array(array('name' => 'StringTrim')),
-				'validators' => array(array('name'=> 'EmailAddress'))
-			)
-		));
+		->setInputFilter($oInputFilter->add(array(
+			'name' => 'user_email',
+			'required' => true,
+			'filters' => array(array('name' => 'StringTrim')),
+			'validators' => array(array('name'=> 'EmailAddress'))
+		)));
 	}
 }

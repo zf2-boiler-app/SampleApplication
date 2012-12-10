@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Form;
-class Register extends \Application\Form\AbstractForm{
+class RegisterForm extends \Application\Form\AbstractForm{
 
 	/**
 	 * Constructor
@@ -71,13 +71,20 @@ class Register extends \Application\Form\AbstractForm{
 				'primary' => true
 			)
 		))
-		->setInputFilter($oInputFilter->add(
-			array(
+		->setInputFilter($oInputFilter->add(array(
 				'name' => 'user_email',
 				'required' => true,
 				'filters' => array(array('name' => 'StringTrim')),
 				'validators' => array(array('name'=> 'EmailAddress'))
-			)
-		));
+			))->add(array(
+				'name' => 'user_password',
+				'required' => true,
+				'validators' => array(array('name'=> 'StringLength','options' => array('max'=>32)))
+			))->add(array(
+				'name' => 'user_confirm_password',
+				'required' => true,
+				'validators' => array(array('name'=> 'Identical','options' => array('token'=>'user_password')))
+			))
+		);
 	}
 }
