@@ -12,7 +12,8 @@ class LoginForm extends \Zend\Form\Form{
 			'name' => 'user_email',
 			'attributes' => array(
 				'placeholder' => 'email',
-				'required' => true
+				'required' => true,
+				'class' => 'validate-email'
 			)
 		))
 		->add(array(

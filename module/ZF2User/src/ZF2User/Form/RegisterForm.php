@@ -23,7 +23,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		->add(array(
 			'name' => 'user_email',
 			'attributes' => array(
-				'required' => true
+				'required' => true,
+				'class' => 'validate-email'
 			),
 			'options' => array(
 				'label' => 'email'
@@ -33,7 +34,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'name' => 'user_password',
 			'attributes' => array(
 			'type'  => 'password',
-				'required' => true
+				'required' => true,
+				'class' => 'maxLength:32'
 			),
 			'options' => array(
 				'label' => 'password'
