@@ -2,7 +2,8 @@ var Controller = {
 	Implements: [Options, Events],
 	options:{
 		'locale':null,
-		'texts':{}
+		'texts':{},
+		'routes':{}
 	},
 
 	/**
@@ -70,9 +71,23 @@ var Controller = {
 		});
 	},
 
+	/**
+	 * @param string sKey : (optionnal)
+	 * @return string|object
+	 */
 	translate : function(sKey){
 		if('string' !== typeof sKey)return this.options.texts;
 		return this.options.texts[sKey] == null?sKey:this.options.texts[sKey];
+	},
+	
+	/**
+	 * @param string sRoute
+	 * @throws Exception
+	 * @return string
+	 */
+	url : function(sRoute){
+		if(this.options.routes[sRoute] == null)throw 'Undefined route : '+sRoute;
+		return this.options.routes[sRoute];
 	}
 };
 Controller = new Class(Controller);
