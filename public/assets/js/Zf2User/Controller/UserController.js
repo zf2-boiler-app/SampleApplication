@@ -12,7 +12,7 @@ var ZF2UserControllerUser = {
 		if(eUserEmail == null)throw 'User email input is undefined';
 		var sEmail = eUserEmail.get('value');
 		this.timer = null;
-		if(!sEmail.length)return this;
+		if(!sEmail.length || !eUserEmail.hasClass('validation-failed'))return this;
 		this.timer = setTimeout(function(){
 			new Request.JSON({
 				'url':this.url('zf2user/checkuseremailavailability'),

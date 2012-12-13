@@ -90,7 +90,7 @@ return array(
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
             	$aConfiguration = $oServiceManager->get('config');
             	if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
-            	return new \Application\View\Helper\Social($aConfiguration['social']);
+            	return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
             }
         )
     ),
@@ -148,8 +148,8 @@ return array(
     		}
         ),
        	'invokables' => array(
-        	'escapeJson' => 'Application\View\Helper\EscapeJson',
-       		'jsController' => 'Application\View\Helper\JsController'
+        	'escapeJson' => 'Application\View\Helper\EscapeJsonHelper',
+       		'jsController' => 'Application\View\Helper\JsControllerHelper'
        	)
     )
 );

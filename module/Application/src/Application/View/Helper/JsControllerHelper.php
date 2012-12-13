@@ -1,6 +1,6 @@
 <?php
 namespace Application\View\Helper;
-class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+class JsControllerHelper extends \Zend\View\Helper\AbstractHelper implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 	/**
 	 * @var \Zend\Mvc\Router\Http\RouteMatch
@@ -32,11 +32,12 @@ class JsController extends \Zend\View\Helper\AbstractHelper implements \Zend\Ser
 	 * @param string $sRoutePrefix
 	 * @return \Application\View\Helper\JsController
 	 */
-	public function setRoutes(array $aRoutesConfig,$sRoutePrefix = null){
-		foreach($aRoutesConfig as $sNomRoute => $aInfosRoute){
-			if($sRoutePrefix)$sNomRoute = $sRoutePrefix.'/'.$sNomRoute;
-			$this->routes[$sNomRoute] = $this->getServiceLocator()->get('router')->assemble(array(), array('name' => $sNomRoute));
-			if(isset($aInfosRoute['child_routes']))$this->setRoutes($aInfosRoute['child_routes'],$sNomRoute);
+	public function setRoutes(array $aRoutesConfig,$sRouteParent = null){
+		$oRouter = $this->getServiceLocator()->get('router');
+		foreach($aRoutesConfig as $sRouteName => $aInfosRoute){
+			if($aInfosRoute['type'] !== 'Zend\Mvc\Router\Http\Literal')continue;
+			$this->routes[$sRouteName = empty($sRouteParent)?$sRouteName:$sRouteParent.'/'.$sRouteName] = $oRouter->assemble(array(), array('name' => $sRouteName));
+			if(isset($aInfosRoute['child_routes']))$this->setRoutes($aInfosRoute['child_routes'],$sRouteName);
 		}
 		return $this;
 	}

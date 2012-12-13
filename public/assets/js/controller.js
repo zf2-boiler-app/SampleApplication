@@ -35,7 +35,7 @@ var Controller = {
     				}
     				catch(oException){}
     			}
-    			alert(that.translate('app_error'));
+    			alert(that.translate('error_occurred'));
 				return this.fireEvent('complete').fireEvent('failure', this.xhr);
 			}
 		});
@@ -53,12 +53,12 @@ var Controller = {
 				else this.onSuccess(json, text);
 			},
 			'onSuccess':function(oResponse){
-    			if(oResponse == null)alert(that.translate('app_error'));
+    			if(oResponse == null)alert(that.translate('error_occurred'));
     			else if('string' === typeof oResponse.error)alert(oResponse.error);
     			else this.fireEvent('complete', [oResponse.datas]).fireEvent('success', [oResponse.datas]).callChain();
     		},
     		'onError' : function(){
-    			alert(that.translate('app_error'));
+    			alert(that.translate('error_occurred'));
     			this.fireEvent('error',arguments);
     		},
 		});
