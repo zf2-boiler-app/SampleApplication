@@ -133,4 +133,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		if(($oUser = $this->getServiceLocator()->get('UserModel')->select(array('user_id'=>$oAuthService->getIdentity()))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
 		else throw new \Exception('User logged doesn\'t match with registred user : '.$oAuthService->$this->getIdentity());
 	}
+	
+	public function isUserEmailAvailable($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
+		return $this->getServiceLocator()->get('UserModel')->isUserEmailAvailable($sEmail);
+	}
 }

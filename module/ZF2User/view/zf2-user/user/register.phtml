@@ -2,9 +2,7 @@
 <?php
 	if(!empty($this->error))echo '<div class="alert alert-error">'.$this->error.'</div>';
 	echo $this->formTwb($this->form,null,array('elements' => array(
-		'submit' => array(
-			'class' => 'btn-large',
-		)
+		'submit' => array('class' => 'btn-large')
 	)));
 ?>
 <fieldset>

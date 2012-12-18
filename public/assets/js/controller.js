@@ -2,7 +2,8 @@ var Controller = {
 	Implements: [Options, Events],
 	options:{
 		'locale':null,
-		'texts':{}
+		'texts':{},
+		'routes':{}
 	},
 
 	/**
@@ -34,7 +35,7 @@ var Controller = {
     				}
     				catch(oException){}
     			}
-    			alert(that.translate('app_error'));
+    			alert(that.translate('error_occurred'));
 				return this.fireEvent('complete').fireEvent('failure', this.xhr);
 			}
 		});
@@ -52,12 +53,12 @@ var Controller = {
 				else this.onSuccess(json, text);
 			},
 			'onSuccess':function(oResponse){
-    			if(oResponse == null)alert(that.translate('app_error'));
+    			if(oResponse == null)alert(that.translate('error_occurred'));
     			else if('string' === typeof oResponse.error)alert(oResponse.error);
-    			else this.fireEvent('complete', [oResponse.datas]).fireEvent('success', [oResponse.datas]).callChain();
+    			else this.fireEvent('complete', [oResponse]).fireEvent('success', [oResponse]).callChain();
     		},
     		'onError' : function(){
-    			alert(that.translate('app_error'));
+    			alert(that.translate('error_occurred'));
     			this.fireEvent('error',arguments);
     		},
 		});
@@ -70,9 +71,23 @@ var Controller = {
 		});
 	},
 
+	/**
+	 * @param string sKey : (optionnal)
+	 * @return string|object
+	 */
 	translate : function(sKey){
 		if('string' !== typeof sKey)return this.options.texts;
 		return this.options.texts[sKey] == null?sKey:this.options.texts[sKey];
+	},
+	
+	/**
+	 * @param string sRoute
+	 * @throws Exception
+	 * @return string
+	 */
+	url : function(sRoute){
+		if(this.options.routes[sRoute] == null)throw 'Undefined route : '+sRoute;
+		return this.options.routes[sRoute];
 	}
 };
 Controller = new Class(Controller);

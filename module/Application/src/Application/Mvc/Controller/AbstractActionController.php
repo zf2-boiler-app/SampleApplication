@@ -2,12 +2,21 @@
 namespace Application\Mvc\Controller;
 abstract class AbstractActionController extends \Neilime\AssetsBundle\Mvc\Controller\AbstractActionController{
 	/**
+	 * @var array
+	 */
+	protected $acceptCriteria = array(
+		'Zend\View\Model\ViewModel' => array('text/html','application/xhtml+xml'),
+		'Zend\View\Model\JsonModel' => array('application/json'),
+		'Zend\View\Model\FeedModel' => array('application/rss+xml')
+	);
+	
+	/**
 	 * @var \Zend\View\Model\ViewModel
 	 */
 	protected $view;
 
 	public function onDispatch(\Zend\Mvc\MvcEvent $oEvent){
-		if(!$this->getRequest()->isXmlHttpRequest())$this->view = new \Zend\View\Model\ViewModel();
+		$this->view = $this->acceptableViewModelSelector($this->acceptCriteria);
 		return parent::onDispatch($oEvent);
 	}
 }

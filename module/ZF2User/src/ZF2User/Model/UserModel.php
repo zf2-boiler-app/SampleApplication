@@ -7,6 +7,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
+	const USER_STATUS_DELETED = 'DELETED';
 
 	/**
 	 * Constuctor
@@ -39,6 +40,10 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		return $oUser;
 	}
 
+	/**
+	 * @param string $sUserState
+	 * @return boolean
+	 */
 	public static function userStateExists($sUserState){
 		switch($sUserState){
 			case self::USER_STATUS_ACTIVE:
@@ -47,5 +52,18 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 			default:
 				return false;
 		}
+	}
+	
+	/**
+	 * Check if an email is available for use
+	 * @param string $sEmail
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function isUserEmailAvailable($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
+		return !$this->select(array(
+			'user_email' => $sEmail		
+		))->count();
 	}
 }

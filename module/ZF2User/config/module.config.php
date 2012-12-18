@@ -8,7 +8,7 @@ return array(
     'router' => array(
         'routes' => array(
             'zf2user' => array(
-                'type' => 'Literal',
+                'type' => 'Zend\Mvc\Router\Http\Literal',
             	'options' => array('route' => '/user'),
                 'may_terminate' => true,
                 'child_routes' => array(
@@ -23,7 +23,7 @@ return array(
 						)
 					),
 					'hybridauth' => array(
-						'type' => 'Literal',
+						'type' => 'Zend\Mvc\Router\Http\Literal',
 						'options' => array(
 							'route' => '/hybridauth',
 							'defaults' => array(
@@ -33,7 +33,7 @@ return array(
 						)
 					),
                 	'logout' => array(
-                		'type' => 'Literal',
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
                 		'options' => array(
                 			'route' => '/logout',
                 			'defaults' => array(
@@ -53,7 +53,7 @@ return array(
 						)
 					),
                 	'checkuseremailavailability' => array(
-                		'type' => 'Literal',
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
                 		'options' => array(
                 			'route' => '/checkuseremailavailability',
                 			'defaults' => array(

@@ -1,6 +1,6 @@
 <?php
 namespace Application\View\Helper;
-class Social extends \Zend\View\Helper\AbstractHelper{
+class SocialHelper extends \Zend\View\Helper\AbstractHelper{
 	const FACEBOOK = 'facebook';
 	const TWITTER = 'twitter';
 	const GOOGLE = 'google';

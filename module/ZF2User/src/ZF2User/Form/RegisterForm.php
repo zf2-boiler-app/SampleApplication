@@ -24,7 +24,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'name' => 'user_email',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required validate-email',
+				'class' => 'required validate-email emailIsAvailable',
 				'onblur' => 'oController.checkUserEmailAvailability(document.id(this));'
 			),
 			'options' => array(

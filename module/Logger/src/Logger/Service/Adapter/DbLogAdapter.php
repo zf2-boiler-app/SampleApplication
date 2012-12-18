@@ -58,7 +58,6 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 			if(!empty($aErrors))foreach($aErrors as $aErrorInfos){
 				$aErrorInfos['log_id'] = $sRealLogId;
 				if(!$this->sql->prepareStatementForSqlObject($this->sql->insert()->into('errors')
-				->columns(array_keys($aErrorInfos))
 				->values($aErrorInfos))->execute())throw new \Exception('Error occured during log insertion');
 			}
 		}

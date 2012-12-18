@@ -20,6 +20,25 @@ form{
 			}
 		}
 	}
+	[class^="validation-"],[class*=" validation-"]{
+		&:after{
+			font-family: FontAwesome;
+			font-weight: normal;
+			font-style: normal;
+			display: inline-block;
+			text-decoration: inherit;
+		}
+		&.validation-passed:after{
+			.icon-ok:before;
+		}
+		&.validation-failed:after{
+			.icon-ban-circle:before;
+		}
+	}
+}
+
+.help-inline {
+	font-size : @baseFontSize;	
 }
 
 /** Sprites **/
