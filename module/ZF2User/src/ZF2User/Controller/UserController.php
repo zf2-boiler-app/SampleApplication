@@ -60,6 +60,12 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 	
 	public function checkuseremailavailabilityAction(){
 		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed');
+		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param missing');
+		
+		return $this->view->setVariable(
+			'available',
+			!$this->getServiceLocator()->get('UserService')->isUserEmailAvailable($sEmail)
+		);
 	}
 
 	public function hybridauthAction(){

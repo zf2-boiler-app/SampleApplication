@@ -55,7 +55,7 @@ var Controller = {
 			'onSuccess':function(oResponse){
     			if(oResponse == null)alert(that.translate('error_occurred'));
     			else if('string' === typeof oResponse.error)alert(oResponse.error);
-    			else this.fireEvent('complete', [oResponse.datas]).fireEvent('success', [oResponse.datas]).callChain();
+    			else this.fireEvent('complete', [oResponse]).fireEvent('success', [oResponse]).callChain();
     		},
     		'onError' : function(){
     			alert(that.translate('error_occurred'));

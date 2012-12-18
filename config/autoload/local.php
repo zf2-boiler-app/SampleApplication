@@ -13,19 +13,19 @@
 
 return array(
     'social' => array(
-    	\Application\View\Helper\Social::GOOGLE => array(
+    	\Application\View\Helper\SocialHelper::GOOGLE => array(
     		'id' => 'google_id',
     		'key' => 'google_key'
     	),
-    	\Application\View\Helper\Social::TWITTER => array(
+    	\Application\View\Helper\SocialHelper::TWITTER => array(
     		'id' => 'twitter_id',
     		'key' => 'twitter_key'
     	),
-    	\Application\View\Helper\Social::FACEBOOK => array(
+    	\Application\View\Helper\SocialHelper::FACEBOOK => array(
     		'id' => 'facebook_id',
     		'key' => 'facebook_key'
     	),
-    	\Application\View\Helper\Social::GOOGLE_ANALYTICS => array(
+    	\Application\View\Helper\SocialHelper::GOOGLE_ANALYTICS => array(
     		'id' => 'analytics_id'
     	)
     ),

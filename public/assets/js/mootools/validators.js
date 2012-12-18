@@ -1,16 +1,4 @@
 Form.Validator.addAllThese([
-	['validate-class-week-schedule', {
-		errorMsg: function(){
-			return oController.translate('Invalid schedule given.');
-		},
-		test: function(eElement){
-			var ePreviousInput = eElement.getPrevious('.validate-class-week-schedule');
-			if(ePreviousInput != null && !Form.Validator.getValidator('validate-class-week-schedule').test(ePreviousInput))return true;
-			if(Form.Validator.getValidator('IsEmpty').test(eElement))return false;
-			//Check schedule format
-			return eElement.get('value').test(/^([0-9]|[0-1][0-9]|[2][0-3])h([0-5][0-9])$/);
-		}
-	}],
 	['validate-file-extension', {
 		errorMsg: function(eElement){
 			return oController.translate("File '%value%' has a false extension").replace('%value%',eElement.get('value'));
@@ -29,6 +17,15 @@ Form.Validator.addAllThese([
 				}
 			}
 			else return true;
+		}
+	}],
+	['emailIsAvailable',{
+		'errorMsg': function(eElement){
+			return oController.translate('email_is_unavailable');
+		},
+		'test': function(eElement){
+			top.console.log('ok',!!eElement.retrieve('email-available',true));
+			return !!eElement.retrieve('email-available',true);
 		}
 	}]
 ]);
