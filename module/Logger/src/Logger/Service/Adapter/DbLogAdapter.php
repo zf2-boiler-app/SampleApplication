@@ -45,10 +45,18 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	public function completed($sCurrentId,$oDateTime){
 		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
 		else{
+			//Errors
 			if(isset(self::$logs[$this->logId]['errors'])){
 				$aErrors = self::$logs[$this->logId]['errors'];
 				unset(self::$logs[$this->logId]['errors']);
 			}
+			
+			//Entities
+			if(isset(self::$logs[$this->logId]['entities'])){
+				$aEntities = self::$logs[$this->logId]['entities'];
+				unset(self::$logs[$this->logId]['entities']);
+			}
+			
 			if(!$this->insert(array_merge(
 				self::$logs[$this->logId],
 				array('log_ending' => $oDateTime->format(\DateTime::ISO8601)))
@@ -56,9 +64,16 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 			
 			$sRealLogId = $this->getLastInsertValue();
 			if(!empty($aErrors))foreach($aErrors as $aErrorInfos){
-				$aErrorInfos['log_id'] = $sRealLogId;
+				$aErrorInfos['error_log_id'] = $sRealLogId;
 				if(!$this->sql->prepareStatementForSqlObject($this->sql->insert()->into('errors')
 				->values($aErrorInfos))->execute())throw new \Exception('Error occured during log insertion');
+			}
+			
+			if(!empty($aEntities))foreach($aEntities as $aEntityInfos){
+				$aEntityInfos['entity_log_id'] = $sRealLogId;
+				if(!$this->sql->prepareStatementForSqlObject($this->sql->update()->table($aEntityInfos['entity_table'].'_logs')
+				->where(array($aEntityInfos['entity_primary']=>$aEntityInfos['entity_id']))
+				->values(array('entity_log_id' => $sRealLogId)))->execute())throw new \Exception('Error occured during log insertion');
 			}
 		}
 		unset(self::$logs[$this->logId]);
@@ -76,14 +91,21 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	public function log($sCurrentId,$oDateTime,$oParam){
 		$this->logId = $sCurrentId;
 		switch(true){
+			//Request
 			case $oParam instanceof \Zend\Stdlib\RequestInterface:
 				return $this->setRequest($oParam);
+			//Route
 			case $oParam instanceof \Zend\Mvc\Router\Http\RouteMatch:
 				return $this->setRouteMatch($oParam);
+			//Exception
 			case $oParam instanceof \Exception:
 				return $this->setError($oParam,func_get_arg(3));
+			//Entity
+			case is_int($oParam):
+				if(func_num_args() !== 5)throw new \Exception('Entity log expects 6 params, '.func_num_args().' given');
+				return $this->setEntity($oParam,func_get_arg(3),func_get_arg(4),func_get_arg(5));
 			default:
-				error_log(get_class($oParam));
+				error_log('log : '.get_class($oParam));
 		}
 	}
 
@@ -142,6 +164,34 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 			'error_name' => $sError,
 			'error_exception' => $oException->__toString()
 		);
+		return $this;
+	}
+	
+	/**
+	 * Add entity infos to the current log
+	 * @param int $iEntityId
+	 * @param string $sEntityTable
+	 * @param string $sEntityPrimary
+	 * @param string $sEntityAction
+	 * @throws \Exception
+	 * @return \Logger\Service\Adapter\DbLogAdapter
+	 */
+	protected function setEntity($iEntityId, $sEntityTable, $sEntityPrimary, $sEntityAction){
+		if(!is_int($iEntityId) || !is_string($sEntityTable) || !is_string($sEntityPrimary) || !is_string($sEntityAction))throw new \Exception('Entity params are invalid');
+		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
+		if(!isset(self::$logs[$this->logId]['entities']))self::$logs[$this->logId]['entities'] = array();
+		switch($sEntityAction){
+			case \Logger\Service\LoggerService::LOG_EVENT_CREATE_ENTITY:
+				self::$logs[$this->logId]['entities'][] = array(
+					'entity_id' => $iEntityId,
+					'entity_table' => $sEntityTable,
+					'entity_action' => $sEntityAction,
+				);
+				break;
+			case \Logger\Service\LoggerService::LOG_EVENT_UPDATE_ENTITY:
+				break;
+			case \Logger\Service\LoggerService::LOG_EVENT_DELETE_ENTITY:
+		}
 		return $this;
 	}
 

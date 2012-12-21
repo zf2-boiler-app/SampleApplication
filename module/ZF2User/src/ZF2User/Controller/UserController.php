@@ -64,7 +64,7 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		
 		return $this->view->setVariable(
 			'available',
-			!$this->getServiceLocator()->get('UserService')->isUserEmailAvailable($sEmail)
+			$this->getServiceLocator()->get('UserService')->isUserEmailAvailable($sEmail)
 		);
 	}
 

@@ -29,8 +29,14 @@ return array(
 	//Models
 	'ZF2User\Model\UserModel' => __DIR__.'/src/ZF2User/Model/UserModel.php',
 	'ZF2User\Model\UserProviderModel' => __DIR__.'/src/ZF2User/Model/UserProviderModel.php',
-    'ZF2User\Module' => __DIR__.'/Module.php',
+    
+	//Module	
+	'ZF2User\Module' => __DIR__.'/Module.php',
 
 	//Services
-	'ZF2User\Service\UserService' => __DIR__.'/src/ZF2User/Service/UserService.php'
+	'ZF2User\Service\UserService' => __DIR__.'/src/ZF2User/Service/UserService.php',
+
+	//Validators
+	'ZF2User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/ZF2User/Validator/EmailAddressAvailabilityValidator.php'
+
 );

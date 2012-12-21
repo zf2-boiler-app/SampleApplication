@@ -2434,10 +2434,11 @@ provides: [Behavior.BS.FormValidator]
 						field.addClass(fieldDetails.cls);
 						var help = fieldDetails.inputParent.getElement('div.advice');
 						if (!help){
+							var eParent = field.getParent();
 							fieldDetails.inputParent.getElements('span.help-inline').setStyle('display', 'none');
 							help = new Element('span.help-inline.advice.auto-created', {
 								html: (field.hasClass('warning') ? 'Suggestion: ' : '') + advice.get('html')
-							}).hide().inject(field, 'after');
+							}).hide().inject(eParent.hasClass('input-append')?eParent:field,'after');
 						}
 						help.set('html', (field.hasClass('warning') ? 'Suggestion: ' : '') + advice.get('html')).reveal();
 						help.removeClass('hide');

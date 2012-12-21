@@ -30,6 +30,10 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 	public function register($sUserEmail,$sUserPassword){
 		if(empty($sUserEmail) || empty($sUserPassword) || !is_string($sUserEmail) || !is_string($sUserPassword))throw new \Exception('User\'s email ('.gettype($sUserEmail).') and/or user\'s ('.gettype($sUserPassword).') password are not strings or are empty');
+		$this->getServiceLocator()->get('UserModel')->create(array(
+			'user_email' => $sUserEmail,
+			'user_password' => md5($sUserPassword)
+		));
 		return true;
 	}
 
@@ -108,10 +112,11 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		if(($oUser = $this->getServiceLocator()->get('UserProviderModel')->getUser($oUserProfile->identifier,$sService)) instanceof \ZF2User\Entity\UserEntity)return $oUser;
 
 		//Try to create user
-		$oUser = $this->getServiceLocator()->get('UserModel')->create(array(
+		$oUserModel = $this->getServiceLocator()->get('UserModel');
+		$oUser = $oUserModel->getUser($oUserModel->create(array(
 			'user_email' => $oUserProfile->email,
 			'user_state' => \ZF2User\Model\UserModel::USER_STATUS_ACTIVE
-		));
+		)));
 
 		//Link to user provider
 		$this->getServiceLocator()->get('UserProviderModel')->create(array(
@@ -130,8 +135,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function getLoggedUser(){
 		$oAuthService = $this->getServiceLocator()->get('AuthService');
 		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
-		if(($oUser = $this->getServiceLocator()->get('UserModel')->select(array('user_id'=>$oAuthService->getIdentity()))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
-		else throw new \Exception('User logged doesn\'t match with registred user : '.$oAuthService->$this->getIdentity());
+		return $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
 	}
 	
 	public function isUserEmailAvailable($sEmail){

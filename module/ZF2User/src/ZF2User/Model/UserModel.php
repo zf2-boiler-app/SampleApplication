@@ -21,6 +21,18 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 			new \Zend\Db\ResultSet\ResultSet(\Zend\Db\ResultSet\ResultSet::TYPE_ARRAYOBJECT,new \ZF2User\Entity\UserEntity())
 		);
 	}
+	
+	/**
+	 * Retrieve User entity from User ID
+	 * @param int $iUserId
+	 * @throws \Exception
+	 * @return \ZF2User\Entity\UserEntity
+	 */
+	public function getUser($iUserId){
+		if(!is_int($iUserId))throw new \Exception('User ID ('.gettype($iUserId).') is not an int');
+		if(($oUser = $this->select(array('user_id'=>$iUserId))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
+		throw new \Exception('User id doesn\'t match with registred user : '.$iUserId);
+	}
 
 	/**
 	 * @param array $aUserInfos
@@ -30,14 +42,12 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	public function create(array $aUserInfos){
 		//Check values
 		if(!isset($aUserInfos['user_email'])
-		|| $sUserEmail = filter_var($aUserInfos['user_email'],FILTER_VALIDATE_EMAIL) === false
+		|| ($aUserInfos['user_email'] = filter_var($aUserInfos['user_email'],FILTER_VALIDATE_EMAIL)) === false
+		|| !$this->isUserEmailAvailable($aUserInfos['user_email'])
 		|| (isset($aUserInfos['user_state']) && !self::userStateExists($aUserInfos['user_state'])))throw new \Exception('Infos for creating user infos are invalid');
 
-		if(!($iUserId = $this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_state'))))))throw new \Exception('An error occurred when creating a new user');
-		$oUser = $this->select(array('user_id' => $iUserId))->current();
-		if(!($oUser instanceof \ZF2User\Entity\UserEntity))throw new \Exception('An error occurred when creating a new user');
-
-		return $oUser;
+		if(($iUserId = $this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_state'))))))return $iUserId; 
+		throw new \Exception('An error occurred when creating a new user');
 	}
 
 	/**

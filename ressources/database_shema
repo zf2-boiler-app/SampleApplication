@@ -19,6 +19,35 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
+-- Table `users_logs`
+--
+
+CREATE TABLE IF NOT EXISTS `users_logs` (
+  `user_log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `user_email` varchar(250) NOT NULL,
+  `user_password` varchar(32) NOT NULL,
+  `user_state` enum('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING',
+  `user_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_update` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_log_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+--
+-- Trigger `insert_user_trigger`
+--
+
+delimiter //;
+CREATE TRIGGER `insert_user_trigger` AFTER INSERT ON `users`
+FOR EACH ROW 
+BEGIN
+INSERT INTO users_logs(user_id,user_email,user_password,user_state,user_create,user_update)
+VALUES (NEW.user_id, NEW.user_email, NEW.user_password, NEW.user_state, NEW.user_create, NEW.user_update);
+END//;
+delimiter ;
+
+--
 -- Table `users_providers`
 --
 
@@ -37,6 +66,36 @@ CREATE TABLE IF NOT EXISTS `users_providers`(
 -- Constraints for table `users_providers`
 --
 ALTER TABLE `users_providers` ADD CONSTRAINT `users_providers_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Table `users_providers_logs`
+--
+
+CREATE TABLE IF NOT EXISTS `users_providers_logs`(
+  `user_provider_log_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `provider_id` varchar(50) NOT NULL,
+  `provider_name` varchar(255) NOT NULL,
+  `provider_state` enum('ACTIVE','DELETE') NOT NULL DEFAULT 'ACTIVE',
+  `provider_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `provider_update` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`user_provider_log_id`),
+  KEY `user_provider_id` (`user_id`,`provider_id`),
+  KEY `provider_id` (`provider_id`,`provider_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Trigger `insert_user_provider_trigger`
+--
+
+delimiter //;
+CREATE TRIGGER `insert_user_provider_trigger` AFTER INSERT ON `users_providers`
+FOR EACH ROW 
+BEGIN
+INSERT INTO users_providers_logs(user_id,provider_id,provider_name,provider_state,provider_create,provider_update)
+VALUES (NEW.user_id, NEW.user_id, NEW.provider_id, NEW.provider_name, NEW.provider_state, NEW.provider_create, NEW.provider_update);
+END//;
+delimiter ;
 
 --
 -- Table `logs`

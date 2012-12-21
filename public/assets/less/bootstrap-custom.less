@@ -19,27 +19,7 @@ form{
     			margin-bottom: 5px;
 			}
 		}
-	}
-	.input-state{
-		&[class^="validation-"],&[class*=" validation-"]{
-			&:after{
-				font-family: FontAwesome;
-				font-weight: normal;
-				font-style: normal;
-				display: inline-block;
-				text-decoration: inherit;
-				display: inline-block;
-			    width: 1.25em;
-			    text-align: center;
-			}
-			&.validation-passed:after{
-				content: "\f00c";
-			}
-			&.validation-failed:after{
-				content: "\f05e";
-			}
-		}
-	}
+	}	
 }
 
 .help-inline {
@@ -50,5 +30,10 @@ form{
 
 [class^="icon-"], [class*=" icon-"] {
     background-image: none !important;
+}
+
+.icon-loading{
+	background-image : url("images/loading-14.gif") !important;
+	background-position: 0 0 !important;
 }
 	

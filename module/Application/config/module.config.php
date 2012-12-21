@@ -99,25 +99,37 @@ return array(
         //'cache' => array('adapter'=> 'Zend\Cache\Storage\Adapter\Memcached'),
         'translation_file_patterns' => array(
             array(
-                'type'     => 'phparray',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.php'
+                'type' => 'phparray',
+                'base_dir' => __DIR__ . '/../languages',
+                'pattern'  => '%s/Common.php'
             )
         ),
         //Zend translations
-        'translation_files' => array(
+        'translation_files' => array(        	
 	        array(
         		'type' => 'phparray',
         		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/fr/Zend_Validate.php',
         		'locale'  => 'fr_FR',
         		'text_domain' => 'validator'
 	        ),
+        	array(
+        		'type' => 'phparray',
+        		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/fr/Zend_Captcha.php',
+        		'locale'  => 'fr_FR',
+        		'text_domain' => 'validator'
+        	),
 	        array(
         		'type' => 'phparray',
         		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/en/Zend_Validate.php',
         		'locale'  => 'en_US',
         		'text_domain' => 'validator'
-	        )
+	        ),        	
+        	array(
+        		'type' => 'phparray',
+        		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/en/Zend_Captcha.php',
+        		'locale'  => 'en_US',
+        		'text_domain' => 'validator'
+        	)
         )
     ),
     'controllers' => array(

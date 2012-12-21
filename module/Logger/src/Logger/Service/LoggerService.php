@@ -40,6 +40,9 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 		$this->getSharedManager()->attach('*', self::LOG_EVENT_DELETE_ENTITY,array($this,'logDeleteEntity'));
 	}
 
+	/**
+	 * Destructor
+	 */
 	public function __destruct(){
 		//Stop logger
 		$this->getAdapter(self::LOG_TYPE_MVC_ACTION)->completed(self::$currentId,new \DateTime());
@@ -59,10 +62,11 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	/**
 	 * Get shared collections container
 	 * @return \Zend\EventManager\SharedEventManagerInterface
-	*/
+	 */
 	public function getSharedManager(){
-		if(!($this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface))$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
-		return $this->sharedEventManager;
+		return $this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface
+			?$this->sharedEventManager
+			:$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
 	}
 
 	/**
@@ -180,10 +184,14 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\LoggerService
 	 */
 	public function logCreateEntity(\Zend\EventManager\Event $oEvent){
+		$aParams = $oEvent->getParams();
+		if(!isset($aParams['entity_id'],$aParams['entity_table'],$aParams['entity_primary']))throw new \Exception('logCreateEntity Event expects entity_id, entity_table & entity_primary params');
 		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
 			self::$currentId,
 			new \DateTime(),
-			$oEvent->getParam('entity'),
+			$aParams['entity_id'],
+			$aParams['entity_table'],
+			$aParams['entity_primary'],
 			self::LOG_EVENT_CREATE_ENTITY
 		)->getLogId();
 		return $this;
@@ -195,10 +203,14 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\LoggerService
 	 */
 	public function logUpdateEntity(\Zend\EventManager\Event $oEvent){
+		$aParams = $oEvent->getParams();
+		if(!isset($aParams['entity_id'],$aParams['entity_table'],$aParams['entity_primary']))throw new \Exception('logCreateEntity Event expects entity_id, entity_table & entity_primary params');
 		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
 			self::$currentId,
 			new \DateTime(),
-			$oEvent->getParam('entity'),
+			$aParams['entity_id'],
+			$aParams['entity_table'],
+			$aParams['entity_primary'],
 			self::LOG_EVENT_UPDATE_ENTITY
 		)->getLogId();
 		return $this;
@@ -210,10 +222,14 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\LoggerService
 	 */
 	public function logDeleteEntity(\Zend\EventManager\Event $oEvent){
+		$aParams = $oEvent->getParams();
+		if(!isset($aParams['entity_id'],$aParams['entity_table'],$aParams['entity_primary']))throw new \Exception('logCreateEntity Event expects entity_id, entity_table & entity_primary params');
 		self::$currentId = $this->getAdapter(self::LOG_TYPE_ENTITY)->log(
 			self::$currentId,
 			new \DateTime(),
-			$oEvent->getParam('entity'),
+			$aParams['entity_id'],
+			$aParams['entity_table'],
+			$aParams['entity_primary'],
 			self::LOG_EVENT_DELETE_ENTITY
 		)->getLogId();
 		return $this;

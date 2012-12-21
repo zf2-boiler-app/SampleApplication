@@ -66,6 +66,21 @@ return array(
             )
         )
     ),
+	'translator' => array(
+		'translation_file_patterns' => array(
+			array(
+				'type' => 'phparray',
+				'base_dir' => __DIR__ . '/../languages',
+				'pattern'  => '%s/Common.php'
+			),
+			array(
+				'type' => 'phparray',
+				'base_dir' => __DIR__ . '/../languages',
+				'pattern'  => '%s/Validate.php',
+        		'text_domain' => 'validator'
+			)
+		)
+	),
 	'asset_bundle' => array(
     	'assets' => array(
     		'zf2user' => array(
@@ -116,7 +131,7 @@ return array(
 			'UserProviderModel' => '\ZF2User\Factory\UserProviderModelFactory',
 			'SessionManager' => '\ZF2User\Factory\SessionManagerFactory',
 			'LoginForm' => '\ZF2User\Factory\LoginFormFactory',
-			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory'
+			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory',
 		)
 	)
 );

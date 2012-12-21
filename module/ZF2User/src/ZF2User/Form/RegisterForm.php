@@ -8,7 +8,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 	public function __construct($sName = null,$aOptions = null){
 		parent::__construct('register',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
-
+		if(!isset($this->options['checkUserEmailAvailability']))throw new \Exception('Option "checkUserEmailAvailability" is undefined');
+		
 		$oCaptchaImage = new \Zend\Captcha\Image(array(
 			'font' =>  './data/fonts/ARIAL.ttf',
 			'fsize' => 30,
@@ -25,7 +26,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'required' => true,
 				'class' => 'required validate-email emailIsAvailable',
-				'onblur' => 'oController.checkUserEmailAvailability(document.id(this));'
+				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));'
 			),
 			'options' => array(
 				'label' => 'email'
@@ -80,7 +81,10 @@ class RegisterForm extends \Application\Form\AbstractForm{
 				'name' => 'user_email',
 				'required' => true,
 				'filters' => array(array('name' => 'StringTrim')),
-				'validators' => array(array('name'=> 'EmailAddress'))
+				'validators' => array(
+					array('name'=> 'EmailAddress'),
+					array('name'=> 'ZF2User\Validator\EmailAddressAvailabilityValidator','options' => array('checkUserEmailAvailability'=>$this->options['checkUserEmailAvailability']))
+				)
 			))->add(array(
 				'name' => 'user_password',
 				'required' => true,
