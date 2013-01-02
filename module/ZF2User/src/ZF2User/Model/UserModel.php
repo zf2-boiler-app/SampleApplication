@@ -7,7 +7,11 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
-	const USER_STATUS_DELETED = 'DELETED';
+	
+	/**
+	 * @var string
+	 */
+	protected $primary = 'user_id';
 
 	/**
 	 * Constuctor
@@ -37,7 +41,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	/**
 	 * @param array $aUserInfos
 	 * @throws \Exception
-	 * @return \ZF2User\Entity\UserEntity
+	 * @return int : id of the newly created user entity
 	 */
 	public function create(array $aUserInfos){
 		//Check values
@@ -46,7 +50,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		|| !$this->isUserEmailAvailable($aUserInfos['user_email'])
 		|| (isset($aUserInfos['user_state']) && !self::userStateExists($aUserInfos['user_state'])))throw new \Exception('Infos for creating user infos are invalid');
 
-		if(($iUserId = $this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_state'))))))return $iUserId; 
+		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_state')))))return $this->getLastInsertValue(); 
 		throw new \Exception('An error occurred when creating a new user');
 	}
 
@@ -72,8 +76,6 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	 */
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		return !$this->select(array(
-			'user_email' => $sEmail		
-		))->count();
+		return !$this->select(array('user_email' => $sEmail))->count();
 	}
 }

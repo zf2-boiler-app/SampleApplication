@@ -21,64 +21,29 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 		$this->authService = $oAuthService;
 		return $this;
 	}
-
+	
 	/**
-	 * @param string $sCurrentId
-	 * @param \DateTime $oDateTime
-	 * @param \Zend\Http\PhpEnvironment\Request $oRequest
-	 * @see \Logger\Service\Adapter\LogAdapterInterface::completed()
-	 * @return \Logger\Service\Adapter\DbLogAdapter
+	 * @see \Logger\Service\Adapter\LogAdapterInterface::getLogId()
+	 * @return int
 	 */
-	public function started($sCurrentId,$oDateTime,\Zend\Stdlib\RequestInterface $oRequest){
-		$this->logId = $sCurrentId;
-		if(isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is already initialized');
-		self::$logs[$this->logId] = array('log_creation' => $oDateTime->format(\DateTime::ISO8601));
-		return $this->setRequest($oRequest);
+	public function getLogId(){
+		return $this->logId;
 	}
-
+	
 	/**
-	 * @param string $sCurrentId
-	 * @param \DateTime $oDateTime
-	 * @see \Logger\Service\Adapter\LogAdapterInterface::completed()
-	 * @return \Logger\Service\Adapter\DbLogAdapter
+	 * Retrieve logged user id, if exists
+	 * @return int|null
 	 */
-	public function completed($sCurrentId,$oDateTime){
-		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
-		else{
-			//Errors
-			if(isset(self::$logs[$this->logId]['errors'])){
-				$aErrors = self::$logs[$this->logId]['errors'];
-				unset(self::$logs[$this->logId]['errors']);
-			}
-			
-			//Entities
-			if(isset(self::$logs[$this->logId]['entities'])){
-				$aEntities = self::$logs[$this->logId]['entities'];
-				unset(self::$logs[$this->logId]['entities']);
-			}
-			
-			if(!$this->insert(array_merge(
-				self::$logs[$this->logId],
-				array('log_ending' => $oDateTime->format(\DateTime::ISO8601)))
-			))throw new \Exception('Error occured during log insertion');
-			
-			$sRealLogId = $this->getLastInsertValue();
-			if(!empty($aErrors))foreach($aErrors as $aErrorInfos){
-				$aErrorInfos['error_log_id'] = $sRealLogId;
-				if(!$this->sql->prepareStatementForSqlObject($this->sql->insert()->into('errors')
-				->values($aErrorInfos))->execute())throw new \Exception('Error occured during log insertion');
-			}
-			
-			if(!empty($aEntities))foreach($aEntities as $aEntityInfos){
-				$aEntityInfos['entity_log_id'] = $sRealLogId;
-				if(!$this->sql->prepareStatementForSqlObject($this->sql->update()->table($aEntityInfos['entity_table'].'_logs')
-				->where(array($aEntityInfos['entity_primary']=>$aEntityInfos['entity_id']))
-				->values(array('entity_log_id' => $sRealLogId)))->execute())throw new \Exception('Error occured during log insertion');
-			}
-		}
-		unset(self::$logs[$this->logId]);
-		$this->logId = null;
-		return $this;
+	protected function getUserId(){
+		return (
+			$this->authService instanceof \Zend\Authentication\AuthenticationService
+			&& $this->authService->hasIdentity()
+		)?$this->authService->getIdentity():null;
+	}
+	
+	protected static function getEntityLogTable($sEntityTable){
+		if(empty($sEntityTable) || !is_string($sEntityTable))throw new \Exception('Entity table must me a not empty string');
+		return $sEntityTable.'_logs';
 	}
 
 	/**
@@ -102,7 +67,7 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 				return $this->setError($oParam,func_get_arg(3));
 			//Entity
 			case is_int($oParam):
-				if(func_num_args() !== 5)throw new \Exception('Entity log expects 6 params, '.func_num_args().' given');
+				if(func_num_args() !== 6)throw new \Exception('Entity log expects 6 params, '.func_num_args().' given');
 				return $this->setEntity($oParam,func_get_arg(3),func_get_arg(4),func_get_arg(5));
 			default:
 				error_log('log : '.get_class($oParam));
@@ -110,11 +75,101 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	}
 
 	/**
-	 * @see \Logger\Service\Adapter\LogAdapterInterface::getLogId()
-	 * @return int
+	 * @param string $sCurrentId
+	 * @param \DateTime $oDateTime
+	 * @param \Zend\Http\PhpEnvironment\Request $oRequest
+	 * @see \Logger\Service\Adapter\LogAdapterInterface::completed()
+	 * @return \Logger\Service\Adapter\DbLogAdapter
 	 */
-	public function getLogId(){
-		return $this->logId;
+	public function started($sCurrentId,$oDateTime,\Zend\Stdlib\RequestInterface $oRequest){
+		$this->logId = $sCurrentId;
+		if(isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is already initialized');
+		self::$logs[$this->logId] = array('log_creation' => $oDateTime->format(\DateTime::ISO8601));
+		return $this->setRequest($oRequest);
+	}
+	
+
+	/**
+	 * @param string $sCurrentId
+	 * @param \DateTime $oDateTime
+	 * @see \Logger\Service\Adapter\LogAdapterInterface::completed()
+	 * @return \Logger\Service\Adapter\DbLogAdapter
+	 */
+	public function completed($sCurrentId,$oDateTime){
+		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
+		else{
+			//Errors
+			if(isset(self::$logs[$this->logId]['errors'])){
+				$aErrors = self::$logs[$this->logId]['errors'];
+				unset(self::$logs[$this->logId]['errors']);
+			}
+				
+			//Entities
+			if(isset(self::$logs[$this->logId]['entities'])){
+				$aEntities = self::$logs[$this->logId]['entities'];
+				unset(self::$logs[$this->logId]['entities']);
+			}
+				
+			if(!$this->insert(array_merge(
+				self::$logs[$this->logId],
+				array('log_ending' => $oDateTime->format(\DateTime::ISO8601)))
+			))throw new \Exception('Error occured during log insertion');
+				
+			//Retrieve real log id (inserted in database)
+			$sRealLogId = $this->getLastInsertValue();
+			
+			//Insert error logs
+			if(!empty($aErrors))foreach($aErrors as $aErrorInfos){
+				$aErrorInfos['error_log_id'] = $sRealLogId;
+				if(!$this->sql->prepareStatementForSqlObject(
+					$this->sql->insert()->into('errors')
+					->values($aErrorInfos))->execute()
+				)throw new \Exception('Error occured during log insertion');
+			}
+				
+			//Insert / entity logs
+			if(!empty($aEntities))foreach($aEntities as $aEntityInfos){
+				if(!isset($aEntityInfos['entity_id'],$aEntityInfos['entity_table'],$aEntityInfos['entity_primary'],$aEntityInfos['entity_action'])
+					|| !(
+						(is_int($aEntityInfos['entity_id']) && is_string($aEntityInfos['entity_primary']))
+						|| (is_array($aEntityInfos['entity_id']) && is_array($aEntityInfos['entity_primary']))
+					)
+					|| !is_string($aEntityInfos['entity_table'])
+					|| !is_string($aEntityInfos['entity_action'])
+				)throw new \Exception('Entity infos are invalid');
+					
+				//Prepare statement for insert or update entity log
+				switch($aEntityInfos['entity_action']){
+					case \Logger\Service\LoggerService::LOG_EVENT_CREATE_ENTITY:
+					case \Logger\Service\LoggerService::LOG_EVENT_DELETE_ENTITY:
+						$oStatement = $this->sql->update()
+						->set(array('entity_log_id' => $sRealLogId));
+						if(is_string($aEntityInfos['entity_primary']))$oStatement->where(array($aEntityInfos['entity_primary'] => $aEntityInfos['entity_id']));
+						else foreach($aEntityInfos['entity_primary'] as $iKey => $sEntityPrimary){
+							$oStatement->where(array($sEntityPrimary => $aEntityInfos['entity_id'][$iKey]));
+						}
+						if($aEntityInfos['entity_action'] === \Logger\Service\LoggerService::LOG_EVENT_DELETE_ENTITY)$oStatement->where(array(
+							'entity_deleted' => true
+						));
+						break;
+					case \Logger\Service\LoggerService::LOG_EVENT_UPDATE_ENTITY:
+						if(!isset($aEntityInfos['entity_infos']) || !is_array($aEntityInfos['entity_infos']))throw new \Exception('Entity infos are undefined or value is not an array');
+						$oStatement = $this->sql->insert()->values(array_merge(
+							array('entity_log_id' => $sRealLogId),
+							$aEntityInfos['entity_infos']
+						));
+						break;
+					default:
+						throw new \Exception('Entity action "'.$sEntityAction.'" is not valid');
+				}
+				
+				//Execute statement
+				if(!$this->sql->prepareStatementForSqlObject($oStatement->table(self::getEntityLogTable($aEntityInfos['entity_table'])))->execute())throw new \Exception('Error occured during log insertion');
+			}
+		}
+		unset(self::$logs[$this->logId]);
+		$this->logId = null;
+		return $this;
 	}
 
 	/**
@@ -171,38 +226,36 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	 * Add entity infos to the current log
 	 * @param int $iEntityId
 	 * @param string $sEntityTable
-	 * @param string $sEntityPrimary
+	 * @param string|array $sEntityPrimary
 	 * @param string $sEntityAction
 	 * @throws \Exception
 	 * @return \Logger\Service\Adapter\DbLogAdapter
 	 */
 	protected function setEntity($iEntityId, $sEntityTable, $sEntityPrimary, $sEntityAction){
-		if(!is_int($iEntityId) || !is_string($sEntityTable) || !is_string($sEntityPrimary) || !is_string($sEntityAction))throw new \Exception('Entity params are invalid');
+		if(!(
+			(is_int($iEntityId) && is_string($sEntityPrimary))
+			|| (is_array($iEntityId) && is_array($sEntityPrimary))
+		) || !is_string($sEntityAction) || !is_string($sEntityTable))throw new \Exception('Entity params are invalid');
 		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
 		if(!isset(self::$logs[$this->logId]['entities']))self::$logs[$this->logId]['entities'] = array();
-		switch($sEntityAction){
-			case \Logger\Service\LoggerService::LOG_EVENT_CREATE_ENTITY:
-				self::$logs[$this->logId]['entities'][] = array(
-					'entity_id' => $iEntityId,
-					'entity_table' => $sEntityTable,
-					'entity_action' => $sEntityAction,
-				);
-				break;
-			case \Logger\Service\LoggerService::LOG_EVENT_UPDATE_ENTITY:
-				break;
-			case \Logger\Service\LoggerService::LOG_EVENT_DELETE_ENTITY:
+		$aLogEntityParams = array(
+			'entity_id' => $iEntityId,
+			'entity_table' => $sEntityTable,
+			'entity_primary' => $sEntityPrimary,
+			'entity_action' => $sEntityAction,
+		);
+		
+		if($sEntityAction === \Logger\Service\LoggerService::LOG_EVENT_UPDATE_ENTITY){
+			//Prepare statement to retrieve entity infos
+			$oStatement = $this->sql->select()->from($sEntityTable);
+			if(is_string($sEntityPrimary))$oStatement->where(array($sEntityPrimary => $iEntityId));
+			else foreach($sEntityPrimary as $iKey => $sEntityPrimaryColumn){
+				$oStatement->where(array($sEntityPrimaryColumn => $iEntityId[$iKey]));
+			}
+			//Execute statement
+			if(!($aLogEntityParams['entity_infos'] = $this->sql->prepareStatementForSqlObject($oStatement)->execute()))throw new \Exception('Error occurred during the retrieval entity\'s infos.');
 		}
+		self::$logs[$this->logId]['entities'][] = $aLogEntityParams;
 		return $this;
-	}
-
-	/**
-	 * Retrieve logged user id, if exists
-	 * @return int|null
-	 */
-	protected function getUserId(){
-		return (
-			$this->authService instanceof \Zend\Authentication\AuthenticationService
-			&& $this->authService->hasIdentity()
-		)?$this->authService->getIdentity():null;
 	}
 }

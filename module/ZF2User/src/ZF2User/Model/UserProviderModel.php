@@ -2,6 +2,11 @@
 namespace ZF2User\Model;
 class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	private $userModel;
+	
+	/**
+	 * @var array
+	 */
+	protected $primary = array('user_id','provider_id');
 
 	/**
 	 * Constuctor
@@ -40,12 +45,12 @@ class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGatewa
 	/**
 	 * @param array $aUserProviderInfos
 	 * @throws \Exception
-	 * @return \ZF2User\Model\UserProviderModel
+	 * @return int : id of the newly created user provider entity
 	 */
 	public function create(array $aUserProviderInfos){
 		//Check values
 		if(!isset($aUserProviderInfos['provider_name'],$aUserProviderInfos['provider_id'],$aUserProviderInfos['user_id']))throw new \Exception('Infos for creating user provider infos are invalid');
 		if(!$this->insert(array_intersect_key($aUserProviderInfos, array_flip(array('provider_name','provider_id','user_id')))))throw new \Exception('An error occurred when creating a new user provider');
-		return $this;
+		return $this->getLastInsertValue();
 	}
 }

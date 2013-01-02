@@ -4,6 +4,11 @@ abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway i
 	const EVENT_CREATE_ENTITY = 'CREATE_ENTITY';
 	
 	/**
+	 * @var string|array
+	 */
+	protected $primary = null;
+	
+	/**
 	 * @var \Zend\EventManager\EventManager
 	 */
 	private $eventManager;
@@ -22,11 +27,12 @@ abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway i
 	 * @return int
 	 */
 	public function insert($aSet){
-		$iEntityId = parent::insert($aSet);
+		$iReturn = parent::insert($aSet);
 		$this->getEventManager()->trigger(self::EVENT_CREATE_ENTITY,$this,array(
-			'entity_id' => $iEntityId,
-			'entity_table' => $this->table
+			'entity_id' => (int)$this->getLastInsertValue(),
+			'entity_table' => $this->table,
+			'entity_primary' => $this->primary
 		));
-		return $iEntityId;
+		return $iReturn;
 	}
 }
