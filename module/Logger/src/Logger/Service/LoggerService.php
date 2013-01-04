@@ -80,7 +80,7 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 
 	/**
 	 * Instantiate a logger
-	 * @param  array|Traversable $oOptions
+	 * @param array|Traversable $oOptions
 	 * @throws \Exception
 	 * @return \Logger\Service\LoggerService
 	 */

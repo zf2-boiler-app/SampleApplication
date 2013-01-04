@@ -14,5 +14,5 @@ return array(
 			//Services
 			'LoggerService' => '\Logger\Service\LoggerServiceFactory'
 		)
-	),
+	)
 );

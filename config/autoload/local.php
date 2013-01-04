@@ -10,7 +10,6 @@
  * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
  * credentials from accidentally being committed into version control.
  */
-
 return array(
     'social' => array(
     	\Application\View\Helper\SocialHelper::GOOGLE => array(
@@ -33,5 +32,29 @@ return array(
 		'username' => 'root',
 		'password' => '',
 		'dsn' => 'mysql:dbname=zf2base;host=localhost'
+	),
+	'messenger' => array(
+		'system_user' => array(
+			'email' => 'email@mail.com',
+			'name' => 'ZF2Base'
+		)
+	),
+	'service_manager' => array(
+		'factories' => array(
+			//Transporters
+			'EmailTransporter' => function(){
+				//Send email with Gmail SMTP (need openssl php extension) 
+				$oTransporter = new \Messenger\Mail\Transport\Smtp(new \Zend\Mail\Transport\SmtpOptions(array(
+					'host' => 'smtp.gmail.com',
+					'connection_class'  => 'plain',
+					'connection_config' => array(
+						'ssl' => 'tls',
+						'username' => 'email@gmail.com',
+						'password' => 'password'
+					)
+				)));
+				return $oTransporter;
+			}
+		)
 	)
 );

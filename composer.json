@@ -35,9 +35,15 @@
         {
 		    "type": "vcs",
 		    "url": "http://github.com/Nodge/lessphp"
+		},
+        {
+		    "type": "vcs",
+		    "url": "https://github.com/neilime/InlineStyle"
 		}
     ],
     "require": {
+        "php": ">=5.3.3",
+        "ext-fileinfo": "*",
         "zendframework/zendframework": "dev-master",
         "neilime/zf2-assets-bundle": "dev-master",
         "twitter/bootstrap": "dev-master",
@@ -45,6 +51,7 @@
         "dlu/dlutwbootstrap": "dev-master",
         "dino/dompdf-module": "dev-master",
         "hybridauth/hybridauth": "dev-master",
-        "fabiomcosta/mootools-meio-mask": "dev-master"
+        "fabiomcosta/mootools-meio-mask": "dev-master",
+        "inlinestyle/inlinestyle": "1.0"
     }
 }

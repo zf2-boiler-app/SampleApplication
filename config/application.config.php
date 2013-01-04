@@ -5,7 +5,8 @@ return array(
     	'Neilime\AssetsBundle',
     	'DluTwBootstrap',
     	'ZF2User',
-    	'Logger'
+    	'Logger',
+    	'Messenger'
     ),
     'module_listener_options' => array(
         'config_glob_paths' => array( 'config/autoload/{,*.}{global,local,private}.php'),
