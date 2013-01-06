@@ -6,21 +6,6 @@ CREATE SCHEMA IF NOT EXISTS `zf2base` DEFAULT CHARACTER SET latin1 ;
 USE `zf2base` ;
 
 -- -----------------------------------------------------
--- Table `zf2base`.`users`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `zf2base`.`users` (
-  `user_id` INT(11) NOT NULL AUTO_INCREMENT ,
-  `user_email` VARCHAR(250) NOT NULL ,
-  `user_password` VARCHAR(32) NOT NULL ,
-  `user_state` ENUM('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING' ,
-  `user_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  `user_update` TIMESTAMP NULL DEFAULT NULL ,
-  PRIMARY KEY (`user_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `zf2base`.`logs`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `zf2base`.`logs` (
@@ -35,13 +20,7 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`logs` (
   `log_controller_name` VARCHAR(250) NULL DEFAULT NULL ,
   `log_action_name` VARCHAR(50) NULL DEFAULT NULL ,
   `log_ending` TIMESTAMP NULL DEFAULT NULL ,
-  PRIMARY KEY (`log_id`) ,
-  INDEX `log_user_id` (`log_user_id` ASC) ,
-  CONSTRAINT `users_log_user_id`
-    FOREIGN KEY (`log_user_id` )
-    REFERENCES `zf2base`.`users` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`log_id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -66,6 +45,22 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `zf2base`.`users`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `zf2base`.`users` (
+  `user_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `user_email` VARCHAR(250) NOT NULL ,
+  `user_password` VARCHAR(32) NOT NULL ,
+  `user_registration_key` VARCHAR(13) NOT NULL ,
+  `user_state` ENUM('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING' ,
+  `user_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `user_update` TIMESTAMP NULL DEFAULT NULL ,
+  PRIMARY KEY (`user_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `zf2base`.`users_logs`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `zf2base`.`users_logs` (
@@ -74,18 +69,13 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`users_logs` (
   `user_email` VARCHAR(250) NOT NULL ,
   `user_password` VARCHAR(32) NOT NULL ,
   `user_state` ENUM('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING' ,
+  `user_registration_key` VARCHAR(13) NOT NULL ,
   `user_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
   `user_update` TIMESTAMP NULL DEFAULT NULL ,
   `entity_deleted` TINYINT(1) NOT NULL DEFAULT 0 ,
   `entity_log_id` INT(11) NULL DEFAULT NULL ,
   PRIMARY KEY (`user_log_id`) ,
-  INDEX `user_id` (`user_id` ASC) ,
   INDEX `entity_log_id` (`entity_log_id` ASC) ,
-  CONSTRAINT `users_user_id`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `zf2base`.`users` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `logs_users_log_id`
     FOREIGN KEY (`entity_log_id` )
     REFERENCES `zf2base`.`logs` (`log_id` )
@@ -134,18 +124,6 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`users_providers_logs` (
   INDEX `user_provider_id` (`user_id` ASC, `provider_id` ASC) ,
   INDEX `provider_id_provider_name` (`provider_id` ASC, `provider_name` ASC) ,
   INDEX `entity_log_id` (`entity_log_id` ASC) ,
-  INDEX `user_id` (`user_id` ASC) ,
-  INDEX `provider_id` (`provider_id` ASC) ,
-  CONSTRAINT `users_providers_user_id`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `zf2base`.`users_providers` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `users_providers_provider_id`
-    FOREIGN KEY (`provider_id` )
-    REFERENCES `zf2base`.`users_providers` (`provider_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `logs_users_providers_log_id`
     FOREIGN KEY (`entity_log_id` )
     REFERENCES `zf2base`.`logs` (`log_id` )
@@ -159,14 +137,16 @@ USE `zf2base`;
 
 DELIMITER $$
 USE `zf2base`$$
+
+
 CREATE
 DEFINER=`root`@`localhost`
 TRIGGER `zf2base`.`insert_user_trigger`
 AFTER INSERT ON `zf2base`.`users`
 FOR EACH ROW
 BEGIN
-INSERT INTO users_logs(user_id,user_email,user_password,user_state,user_create,user_update)
-VALUES (NEW.user_id, NEW.user_email, NEW.user_password, NEW.user_state, NEW.user_create, NEW.user_update);
+INSERT INTO users_logs(user_id,user_email,user_password,user_registration_key,user_state,user_create,user_update)
+VALUES (NEW.user_id, NEW.user_email, NEW.user_password,NEW.user_registration_key, NEW.user_state, NEW.user_create, NEW.user_update);
 END$$
 
 USE `zf2base`$$
@@ -175,8 +155,8 @@ USE `zf2base`$$
 CREATE TRIGGER `delete_user_trigger` AFTER DELETE ON users FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
 BEGIN
-INSERT INTO users_logs(user_id,user_email,user_password,user_state,user_create,user_update,entity_deleted)
-VALUES (OLD.user_id, OLD.user_email, OLD.user_password, OLD.user_state, OLD.user_create, OLD.user_update,1);
+INSERT INTO users_logs(user_id,user_email,user_password,user_registration_key,user_state,user_create,user_update,entity_deleted)
+VALUES (OLD.user_id, OLD.user_email, OLD.user_password, OLD.user_registration_key, OLD.user_state, OLD.user_create, OLD.user_update,1);
 END
 $$
 
@@ -198,7 +178,7 @@ END$$
 USE `zf2base`$$
 
 
-CREATE TRIGGER `delete_user_provider_trigger` AFTER DELETE ON users_providers FOR EACH ROW
+CREATE TRIGGER `users_providers_ADEL` AFTER DELETE ON users_providers FOR EACH ROW
 -- Edit trigger body code below this line. Do not edit lines above this one
 BEGIN
 INSERT INTO users_providers_logs(user_id,provider_id,provider_name,provider_state,provider_create,provider_update,entity_deleted)

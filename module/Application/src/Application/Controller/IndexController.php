@@ -16,14 +16,6 @@ class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
-        $oMessage = new \Messenger\Message();
-    	$this->getServiceLocator()->get('MessengerService')->sendMessage(
-    		$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
-    		->setTo(\Messenger\Message::SYSTEM_USER)
-    		->setSubject('Test subject')
-    		->setBody('Test body'),
-    		\Messenger\Service\MessengerService::MEDIA_EMAIL
-    	);
     	return new ViewModel();
     }
 }

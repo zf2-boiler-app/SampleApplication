@@ -36,6 +36,15 @@ class UserEntity{
 		if(!isset($this->user_email))throw new\Exception('user_email is undefined');
 		return $this->user_email;
 	}
+	
+	/**
+	 * @throws \Exception
+	 * @return string
+	 */
+	public function getUserRegistrationKey(){
+		if(!isset($this->user_registration_key))throw new\Exception('user_registration_key is undefined');
+		return $this->user_registration_key;
+	}
 
 	/**
 	 * @throws \Exception

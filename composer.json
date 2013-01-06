@@ -52,6 +52,6 @@
         "dino/dompdf-module": "dev-master",
         "hybridauth/hybridauth": "dev-master",
         "fabiomcosta/mootools-meio-mask": "dev-master",
-        "inlinestyle/inlinestyle": "1.0"
+        "inlinestyle/inlinestyle": "dev-master"
     }
 }

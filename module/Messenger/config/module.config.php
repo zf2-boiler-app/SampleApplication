@@ -19,6 +19,17 @@ return array(
 			\Messenger\Service\MessengerService::MEDIA_EMAIL => 'EmailTransporter'
 		)
 	),
+	'asset_bundle' => array(
+		'assets' => array(
+			'messenger' => array(
+				'email' => array(
+					'less' => array(
+						'less/email/reset.less'
+					)
+				)
+			)
+		)
+	),
 	'service_manager' => array(
 		'factories' => array(
 			//Services

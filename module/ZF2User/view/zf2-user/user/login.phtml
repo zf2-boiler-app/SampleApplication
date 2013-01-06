@@ -1,7 +1,15 @@
 <h3><?=$this->layout()->title?></h3>
 <div class="<?=empty($this->error)?'well':'alert alert-error'?>">
-	<?php if(!empty($this->error))echo $this->error.'<br/><br/>';?>
-	<?=$this->translate('new_user')?> ? <a href="<?=$this->url('zf2user/register')?>"><?=$this->translate('sign_up')?> </a> !
+<?php 
+	if(!empty($this->error))echo $this->error.'<br/><br/>';
+	if($this->isPending)echo '
+		<a href="javascript:oController.sendConfirmationEmail('.$this->escapeHtmlAttr($this->escapeJson($this->form->get('user_email')->getValue())).');">
+			'.$this->translate('resend_confirmation_email').'
+		</a>
+	';
+	else echo $this->translate('new_user').' ? <a href="'.$this->url('zf2user/register').'">'.$this->translate('sign_up').'</a> !'
+	.' | '.$this->translate('forgot_your_password').' ? <a href="'.$this->url('zf2user/forgotten-password').'">'.$this->translate('reset_password').'</a>';
+?>
 </div>
 <?=$this->formTwb($this->form,null,array('elements' => array(
 	'user_email' => array(

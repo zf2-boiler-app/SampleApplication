@@ -6,7 +6,10 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('AuthService')->hasIdentity())$this->redirect()->toUrl($sRedirectUrl);
 
+		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('sign_in');
+		
+		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('LoginForm');
 
 		if($this->flashMessenger()->hasCurrentMessages()){
@@ -26,7 +29,10 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		))return $this->redirect()->toUrl($sRedirectUrl);
 
 		if(isset($bReturn)){
-			if(is_string($bReturn))$this->view->error = $bReturn;
+			if(is_string($bReturn)){
+				$this->view->error = $bReturn;
+				$this->view->isPending = $bReturn === $this->getServiceLocator()->get('translator')->translate('user_state_pending');
+			}
 			else throw new \Exception('Authenticate process return invalid : '.gettype($bReturn));
 		}
 		return $this->view;
@@ -38,29 +44,44 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 	}
 
 	public function registerAction(){
-		$sRedirectUrl = $this->params('redirect')?:$this->url()->fromRoute('home');
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('AuthService')->hasIdentity())return $this->redirect()->toUrl($sRedirectUrl);
-
+		
+		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('register');
+		
+		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('RegisterForm');
 
-		if($this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
-			($bReturn = $this->getServiceLocator()->get('UserService')->register(
+		if($this->getRequest()->isPost() 
+			&& $this->view->form->setData($this->params()->fromPost())->isValid()
+			&& $this->getServiceLocator()->get('UserService')->register(
 				$this->params()->fromPost('user_email'),
 				$this->params()->fromPost('user_password')
-			)) === true
-		)return $this->redirect($sRedirectUrl);
-		elseif(isset($bReturn)){
+			)
+		)$this->view->isValid = true;
+		return $this->view;
+	}
+	
+	public function confirmemailAction(){
+		if(!($sRegistrationKey = $this->params('registration_key')))throw new \Exception('Registration key param is missing');
+		if(($bReturn = $this->getServiceLocator()->get('UserService')->confirmEmail($sRegistrationKey)) !== true){
 			if(is_string($bReturn))$this->view->error = $bReturn;
-			else throw new \Exception('Register process return invalid : '.gettype($bReturn));
+			else throw new \Exception('Confirm email process return invalid : '.gettype($bReturn));
 		}
 		return $this->view;
 	}
 	
+	public function resendconfirmationemailAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
+		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param is missing');
+		$this->getServiceLocator()->get('UserService')->resendConfirmationEmail($sEmail);
+		return $this->view;
+	}
+	
 	public function checkuseremailavailabilityAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed');
-		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param missing');
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
+		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param is missing');
 		
 		return $this->view->setVariable(
 			'available',
@@ -77,5 +98,28 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 			return $this->redirect()->toRoute('zf2user/login');
 		}
 		\Hybrid_Endpoint::process();
+	}
+	
+	public function forgottenpasswordAction(){
+		//Define title
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
+		
+		//Assign form
+		$this->view->form = $this->getServiceLocator()->get('ResetPasswordForm');
+		
+		if($this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
+			($bReturn = $this->getServiceLocator()->get('UserService')->sendConfirmationResetPassword($this->params()->fromPost('user_email'))) === true
+		)$this->view->passwordReset = true;
+		elseif(isset($bReturn)){
+			if(is_string($bReturn))$this->view->error = $bReturn;
+			else throw new \Exception('Reset password process return invalid : '.gettype($bReturn));
+		}
+		return $this->view;
+	}
+	
+	public function resetpasswordAction(){
+		if(!($sResetKey = $this->params('reset_key')))throw new \Exception('Reset key param is missing');
+		$this->getServiceLocator()->get('UserService')->resetPassword($sResetKey);
+		return $this->view;
 	}
 }

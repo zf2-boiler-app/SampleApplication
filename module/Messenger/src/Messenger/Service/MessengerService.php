@@ -1,6 +1,6 @@
 <?php
 namespace Messenger\Service;
-class MessengerService{
+class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInterface{
 	const MEDIA_EMAIL = 'email';
 	/**
 	 * @var array
@@ -36,6 +36,11 @@ class MessengerService{
 	 * @var array<\Zend\Mail\Transport\TransportInterface>
 	 */
 	private $transporters = array();
+	
+	/**
+	 * @var \Zend\EventManager\SharedEventManagerInterface
+	 */
+	protected $sharedEventManager;
 	
 	/**
 	 * Constructor
@@ -135,6 +140,8 @@ class MessengerService{
 		switch($sMedia){
 			case self::MEDIA_EMAIL:
 				$oFormatMessage = new \Messenger\Mail\Message();
+				$oFormatMessage->setEncoding('UTF-8');
+				
 				
 				//From Sender
 				$oFrom = $oMessage->getFrom();
@@ -174,7 +181,7 @@ class MessengerService{
 	 * @throws \Exception
 	 * @return \Messenger\Service\MediasService
 	 */
-	private function renderView(\Zend\View\Model\ViewModel $oView,\Closure $oCallback){
+	public function renderView(\Zend\View\Model\ViewModel $oView,\Closure $oCallback){
 		if(!is_callable($oCallback))throw new \Exception('$oCallback is not a valid callback : '.(is_object($oCallback)?get_class($oCallback):print_r($oCallback,true)));
 	
 		$oRenderer = $this->getRenderer('default');
@@ -188,7 +195,7 @@ class MessengerService{
 		$oMessageView->getEventManager()->attach(
 			\Zend\View\ViewEvent::EVENT_RENDERER,
 			function(\Zend\View\ViewEvent $oEvent) use($oAssetsBundleService, $oRenderer){
-				$oAssetsBundleService->setRenderer($oRenderer)->renderAssets(array(
+				$oAssetsBundleService->setRenderer($oRenderer)->setControllerName('email')->renderAssets(array(
 					'application',
 					'messenger'
 				));
@@ -341,5 +348,34 @@ class MessengerService{
 	private function getRouter(){
 		if($this->router instanceof \Zend\Mvc\Router\RouteStackInterface)return $this->router;
 		throw new \Exception('Router is undefined');
+	}
+	
+	/**
+	 * Inject a SharedEventManager instance
+	 * @param \Zend\EventManager\SharedEventManagerInterface $oSharedEventManager
+	 * @return \Messenger\Service\MessengerService
+	 */
+	public function setSharedManager(\Zend\EventManager\SharedEventManagerInterface $oSharedEventManager){
+		$this->sharedEventManager = $oSharedEventManager;
+		return $this;
+	}
+	
+	/**
+	 * Get shared collections container
+	 * @return \Zend\EventManager\SharedEventManagerInterface
+	 */
+	public function getSharedManager(){
+		return $this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface
+		?$this->sharedEventManager
+		:$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
+	}
+	
+	/**
+	 * Remove any shared collections
+	 * @return \Messenger\Service\MessengerService
+	 */
+	public function unsetSharedManager(){
+		$this->sharedEventManager = null;
+		return $this;
 	}
 }

@@ -62,6 +62,46 @@ return array(
                 			)
                 		)
                 	),
+                	'confirm-email' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Segment',
+                		'options' => array(
+                			'route' => '/confirm-email/:registration_key',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'confirmemail'
+                			)
+                		)
+                	),
+                	'forgotten-password' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/forgotten-password',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'forgottenpassword'
+                			)
+                		)
+                	),
+                	'reset-password' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Segment',
+                		'options' => array(
+                			'route' => '/reset-password/:reset_key',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'resetpassword'
+                			)
+                		)
+                	),
+                	'resend-confirmation-email' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/resend-confirmation-email',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'resendconfirmationemail'
+                			)
+                		)
+                	)
                 )
             )
         )
@@ -116,7 +156,15 @@ return array(
 		),
 		'debug_mode' => false
 	),
-
+	'messenger' => array(
+		'view_manager' => array(
+			'template_map' => array(
+				'email/user/confirm-email' => __DIR__ . '/../view/zf2-user/email/confirm-email.phtml',
+				'email/user/confirm-reset-password' => __DIR__ . '/../view/zf2-user/email/confirm-reset-password.phtml',
+				'email/user/password-reset' => __DIR__ . '/../view/zf2-user/email/password-reset.phtml'
+			)
+		)
+	),
     'view_manager' => array(
     	'template_path_stack' => array('ZF2User' => __DIR__ . '/../view')
     ),
@@ -132,6 +180,7 @@ return array(
 			'SessionManager' => '\ZF2User\Factory\SessionManagerFactory',
 			'LoginForm' => '\ZF2User\Factory\LoginFormFactory',
 			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory',
+			'ResetPasswordForm' => '\ZF2User\Factory\ResetPasswordFormFactory',
 		)
 	)
 );

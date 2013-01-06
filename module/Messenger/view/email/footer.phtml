@@ -1,21 +1,7 @@
-<table class="footer-wrap">
-	<tr>
-		<td></td>
-		<td class="container">
-			<div class="content">
-				<table>
-					<tr>
-						<td align="center">
-							<p>
-								<a href="<?=$this->serverUrl().$this->url('home')?>"><?=$this->translate('application_name')?></a> |
-								<a href="#"><?=$this->translate('terms')?></a> |
-								<a href="#"><?=$this->translate('privacy')?></a>
-							</p>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</td>
-		<td></td>
-	</tr>
-</table>
+<div class="container-fluid">
+	<p style="text-align:center;">
+		<a href="<?=$this->serverUrl().$this->url('home')?>"><?=$this->translate('application_name')?></a> |
+		<a href="<?=$this->serverUrl().$this->url('terms')?>"><?=$this->translate('terms')?></a> |
+		<a href="<?=$this->serverUrl().$this->url('privacy')?>"><?=$this->translate('privacy')?></a>
+	</p>
+</div>

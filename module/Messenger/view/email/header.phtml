@@ -1,16 +1,9 @@
-<table class="head-wrap" bgcolor="#F2F2F2">
-	<tr>
-		<td></td>
-		<td class="header container" >
-			<div class="content">
-				<table bgcolor="#F2F2F2">
-					<tr>
-						<td><img src="<?=$this->serverUrl().'/assets/cache/images/logo-200x50.png'?>"/></td>
-						<td align="right"><h6 class="collapse"><?=$this->subject?></h6></td>
-					</tr>
-				</table>
-			</div>
-		</td>
-		<td></td>
-	</tr>
-</table>
+<div class="navbar">
+	<div class="navbar-inner">
+		<a class="brand" href="<?=$this->url('home')?>">
+			<img src="<?=$this->serverUrl().'/assets/cache/images/logo-16x16.png'?>" style="margin: 2px 10px 0 0 !important;"/>
+			<?=$this->translate('application_name')?>
+		</a>
+		<h5 class="text-info"><?=$this->subject?></h5>
+	</div>
+</div>

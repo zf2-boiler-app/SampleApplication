@@ -24,7 +24,6 @@ Form.Validator.addAllThese([
 			return oController.translate('email_is_unavailable');
 		},
 		'test': function(eElement){
-			top.console.log('ok',!!eElement.retrieve('email-available',true));
 			return !!eElement.retrieve('email-available',true);
 		}
 	}]

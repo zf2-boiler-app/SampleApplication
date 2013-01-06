@@ -1,0 +1,8 @@
+<?php if(!empty($this->error)){?>
+<div class="alert alert-block"><?=$this->error?></div>
+<?php } else { ?>
+<div class="alert alert-success">
+	<?=$this->translate('registration_validated_now_connect')?>
+	<a class="btn" href="<?=$this->url('zf2user/login')?>"><?=$this->translate('sign_in')?></a>
+</div>
+<?php } ?>

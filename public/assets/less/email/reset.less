@@ -1,11 +1,7 @@
 .ExternalClass {
     width:100%;
 }
-h1 a:visited, h2 a:visited,  h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
-    color: purple !important;
-}
 a {
-    color: orange;
     img {
         border:none;
     }
@@ -48,11 +44,7 @@ table {
 p {
     margin: 1em 0;
 }
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-    color: blue !important;
-}
 h1, h2, h3, h4, h5, h6 {
-    color: #0760A4 !important;
     display:"inline";
 }
 #backgroundTable {
@@ -108,17 +100,15 @@ Read more: http://www.campaignmonitor.com/blog/post/3457/media-query-issues-in-y
 	/* Step 1a: Repeating for the iPad */
 	a[href^="tel"], a[href^="sms"] {
 				text-decoration: none;
-				color: blue; /* or whatever your want */
 				pointer-events: none;
 				cursor: default;
 			}
 
 	.mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
-				text-decoration: default;
-				color: orange !important;
-				pointer-events: auto;
-				cursor: default;
-			}
+		text-decoration: default;
+		pointer-events: auto;
+		cursor: default;
+	}
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {

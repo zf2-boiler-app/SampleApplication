@@ -46,8 +46,8 @@ class AuthenticationService extends \Zend\Authentication\AuthenticationService{
 	        ->authenticate();
 	        if($oAuthResult->isValid()){
 	        	//Check user's state
-	        	$aUserStateInfos = $this->getAdapter()->getResultRowObject('user_id','user_state');
-	        	$iUserId = $aUserStateInfos->user_id;
+	        	$aUserStateInfos = $this->getAdapter()->getResultRowObject(array('user_id','user_state'));
+	        	$iUserId = (int)$aUserStateInfos->user_id;
 	        	$sUserState = $aUserStateInfos->user_state;
 	        }
 	        else switch($oAuthResult->getCode()){

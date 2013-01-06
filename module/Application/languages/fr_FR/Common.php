@@ -13,5 +13,10 @@ return array(
 	'im_not_a_robot' => 'Je ne suis pas un robot',
 
 	'or' => 'ou',
+		
+	'privacy' => 'Confidentialité',
+		
+	'terms' => 'Conditions',
+		
 	'outdated_browser' => 'Vous utilisez un navigateur obsolète. <a href="http://browsehappy.com/">Mettez votre navigateur à jour</a> ou <a href="http://www.google.com/chromeframe/?redirect=true">installez Google Chrome Frame</a> pour mieux visualiser ce site.',
 );

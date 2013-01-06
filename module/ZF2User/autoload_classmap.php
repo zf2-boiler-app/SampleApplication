@@ -17,6 +17,7 @@ return array(
 	'ZF2User\Factory\HybridAuthAdapterFactory' => __DIR__.'/src/ZF2User/Factory/HybridAuthAdapterFactory.php',
 	'ZF2User\Factory\LoginFormFactory' => __DIR__.'/src/ZF2User/Factory/LoginFormFactory.php',
 	'ZF2User\Factory\RegisterFormFactory' => __DIR__.'/src/ZF2User/Factory/RegisterFormFactory.php',
+	'ZF2User\Factory\ResetPasswordFormFactory' => __DIR__.'/src/ZF2User/Factory/ResetPasswordFormFactory.php',
 	'ZF2User\Factory\SessionManagerFactory' => __DIR__.'/src/ZF2User/Factory/SessionManagerFactory.php',
 	'ZF2User\Factory\UserModelFactory' => __DIR__.'/src/ZF2User/Factory/UserModelFactory.php',
 	'ZF2User\Factory\UserProviderModelFactory' => __DIR__.'/src/ZF2User/Factory/UserProviderModelFactory.php',
@@ -25,6 +26,8 @@ return array(
 	//Forms
 	'ZF2User\Form\LoginForm' => __DIR__.'/src/ZF2User/Form/LoginForm.php',
 	'ZF2User\Form\RegisterForm' => __DIR__.'/src/ZF2User/Form/RegisterForm.php',
+	'ZF2User\Form\ResetPasswordForm' => __DIR__.'/src/ZF2User/Form/ResetPasswordForm.php',
+		
 
 	//Models
 	'ZF2User\Model\UserModel' => __DIR__.'/src/ZF2User/Model/UserModel.php',

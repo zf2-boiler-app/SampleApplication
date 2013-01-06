@@ -31,6 +31,24 @@ var ZF2UserControllerUser = {
 			this.timer = null;
 		}.bind(this),250);
 		return this;
+	},
+	
+	sendConfirmationEmail : function(sUserEmail){
+		if('string' !== typeof sUserEmail)throw 'User email expects string';
+		var eBody = document.id(document.body).spin();
+		new Request.JSON({
+			'url':this.url('zf2user/resend-confirmation-email'),
+			'data':{'email':sUserEmail},
+			'onSuccess':function(){
+				alert(this.translate('email_confirmation_sent'));
+			}.bind(this),
+			'onComplete':function(){
+				eBody.unspin();
+			},
+			'onError':function(){
+				eBody.unspin();
+			}
+		}).send();
 	}
 };
 ZF2UserControllerUser = new Class(ZF2UserControllerUser);

@@ -37,6 +37,30 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		if(($oUser = $this->select(array('user_id'=>$iUserId))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
 		throw new \Exception('User id doesn\'t match with registred user : '.$iUserId);
 	}
+	
+	/**
+	 * Retrieve User entity from User registration key
+	 * @param string $sRegistrationKey
+	 * @throws \Exception
+	 * @return \ZF2User\Entity\UserEntity
+	 */
+	public function getUserByEmail($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('User\'s email ('.gettype($sEmail).') is not a string or is empty');
+		if(($oUser = $this->select(array('user_email' => $sEmail))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
+		throw new \Exception('User email doesn\'t match with registred user : '.$sEmail);
+	}
+	
+	/**
+	 * Retrieve User entity from User registration key
+	 * @param string $sRegistrationKey
+	 * @throws \Exception
+	 * @return \ZF2User\Entity\UserEntity
+	 */
+	public function getUserByRegistrationKey($sRegistrationKey){
+		if(empty($sRegistrationKey) || !is_string($sRegistrationKey))throw new \Exception('User\'s registration key ('.gettype($sRegistrationKey).') is not a string or is empty');
+		if(($oUser = $this->select(array('user_registration_key' => $sRegistrationKey))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
+		throw new \Exception('User registration key doesn\'t match with registred user : '.$sRegistrationKey);
+	}
 
 	/**
 	 * @param array $aUserInfos
@@ -50,10 +74,56 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		|| !$this->isUserEmailAvailable($aUserInfos['user_email'])
 		|| (isset($aUserInfos['user_state']) && !self::userStateExists($aUserInfos['user_state'])))throw new \Exception('Infos for creating user infos are invalid');
 
-		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_state')))))return $this->getLastInsertValue(); 
+		//Generate user registration key
+		$aUserInfos['user_registration_key'] = uniqid();
+		
+		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_registration_key','user_state')))))return (int)$this->getLastInsertValue(); 
 		throw new \Exception('An error occurred when creating a new user');
 	}
 
+	/**
+	 * Check if an email is available for use
+	 * @param string $sEmail
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function isUserEmailAvailable($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
+		return !$this->select(array('user_email' => $sEmail))->count();
+	}
+	
+	/**
+	 * Update user state to "Active"
+	 * @param \ZF2User\Entity\UserEntity $oUser
+	 * @throws \Exception
+	 * @return \ZF2User\Model\UserModel
+	 */
+	public function activeUser(\ZF2User\Entity\UserEntity $oUser){
+		//Update user state and registration key
+		if(!$this->update(array(
+			'user_state'=> self::USER_STATUS_ACTIVE,
+			'user_registration_key' => str_shuffle(uniqid())
+		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
+		return $this;
+	}
+	
+	/**
+	 * Reset user password
+	 * @param \ZF2User\Entity\UserEntity $oUser
+	 * @param string $sPassword
+	 * @throws \Exception
+	 * @return \ZF2User\Model\UserModel
+	 */
+	public function resetUserPassword(\ZF2User\Entity\UserEntity $oUser,$sPassword){
+		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password is not a valid md5 hash');
+		//Update user password and registration key
+		if(!$this->update(array(
+			'user_password'=> $sPassword,
+			'user_registration_key' => str_shuffle(uniqid())
+		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
+		return $this;
+	}
+	
 	/**
 	 * @param string $sUserState
 	 * @return boolean
@@ -66,16 +136,5 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 			default:
 				return false;
 		}
-	}
-	
-	/**
-	 * Check if an email is available for use
-	 * @param string $sEmail
-	 * @throws \Exception
-	 * @return boolean
-	 */
-	public function isUserEmailAvailable($sEmail){
-		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		return !$this->select(array('user_email' => $sEmail))->count();
 	}
 }

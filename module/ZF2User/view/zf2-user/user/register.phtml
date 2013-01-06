@@ -1,5 +1,9 @@
 <h3><?=$this->layout()->title?></h3>
-<?php
+<?php if($this->isValid === true){ ?>
+<div class="alert alert-success">
+	<?=$this->translate('registration_completed_now_confirm_email')?>
+</div>
+<?php } else{
 	if(!empty($this->error))echo '<div class="alert alert-error">'.$this->error.'</div>';
 	echo $this->formTwb($this->form,null,array('elements' => array(
 		'submit' => array('class' => 'btn-large')
@@ -11,3 +15,4 @@
     <a class="btn btn-mini" href="<?=$this->url('zf2user/register',array('service'=>'twitter'))?>"><i class="icon-twitter"></i> Twitter</a>
     <a class="btn btn-mini" href="<?=$this->url('zf2user/register',array('service'=>'google'))?>"><i class="icon-google-plus"></i> Google+</a>
 </fieldset>
+<?php } ?>

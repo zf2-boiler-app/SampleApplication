@@ -22,7 +22,10 @@
 			<?=$this->layout()->content?>
 			<hr>
             <footer>
-                <p>&copy; <?=$this->translate('application_name').' '.date('Y')?></p>
+            	<a href="<?=$this->url('home')?>"><?=$this->translate('application_name')?></a> |
+				<a href="<?=$this->url('terms')?>"><?=$this->translate('terms')?></a> |
+				<a href="<?=$this->url('privacy')?>"><?=$this->translate('privacy')?></a>
+                <span class="pull-right">&copy; <?=$this->translate('application_name').' '.date('Y')?></span>
             </footer>
 
         </div>

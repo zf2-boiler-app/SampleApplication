@@ -27,6 +27,7 @@ abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway i
 	 * @return int
 	 */
 	public function insert($aSet){
+		error_log(print_r($aSet,true));
 		$iReturn = parent::insert($aSet);
 		$this->getEventManager()->trigger(self::EVENT_CREATE_ENTITY,$this,array(
 			'entity_id' => (int)$this->getLastInsertValue(),
