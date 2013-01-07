@@ -1,11 +1,14 @@
 <?php
 namespace ZF2User\Form;
-class ResetPasswordForm extends \Zend\Form\Form{
+class ResetPasswordForm extends \Application\Form\AbstractForm{
 	/**
-	* Constructor
-	*/
-	public function __construct(){
-		parent::__construct('reset_password');
+	 * Constructor
+	 * @param string $sName
+	 * @param array $aOptions
+	 * @throws \Exception
+	 */
+	public function __construct($sName = null,$aOptions = null){
+		parent::__construct('reset_password',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		$this->setAttribute('method', 'post')
 		->add(array(

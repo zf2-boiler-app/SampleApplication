@@ -157,9 +157,6 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		//Check user is logged in
 		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
 
-		//Define title
-		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('change_password');
-
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('ChangePasswordForm');
 

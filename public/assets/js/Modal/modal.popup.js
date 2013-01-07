@@ -46,7 +46,6 @@ Modal.Popup = {
     	//Create popup html elements
     	this.element = new Element('div',{
     		'id':this.options.id,
-    		'data-behavior':'BS.Popup',
     		'class':'modal fade'
     	}).inject(this.options.container);
     	
@@ -55,9 +54,13 @@ Modal.Popup = {
     	eFooter = new Element('div',{'class':'modal-footer'}).inject(this.element);
 
     	//Header content
-    	if('string' === typeof this.options.title)eHeader.adopt(new Element('h3',{'html':Elements.from(this.options.title)}));
+    	if('string' === typeof this.options.title){
+    		var aElements = Elements.from(this.options.title);
+    		if(aElements.length)eHeader.adopt(new Element('h3').adopt(aElements));
+    		else eHeader.adopt(new Element('h3',{'html':this.options.title}));
+    	}
     	else if(this.options.title instanceof Element)eHeader.adopt(new Element('h3').adopt(this.options.title));
-    	else eHeader.adopt(new Element('h3'));
+    	else eHeader.adopt(new Element('h3',{'html':'&nbsp;'}));
     	if(this.options.close)eHeader.grab(new Element('a',{'html':'&times;','class':'close','title':oController.translate('close_modal')}),'top');
     	
     	//Body content

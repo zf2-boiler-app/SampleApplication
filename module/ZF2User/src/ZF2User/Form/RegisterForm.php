@@ -4,6 +4,9 @@ class RegisterForm extends \Application\Form\AbstractForm{
 
 	/**
 	 * Constructor
+	 * @param string $sName
+	 * @param array $aOptions
+	 * @throws \Exception
 	 */
 	public function __construct($sName = null,$aOptions = null){
 		parent::__construct('register',$aOptions);

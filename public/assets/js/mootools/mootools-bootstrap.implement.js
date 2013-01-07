@@ -5,7 +5,6 @@ Bootstrap.Popup.implement({
 		return this;
 	},
 	'load':function(sUrl,oOptions){
-		var that = this;
 		this.spin();
 		if(oOptions == null || 'object' !== typeof oOptions)oOptions = {};
 		
@@ -26,9 +25,9 @@ Bootstrap.Popup.implement({
 				if(fSuccess != null)fSuccess(this);
 			}.bind(this),
 			'onFailure' : function(){
-				if(that.animating && that.visible)that.addEvent('show',that.hide.bind(that));
-				else that.hide();
-    		}
+				if(this.animating && this.visible)this.addEvent('show',this.hide.bind(this));
+				else this.hide();
+    		}.bind(this)
 		},oOptions)).send();
 		return this;
 	},
@@ -44,7 +43,27 @@ Bootstrap.Popup.implement({
 		this.element.getElement('.modal-body').unspin();
 		return this;
 	},
-
+	
+	show: function(){
+		if (this.visible || this.animating) return;
+		this.element.addEvent('click:relay(.close, .dismiss)', this.bound.hide);
+		if (this.options.closeOnEsc) document.addEvent('keyup', this.bound.keyMonitor);
+		this._makeMask();
+		if(this._mask.getParent() == null)this._mask.inject(document.body);
+		this.animating = true;
+		if (this.options.changeDisplayValue) this.element.show();
+		if (this._checkAnimate()){
+			this.element.offsetWidth; // force reflow
+			this.element.addClass('in');
+			this._mask.addClass('in');
+		} else {
+			this.element.show();
+			this._mask.show();
+		}
+		this.visible = true;
+		this._watch();
+	},
+	
 	_makeMask: function(){
 		if(this.options.mask){
 			if(!this._mask){

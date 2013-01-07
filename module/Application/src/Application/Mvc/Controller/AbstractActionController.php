@@ -17,6 +17,7 @@ abstract class AbstractActionController extends \Neilime\AssetsBundle\Mvc\Contro
 
 	public function onDispatch(\Zend\Mvc\MvcEvent $oEvent){
 		$this->view = $this->acceptableViewModelSelector($this->acceptCriteria);
+		if($this->getRequest()->isXmlHttpRequest())$this->view->setTerminal(true);
 		return parent::onDispatch($oEvent);
 	}
 }

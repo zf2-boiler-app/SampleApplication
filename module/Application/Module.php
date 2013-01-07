@@ -15,9 +15,16 @@ class Module{
     	//Add translation for validators
     	\Zend\Validator\AbstractValidator::setDefaultTranslator($oServiceManager->get('translator'),'validator');
 
+    	//Process for render MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
     		\Zend\Mvc\MvcEvent::EVENT_RENDER,
     		array($this, 'onRender')
+    	);
+    	
+    	//Process for error MVC event
+    	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
+    		\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,
+    		array($this, 'onError')
     	);
     }
 
@@ -42,6 +49,13 @@ class Module{
 	    		return new \Application\View\Helper\JsControllerHelper($oEvent->getRouteMatch(),$aConfiguration['router']['routes'],$oServiceManager);
 	    	});
     	}
+    }
+    
+    /**
+     * @param \Zend\Mvc\MvcEvent $oEvent
+     */
+     public function onError(\Zend\Mvc\MvcEvent $oEvent){
+     	if($oEvent->getRequest()->isXmlHttpRequest())$oEvent->getResult()->setTerminal(true);
     }
 
     /**

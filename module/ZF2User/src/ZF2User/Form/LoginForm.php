@@ -1,11 +1,14 @@
 <?php
 namespace ZF2User\Form;
-class LoginForm extends \Zend\Form\Form{
+class LoginForm extends \Application\Form\AbstractForm{
 	/**
-	* Constructor
-	*/
-	public function __construct(){
-		parent::__construct('login');
+	 * Constructor
+	 * @param string $sName
+	 * @param array $aOptions
+	 * @throws \Exception
+	 */
+	public function __construct($sName = null,$aOptions = null){
+		parent::__construct('login',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		$this->setAttribute('method', 'post')
 		->add(array(

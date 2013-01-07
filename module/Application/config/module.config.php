@@ -88,9 +88,9 @@ return array(
     			'js' => array(
     				'js/mootools/mootools-core-1.4.5.js',
     				'js/mootools/mootools-more-1.4.0.1.js',
+					'js/mootools/mootools-bootstrap.js',
     				'js/mootools',
     				'js/modernizr.min.js',
-					'js/mootools-bootstrap.js',
     				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
     				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source',
     				'js/MeioMask/behavior.js',
