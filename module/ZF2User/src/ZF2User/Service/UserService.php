@@ -38,7 +38,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 			'user_email' => $sUserEmail,
 			'user_password' => md5($sUserPassword)
 		)));
-		
+
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
     		'user_email' => $oUser->getUserEmail(),
@@ -48,10 +48,10 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 		//Retrieve Messenger service
 		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
-		
+
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
-		
+
 		//Render view & send email to user
 		$oMessengerService->renderView($oView->setTemplate('email/user/confirm-email'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
 			$oMessage = new \Messenger\Message();
@@ -65,7 +65,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		});
 		return $this;
 	}
-	
+
 	/**
 	 * @param string $sEmail
 	 * @throws \Exception
@@ -74,18 +74,18 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function resendConfirmationEmail($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
 		$oUser = $this->getServiceLocator()->get('UserModel')->getUserByEmail($sEmail);
-		
+
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
 			'user_registration_key' => $oUser->getUserRegistrationKey()
 		));
-		
+
 		//Retrieve Messenger service
 		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
-		
+
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
-		
+
 		//Render view & send email to user
 		$oMessengerService->renderView($oView->setTemplate('email/user/confirm-email'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
 			$oMessage = new \Messenger\Message();
@@ -99,7 +99,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		});
 		return $this;
 	}
-	
+
 	/**
 	 * @param string $sEmail
 	 * @throws \Exception
@@ -107,21 +107,21 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 */
 	public function sendConfirmationResetPassword($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		
+
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
-		
+
 		if($this->isUserEmailAvailable($sEmail))return $oTranslator->translate('email_does_not_match_any_registered_user');
 		$oUser = $this->getServiceLocator()->get('UserModel')->getUserByEmail($sEmail);
-		
+
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
 			'reset_key' => $oUser->getUserRegistrationKey()
 		));
-		
+
 		//Retrieve Messenger service
 		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
-		
+
 		//Render view & send email to user
 		$oMessengerService->renderView($oView->setTemplate('email/user/confirm-reset-password'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
 			$oMessage = new \Messenger\Message();
@@ -133,9 +133,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 				\Messenger\Service\MessengerService::MEDIA_EMAIL
 			);
 		});
-		return true;		
+		return true;
 	}
-	
+
 	/**
 	 * @param string $sRegistrationKey
 	 * @throws \Exception
@@ -144,14 +144,14 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function confirmEmail($sRegistrationKey){
 		if(empty($sRegistrationKey) || !is_string($sRegistrationKey))throw new \Exception('User\'s registration key ('.gettype($sRegistrationKey).') is not a string or is empty');
 		$oUserModel = $this->getServiceLocator()->get('UserModel');
-		
+
 		$oUser = $oUserModel->getUserByRegistrationKey($sRegistrationKey);
 		if($oUser->isUserActive())return $this->getServiceLocator()->get('translator')->translate('email_already_confirmed');
 		//Active user
 		$oUserModel->activeUser($oUser);
 		return true;
 	}
-	
+
 	/**
 	 * @param string $sResetKey
 	 * @throws \Exception
@@ -160,29 +160,29 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function resetPassword($sResetKey){
 		if(empty($sResetKey) || !is_string($sResetKey))throw new \Exception('Reset key ('.gettype($sResetKey).') is not a string or is empty');
 		$oUserModel = $this->getServiceLocator()->get('UserModel');
-		
+
 		$oUser = $oUserModel->getUserByRegistrationKey($sResetKey);
 		if(!$oUser->isUserActive())throw new \Exception('User is not active');
-		
+
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
-		
+
 		//Reset password
 		$sPassword = md5(date('Y-m-d').str_shuffle(uniqid()));
 		$oUserModel->resetUserPassword($oUser,md5($sPassword));
-		
+
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
 			'user_email' => $oUser->getUserEmail(),
 			'user_password' => $sPassword
 		));
-		
+
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
-		
+
 		//Retrieve Messenger service
 		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
-		
+
 		//Render view & send email to user
 		$oMessengerService->renderView($oView->setTemplate('email/user/password-reset'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
 			$oMessage = new \Messenger\Message();
@@ -245,8 +245,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	}
 
 	/**
+	 * Log out current logged user
 	 * @throws \Exception
-	 * @return boolean
+	 * @return \ZF2User\Service\UserService
 	 */
 	public function logout(){
 		/* @var $oAuthService \ZF2User\Authentication\AuthenticationService */
@@ -257,7 +258,20 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 		//Clear providers storage
 		$this->getServiceLocator()->get('HybridAuthAdapter')->logoutAllProviders();
-		return true;
+		return $this;
+	}
+
+
+	/**
+	 * Delete current logged user
+	 * @return \ZF2User\Service\UserService
+	 */
+	public function deleteLoggedUser(){
+		//Delete user
+		$this->getServiceLocator()->get('UserModel')->deleteUser($this->getLoggedUser());
+		//Log out user
+		$this->logout();
+		return $this;
 	}
 
 	/**
@@ -284,7 +298,6 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 			'provider_id' => $oUserProfile->identifier,
 			'provider_name' => $sService
 		));
-
 		return $oUser;
 	}
 
@@ -297,7 +310,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
 		return $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
 	}
-	
+
 	/**
 	 * @param string $sEmail
 	 * @throws \Exception

@@ -24,16 +24,20 @@ return array(
 	'ZF2User\Factory\UserServiceFactory' => __DIR__.'/src/ZF2User/Factory/UserServiceFactory.php',
 
 	//Forms
+	'ZF2User\Form\ChangePasswordForm' => __DIR__.'/src/ZF2User/Form/ChangePasswordForm.php',
 	'ZF2User\Form\LoginForm' => __DIR__.'/src/ZF2User/Form/LoginForm.php',
 	'ZF2User\Form\RegisterForm' => __DIR__.'/src/ZF2User/Form/RegisterForm.php',
 	'ZF2User\Form\ResetPasswordForm' => __DIR__.'/src/ZF2User/Form/ResetPasswordForm.php',
-		
+
 
 	//Models
 	'ZF2User\Model\UserModel' => __DIR__.'/src/ZF2User/Model/UserModel.php',
 	'ZF2User\Model\UserProviderModel' => __DIR__.'/src/ZF2User/Model/UserProviderModel.php',
-    
-	//Module	
+
+	//Controllers Plugins
+	'ZF2User\Mvc\Controller\Plugin\UserMustBeLoggedInPlugin' =>  __DIR__.'/src/ZF2User/Mvc/Controller/Plugin/UserMustBeLoggedInPlugin.php',
+
+	//Module
 	'ZF2User\Module' => __DIR__.'/Module.php',
 
 	//Services

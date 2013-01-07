@@ -7,7 +7,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
-	
+
 	/**
 	 * @var string
 	 */
@@ -25,7 +25,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 			new \Zend\Db\ResultSet\ResultSet(\Zend\Db\ResultSet\ResultSet::TYPE_ARRAYOBJECT,new \ZF2User\Entity\UserEntity())
 		);
 	}
-	
+
 	/**
 	 * Retrieve User entity from User ID
 	 * @param int $iUserId
@@ -37,7 +37,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		if(($oUser = $this->select(array('user_id'=>$iUserId))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
 		throw new \Exception('User id doesn\'t match with registred user : '.$iUserId);
 	}
-	
+
 	/**
 	 * Retrieve User entity from User registration key
 	 * @param string $sRegistrationKey
@@ -49,7 +49,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		if(($oUser = $this->select(array('user_email' => $sEmail))->current()) instanceof \ZF2User\Entity\UserEntity)return $oUser;
 		throw new \Exception('User email doesn\'t match with registred user : '.$sEmail);
 	}
-	
+
 	/**
 	 * Retrieve User entity from User registration key
 	 * @param string $sRegistrationKey
@@ -76,22 +76,24 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 
 		//Generate user registration key
 		$aUserInfos['user_registration_key'] = uniqid();
-		
-		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_registration_key','user_state')))))return (int)$this->getLastInsertValue(); 
+
+		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_registration_key','user_state')))))return (int)$this->getLastInsertValue();
 		throw new \Exception('An error occurred when creating a new user');
 	}
 
+
 	/**
-	 * Check if an email is available for use
-	 * @param string $sEmail
+	 * Delete user
+	 * @param \ZF2User\Entity\UserEntity $oUser
 	 * @throws \Exception
-	 * @return boolean
+	 * @return \ZF2User\Model\UserModel
 	 */
-	public function isUserEmailAvailable($sEmail){
-		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		return !$this->select(array('user_email' => $sEmail))->count();
+	public function deleteUser(\ZF2User\Entity\UserEntity $oUser){
+		//Update user state and registration key
+		if(!$this->delete(array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when deleting user');
+		return $this;
 	}
-	
+
 	/**
 	 * Update user state to "Active"
 	 * @param \ZF2User\Entity\UserEntity $oUser
@@ -106,7 +108,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
 		return $this;
 	}
-	
+
 	/**
 	 * Reset user password
 	 * @param \ZF2User\Entity\UserEntity $oUser
@@ -123,7 +125,18 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
 		return $this;
 	}
-	
+
+	/**
+	 * Check if an email is available for use
+	 * @param string $sEmail
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function isUserEmailAvailable($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
+		return !$this->select(array('user_email' => $sEmail))->count();
+	}
+
 	/**
 	 * @param string $sUserState
 	 * @return boolean

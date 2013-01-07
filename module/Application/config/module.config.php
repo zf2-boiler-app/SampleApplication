@@ -90,10 +90,12 @@ return array(
     				'js/mootools/mootools-more-1.4.0.1.js',
     				'js/mootools',
     				'js/modernizr.min.js',
+					'js/mootools-bootstrap.js',
     				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
     				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source',
     				'js/MeioMask/behavior.js',
-    				'js/controller.js'
+    				'js/controller.js',
+    				'js/Modal'
     			),
     			'media' => array(
     				'@zfRootPath/vendor/fortawesome/font-awesome/font',
@@ -111,6 +113,9 @@ return array(
             	$aConfiguration = $oServiceManager->get('config');
             	if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
             	return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
+            },
+            'Session' =>  function(){
+            	return new \Zend\Session\Container('zf2base');
             }
         )
     ),
@@ -125,7 +130,7 @@ return array(
             )
         ),
         //Zend translations
-        'translation_files' => array(        	
+        'translation_files' => array(
 	        array(
         		'type' => 'phparray',
         		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/fr/Zend_Validate.php',
@@ -143,7 +148,7 @@ return array(
         		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/en/Zend_Validate.php',
         		'locale'  => 'en_US',
         		'text_domain' => 'validator'
-	        ),        	
+	        ),
         	array(
         		'type' => 'phparray',
         		'filename' =>  getcwd().'/vendor/zendframework/zendframework/resources/languages/en/Zend_Captcha.php',

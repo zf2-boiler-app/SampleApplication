@@ -18,8 +18,10 @@
 	<body>
         <header data-behavior="BS.Dropdown FormValidator Meio.Mask"><?=$this->layout()->header?></header>
         <div class="container" data-behavior="BS.Dropdown FormValidator Meio.Mask">
-	        <!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
-			<?=$this->layout()->content?>
+        	<!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
+	    	<div class="row-fluid">
+    			<div class="span12"><?=$this->layout()->content?></div>
+    		</div>
 			<hr>
             <footer>
             	<a href="<?=$this->url('home')?>"><?=$this->translate('application_name')?></a> |

@@ -2,7 +2,7 @@
 namespace ZF2User\Model;
 class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	private $userModel;
-	
+
 	/**
 	 * @var array
 	 */
@@ -20,6 +20,19 @@ class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGatewa
 			null,
 			new \Zend\Db\ResultSet\ResultSet(\Zend\Db\ResultSet\ResultSet::TYPE_ARRAYOBJECT,new \ZF2User\Entity\UserProviderEntity())
 		);
+	}
+
+	/**
+	 * @see \Application\Db\TableGateway\AbstractTableGateway::attachEvents()
+	 * @return
+	 */
+	protected function attachEvents(){
+		$this->getSharedManager()->attach(
+			'ZF2User\Model\UserModel',
+			\Application\Db\TableGateway\AbstractTableGateway::EVENT_CREATE_ENTITY,
+			array($this,'onDeleteUserEntity')
+		);
+		return $this;
 	}
 
 	/**
@@ -52,5 +65,20 @@ class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGatewa
 		if(!isset($aUserProviderInfos['provider_name'],$aUserProviderInfos['provider_id'],$aUserProviderInfos['user_id']))throw new \Exception('Infos for creating user provider infos are invalid');
 		if(!$this->insert(array_intersect_key($aUserProviderInfos, array_flip(array('provider_name','provider_id','user_id')))))throw new \Exception('An error occurred when creating a new user provider');
 		return $this->getLastInsertValue();
+	}
+
+	/**
+	 * Actions on delete user entity event
+	 * @param \Zend\EventManager\Event $oEvent
+	 * @throws \Exception
+	 * @return \ZF2User\Model\UserProviderModel
+	 */
+	protected function onDeleteUserEntity(\Zend\EventManager\Event $oEvent){
+		$aParams = $oEvent->getParams();
+		if(!isset($aParams['entity_id'],$aParams['entity_table'],$aParams['entity_primary']))throw new \Exception('CREATE_ENTITY Event expects entity_id, entity_table & entity_primary params');
+		$this->delete(array(
+			'user_id' => $aParams['entity_id']
+		));
+		return $this;
 	}
 }

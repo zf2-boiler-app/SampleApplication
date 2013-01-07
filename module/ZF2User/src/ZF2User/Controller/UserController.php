@@ -2,13 +2,19 @@
 namespace ZF2User\Controller;
 class UserController extends \Application\Mvc\Controller\AbstractActionController{
 	public function loginAction(){
-		$sRedirectUrl = $this->params('redirect')?:$this->url()->fromRoute('home');
+		$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
+			?$this->url()->fromRoute('home')
+			:$this->getServiceLocator()->get('Session')->redirect;
+
 		//If user is already logged in, redirect him
-		if($this->getServiceLocator()->get('AuthService')->hasIdentity())$this->redirect()->toUrl($sRedirectUrl);
+		if($this->getServiceLocator()->get('AuthService')->hasIdentity()){
+			unset($this->getServiceLocator()->get('Session')->redirect);
+			return $this->redirect()->toUrl($sRedirectUrl);
+		}
 
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('sign_in');
-		
+
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('LoginForm');
 
@@ -26,7 +32,10 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 				$this->params()->fromPost('user_email'),
 				$this->params()->fromPost('user_password')
 			)) === true
-		))return $this->redirect()->toUrl($sRedirectUrl);
+		)){
+			unset($this->getServiceLocator()->get('Session')->redirect);
+			return $this->redirect()->toUrl($sRedirectUrl);
+		}
 
 		if(isset($bReturn)){
 			if(is_string($bReturn)){
@@ -46,14 +55,14 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 	public function registerAction(){
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('AuthService')->hasIdentity())return $this->redirect()->toUrl($sRedirectUrl);
-		
+
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('register');
-		
+
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('RegisterForm');
 
-		if($this->getRequest()->isPost() 
+		if($this->getRequest()->isPost()
 			&& $this->view->form->setData($this->params()->fromPost())->isValid()
 			&& $this->getServiceLocator()->get('UserService')->register(
 				$this->params()->fromPost('user_email'),
@@ -62,7 +71,7 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		)$this->view->isValid = true;
 		return $this->view;
 	}
-	
+
 	public function confirmemailAction(){
 		if(!($sRegistrationKey = $this->params('registration_key')))throw new \Exception('Registration key param is missing');
 		if(($bReturn = $this->getServiceLocator()->get('UserService')->confirmEmail($sRegistrationKey)) !== true){
@@ -71,18 +80,18 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		return $this->view;
 	}
-	
+
 	public function resendconfirmationemailAction(){
 		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
 		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param is missing');
 		$this->getServiceLocator()->get('UserService')->resendConfirmationEmail($sEmail);
 		return $this->view;
 	}
-	
+
 	public function checkuseremailavailabilityAction(){
 		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
 		if(!($sEmail = $this->params()->fromPost('email')))throw new \Exception('Email param is missing');
-		
+
 		return $this->view->setVariable(
 			'available',
 			$this->getServiceLocator()->get('UserService')->isUserEmailAvailable($sEmail)
@@ -99,14 +108,14 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		\Hybrid_Endpoint::process();
 	}
-	
+
 	public function forgottenpasswordAction(){
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
-		
+
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('ResetPasswordForm');
-		
+
 		if($this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
 			($bReturn = $this->getServiceLocator()->get('UserService')->sendConfirmationResetPassword($this->params()->fromPost('user_email'))) === true
 		)$this->view->passwordReset = true;
@@ -116,10 +125,49 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		return $this->view;
 	}
-	
+
 	public function resetpasswordAction(){
 		if(!($sResetKey = $this->params('reset_key')))throw new \Exception('Reset key param is missing');
+		//Define title
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
 		$this->getServiceLocator()->get('UserService')->resetPassword($sResetKey);
+		return $this->view;
+	}
+
+	public function accountAction(){
+		//Check user is logged in
+		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
+		//Define title
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('account');
+		return $this->view->setVariable('user', $this->getServiceLocator()->get('UserService')->getLoggedUser());
+	}
+
+	public function deleteaccountAction(){
+		//Check user is logged in
+		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
+
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('delete_account');
+		$this->getServiceLocator()->get('UserService')->deleteLoggedUser();
+		return $this->view;
+	}
+
+	public function changepasswordAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
+
+		//Check user is logged in
+		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
+
+		//Define title
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('change_password');
+
+		//Assign form
+		$this->view->form = $this->getServiceLocator()->get('ChangePasswordForm');
+
+		if(
+			$this->getRequest()->isPost()
+			&& $this->view->form->setData($this->params()->fromPost())->isValid()
+			&& $this->getServiceLocator()->get('UserService')->changeUserLoggedPassword($this->params()->fromPost('user_new_password'))
+		)$this->view->passwordChanged = true;
 		return $this->view;
 	}
 }

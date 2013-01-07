@@ -49,6 +49,13 @@ var ZF2UserControllerUser = {
 				eBody.unspin();
 			}
 		}).send();
-	}
+	},
+	
+	changeUserPassword : function(){
+		new Modal.Popup({
+			'title':this.translate('change_password'),
+			'url':this.url('zf2user/change-password')
+		});
+	},
 };
 ZF2UserControllerUser = new Class(ZF2UserControllerUser);

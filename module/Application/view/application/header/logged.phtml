@@ -8,6 +8,7 @@
 			<li class="menu">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?=$this->layout()->loggedUser->getUserEmail()?> <b class="caret"></b></a>
 				<ul class="dropdown-menu menu-dropdown">
+					<li><a href="<?=$this->url('zf2user/account')?>"><?=$this->translate('account')?></a></li>
 					<li class="divider"></li>
 					<li><a href="<?=$this->url('zf2user/logout')?>"><?=$this->translate('logout')?></a></li>
 				</ul>

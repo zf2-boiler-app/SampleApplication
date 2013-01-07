@@ -15,7 +15,7 @@ return array(
                 	'login' => array(
 						'type' => 'Zend\Mvc\Router\Http\Segment',
 						'options' => array(
-							'route' => '/login[/:service]',
+							'route' => '/login[/:service][/:redirect]',
 							'defaults' => array(
 								'controller' => 'ZF2User\Controller\User',
 								'action'  => 'login'
@@ -101,7 +101,37 @@ return array(
                 				'action' => 'resendconfirmationemail'
                 			)
                 		)
-                	)
+                	),
+                	'account' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/account',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'account'
+                			)
+                		)
+                	),
+                	'delete-account' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/delete-account',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'deleteaccount'
+                			)
+                		)
+                	),
+                	'change-password' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/change-password',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'changepassword'
+                			)
+                		)
+                	),
                 )
             )
         )
@@ -178,9 +208,15 @@ return array(
 			'UserModel' => '\ZF2User\Factory\UserModelFactory',
 			'UserProviderModel' => '\ZF2User\Factory\UserProviderModelFactory',
 			'SessionManager' => '\ZF2User\Factory\SessionManagerFactory',
+			'ChangePasswordForm' => '\ZF2User\Factory\ChangePasswordFormFactory',
 			'LoginForm' => '\ZF2User\Factory\LoginFormFactory',
 			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory',
 			'ResetPasswordForm' => '\ZF2User\Factory\ResetPasswordFormFactory',
 		)
-	)
+	),
+	'controller_plugins' => array(
+       	'invokables' => array(
+        	'userMustBeLoggedIn' => 'ZF2User\Mvc\Controller\Plugin\UserMustBeLoggedInPlugin',
+       	)
+    )
 );
