@@ -49,7 +49,7 @@ class ChangePasswordForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'reset_password'
+				'value' => 'change_password'
 			),
 			'options' => array(
 				'primary' => true

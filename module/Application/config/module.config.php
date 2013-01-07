@@ -187,7 +187,8 @@ return array(
         ),
        	'invokables' => array(
         	'escapeJson' => 'Application\View\Helper\EscapeJsonHelper',
-       		'jsController' => 'Application\View\Helper\JsControllerHelper'
+       		'jsController' => 'Application\View\Helper\JsControllerHelper',
+       		'form' => '\Application\Form\View\Helper\FormHelper'
        	)
     )
 );
