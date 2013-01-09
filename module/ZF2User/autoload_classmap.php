@@ -45,6 +45,6 @@ return array(
 	'ZF2User\Service\UserService' => __DIR__.'/src/ZF2User/Service/UserService.php',
 
 	//Validators
-	'ZF2User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/ZF2User/Validator/EmailAddressAvailabilityValidator.php'
-
+	'ZF2User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/ZF2User/Validator/EmailAddressAvailabilityValidator.php',
+	'ZF2User\Validator\UserLoggedPasswordValidator' => __DIR__.'/src/ZF2User/Validator/UserLoggedPasswordValidator.php'
 );

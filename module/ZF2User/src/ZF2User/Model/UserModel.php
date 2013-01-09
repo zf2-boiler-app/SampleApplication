@@ -110,19 +110,19 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	}
 
 	/**
-	 * Reset user password
+	 * Change user password
 	 * @param \ZF2User\Entity\UserEntity $oUser
 	 * @param string $sPassword
 	 * @throws \Exception
 	 * @return \ZF2User\Model\UserModel
 	 */
-	public function resetUserPassword(\ZF2User\Entity\UserEntity $oUser,$sPassword){
-		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password is not a valid md5 hash');
+	public function changeUserPassword(\ZF2User\Entity\UserEntity $oUser,$sPassword){
+		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password expects md5 hash');
 		//Update user password and registration key
 		if(!$this->update(array(
 			'user_password'=> $sPassword,
 			'user_registration_key' => str_shuffle(uniqid())
-		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
+		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user password');
 		return $this;
 	}
 
@@ -135,6 +135,20 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
 		return !$this->select(array('user_email' => $sEmail))->count();
+	}
+
+	/**
+	 * @param string $sPassword
+	 * @param \ZF2User\Entity\UserEntity $oUser
+	 * @throws \Exception
+	 * @return boolean
+	 */
+	public function checkUserPassword(\ZF2User\Entity\UserEntity $oUser, $sPassword){
+		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password expects md5 hash');
+		return !!$this->select(array(
+			'user_id' => $oUser->getUserId(),
+			'user_password' => $sPassword
+		))->count();
 	}
 
 	/**

@@ -29,6 +29,7 @@ return array(
 	'or_use_another_service' => 'Ou utiliser un autre service',
 
 	'password' => 'Mot de passe',
+	'password_has_been_changed' => 'Votre mot de passe a été modifié',
 	'password_has_been_reset' => 'Votre mot de passe a été réinitialisé',
 	'password_has_been_reset_email_has_been_sent' => 'Votre mot de passe a été réinitialisé, vous allez recevoir un email contenant vos nouvelles informations de connexion',
 	'password_reset_sent' => 'Vous allez recevoir un email vous permettant de réinitialiser votre mot de passe',

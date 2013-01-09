@@ -169,7 +169,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 		//Reset password
 		$sPassword = md5(date('Y-m-d').str_shuffle(uniqid()));
-		$oUserModel->resetUserPassword($oUser,md5($sPassword));
+		$oUserModel->changeUserPassword($oUser,md5($sPassword));
 
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
@@ -308,7 +308,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function getLoggedUser(){
 		$oAuthService = $this->getServiceLocator()->get('AuthService');
 		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
-		return $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
+		$oUser = $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
+		if(!$oUser->isUserActive())throw new \Exception('User is not active');
+		return $oUser;
 	}
 
 	/**
@@ -319,5 +321,59 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
 		return $this->getServiceLocator()->get('UserModel')->isUserEmailAvailable($sEmail);
+	}
+
+	/**
+	 * @param string $sPassword
+	 * @return boolean
+	 */
+	public function checkUserLoggedPassword($sPassword){
+		return $this->getServiceLocator()->get('UserModel')->checkUserPassword(
+			$this->getLoggedUser(),
+			md5($sPassword)
+		);
+	}
+
+	/**
+	 * @param string $sResetKey
+	 * @throws \Exception
+	 * @return \ZF2User\Service\UserService
+	 */
+	public function changeUserLoggedPassword($sPassword){
+		if(empty($sPassword) || !is_string($sPassword))throw new \Exception('Password ('.gettype($sPassword).') is not a string or is empty');
+		$oUserModel = $this->getServiceLocator()->get('UserModel');
+
+		$oUser = $this->getLoggedUser();
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		//Reset password
+		$oUserModel->changeUserPassword($oUser,md5($sPassword));
+
+		/*//Create email view body
+		$oView = new \Zend\View\Model\ViewModel(array(
+			'user_email' => $oUser->getUserEmail(),
+			'user_password' => $sPassword
+		));
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		//Retrieve Messenger service
+		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
+
+		//Render view & send email to user
+		$oMessengerService->renderView($oView->setTemplate('email/user/password-changed'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
+			$oMessage = new \Messenger\Message();
+			$oMessengerService->sendMessage(
+				$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
+				->setTo($oUser)
+				->setSubject($oTranslator->translate('change_password'))
+				->setBody($sHtml),
+				\Messenger\Service\MessengerService::MEDIA_EMAIL
+			);
+		});*/
+		return $this;
 	}
 }

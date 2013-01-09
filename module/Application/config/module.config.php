@@ -116,6 +116,13 @@ return array(
             },
             'Session' =>  function(){
             	return new \Zend\Session\Container('zf2base');
+            },
+            'FormHelper' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+            	return new \Application\Form\View\Helper\FormHelper(
+            		new \DluTwBootstrap\GenUtil(),
+            		new \DluTwBootstrap\Form\FormUtil(),
+            		$oServiceManager->get('Request')
+            	);
             }
         )
     ),
@@ -183,12 +190,14 @@ return array(
         'factories' => array(
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
             	return $oServiceManager->getServiceLocator()->get('social');
+    		},
+    		'form' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+    			return $oServiceManager->getServiceLocator()->get('FormHelper');
     		}
         ),
        	'invokables' => array(
         	'escapeJson' => 'Application\View\Helper\EscapeJsonHelper',
        		'jsController' => 'Application\View\Helper\JsControllerHelper',
-       		'form' => '\Application\Form\View\Helper\FormHelper'
        	)
     )
 );

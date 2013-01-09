@@ -1,7 +1,7 @@
 <?php
 namespace ZF2User\Form;
 class ChangePasswordForm extends \Application\Form\AbstractForm{
-	
+
 	/**
 	 * Constructor
 	 * @param string $sName
@@ -10,6 +10,8 @@ class ChangePasswordForm extends \Application\Form\AbstractForm{
 	 */
 	public function __construct($sName = null,$aOptions = null){
 		parent::__construct('change_password',$aOptions);
+		if(!isset($this->options['checkUserLoggedPassword']))throw new \Exception('Option "checkUserLoggedPassword" is undefined');
+
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		$this->setAttribute('method', 'post')
 		->add(array(
@@ -58,7 +60,10 @@ class ChangePasswordForm extends \Application\Form\AbstractForm{
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_password',
 			'required' => true,
-			'validators' => array(array('name'=> 'StringLength','options' => array('max'=>32)))
+			'validators' => array(
+				array('name'=> 'StringLength','options' => array('max'=>32)),
+				array('name'=> 'ZF2User\Validator\UserLoggedPasswordValidator','options' => array('checkUserLoggedPassword'=>$this->options['checkUserLoggedPassword']))
+			)
 		))->add(array(
 			'name' => 'user_new_password',
 			'required' => true,

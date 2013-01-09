@@ -2335,27 +2335,25 @@ Behavior.addGlobalFilter('FormValidator', {
 	},
 	setup: function(element, api) {
 		//instantiate the form validator
-		var validator = element.retrieve('validator');
-		if (!validator) {
-			validator = new Form.Validator.Inline(element,
-				Object.cleanValues(
-					api.getAs({
-						useTitles: Boolean,
-						scrollToErrorsOnSubmit: Boolean,
-						scrollToErrorsOnBlur: Boolean,
-						scrollToErrorsOnChange: Boolean,
-						ignoreHidden: Boolean,
-						ignoreDisabled: Boolean,
-						useTitles: Boolean,
-						evaluateOnSubmit: Boolean,
-						evaluateFieldsOnBlur: Boolean,
-						evaluateFieldsOnChange: Boolean,
-						serial: Boolean,
-						stopOnFailure: Boolean
-					})
-				)
-			);
-		}
+		var validator = element.retrieve('validator',new Form.Validator.Inline(element,
+			Object.cleanValues(
+				api.getAs({
+					useTitles: Boolean,
+					scrollToErrorsOnSubmit: Boolean,
+					scrollToErrorsOnBlur: Boolean,
+					scrollToErrorsOnChange: Boolean,
+					ignoreHidden: Boolean,
+					ignoreDisabled: Boolean,
+					useTitles: Boolean,
+					evaluateOnSubmit: Boolean,
+					evaluateFieldsOnBlur: Boolean,
+					evaluateFieldsOnChange: Boolean,
+					serial: Boolean,
+					stopOnFailure: Boolean
+				})
+			)
+		));
+		
 		//if the api provides a getScroller method, which should return an instance of
 		//Fx.Scroll, use it instead
 		if (api.getScroller) {

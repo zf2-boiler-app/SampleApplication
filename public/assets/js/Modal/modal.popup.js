@@ -34,7 +34,7 @@ Modal.Popup = {
 	initialize : function(oOptions){
 		this.setOptions(oOptions);
 		if(this.options.id == null)this.options.id = String.uniqueID();
-		if((this.options.container = document.id(this.options.container)) == null)this.options.container = document.id(document.body);
+		if((this.options.container = document.id(this.options.container)) == null)this.options.container = document.id(document.body).getElement('.container');
 		this.buildPopup();
     },
     
@@ -46,7 +46,7 @@ Modal.Popup = {
     	//Create popup html elements
     	this.element = new Element('div',{
     		'id':this.options.id,
-    		'class':'modal fade'
+    		'class':'modal fade BS.DismissPopup'
     	}).inject(this.options.container);
     	
     	var eHeader = new Element('div',{'class':'modal-header'}).inject(this.element),

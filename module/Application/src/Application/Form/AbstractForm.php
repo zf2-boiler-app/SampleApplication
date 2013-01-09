@@ -24,6 +24,9 @@ abstract class AbstractForm extends \Zend\Form\Form implements \Zend\I18n\Transl
 	public function __construct($sName = null,$aOptions = null){
 		parent::__construct($sName,$aOptions);
 		if(isset($this->options['translator']))$this->setTranslator($aOptions['translator']);
+
+		//Add data behaviors
+		$this->setAttribute('data-behavior', 'FormValidator Meio.Mask');
 	}
 
 

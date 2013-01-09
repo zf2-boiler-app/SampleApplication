@@ -10,20 +10,24 @@ Bootstrap.Popup.implement({
 		
 		var fSuccess;
 		if('function' === typeof oOptions.onSuccess){
-			fSuccess =  oOptions.onSuccess;
+			fSuccess = oOptions.onSuccess;
 			delete oOptions.onSuccess;
 		}
 		
-		var eBody = this.element.getElement('.modal-body');
+		var that = this, eBody = this.element.getElement('.modal-body');
 		new Request.HTML(Object.merge({
 			'method':'get',
 			'data':eBody,
 			'update':eBody,
 			'url':sUrl,
 			'onSuccess':function(){
-				this.unspin();
-				if(fSuccess != null)fSuccess(this);
-			}.bind(this),
+				var aCloseButtons = eBody.getElements('[data-dismiss=modal]');
+				if(aCloseButtons.length)aCloseButtons.each(function(eButton){
+					eButton.addEvent('click',that.hide.bind(that));
+				}.bind(that));
+				that.unspin();
+				if(fSuccess != null)fSuccess(that);
+			},
 			'onFailure' : function(){
 				if(this.animating && this.visible)this.addEvent('show',this.hide.bind(this));
 				else this.hide();
@@ -42,28 +46,10 @@ Bootstrap.Popup.implement({
 	'unspin':function(){
 		this.element.getElement('.modal-body').unspin();
 		return this;
-	},
-	
-	show: function(){
-		if (this.visible || this.animating) return;
-		this.element.addEvent('click:relay(.close, .dismiss)', this.bound.hide);
-		if (this.options.closeOnEsc) document.addEvent('keyup', this.bound.keyMonitor);
-		this._makeMask();
-		if(this._mask.getParent() == null)this._mask.inject(document.body);
-		this.animating = true;
-		if (this.options.changeDisplayValue) this.element.show();
-		if (this._checkAnimate()){
-			this.element.offsetWidth; // force reflow
-			this.element.addClass('in');
-			this._mask.addClass('in');
-		} else {
-			this.element.show();
-			this._mask.show();
-		}
-		this.visible = true;
-		this._watch();
-	},
-	
+	}
+});
+
+Class.refactor(Bootstrap.Popup,{
 	_makeMask: function(){
 		if(this.options.mask){
 			if(!this._mask){
@@ -76,3 +62,22 @@ Bootstrap.Popup.implement({
 		return this;
 	}
 });
+
+(function(){
+	Behavior.addGlobalFilters({
+		'BS.DismissPopup': {
+			defaults: {},
+			setup: function(eElement, api){
+				var options = Object.cleanValues(
+					api.getAs({})
+				);
+				eElement.getElements('[data-dismiss=modal]').each(function(eButton){
+					eButton.addEvent('click',function(){
+						this.getParent('.modal').getElement('.close').click();
+					});
+				});
+				return eElement;
+			}
+		}
+	});
+})();

@@ -159,7 +159,6 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('ChangePasswordForm');
-
 		if(
 			$this->getRequest()->isPost()
 			&& $this->view->form->setData($this->params()->fromPost())->isValid()

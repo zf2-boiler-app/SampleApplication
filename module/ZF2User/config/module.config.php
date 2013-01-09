@@ -191,7 +191,8 @@ return array(
 			'template_map' => array(
 				'email/user/confirm-email' => __DIR__ . '/../view/zf2-user/email/confirm-email.phtml',
 				'email/user/confirm-reset-password' => __DIR__ . '/../view/zf2-user/email/confirm-reset-password.phtml',
-				'email/user/password-reset' => __DIR__ . '/../view/zf2-user/email/password-reset.phtml'
+				'email/user/password-reset' => __DIR__ . '/../view/zf2-user/email/password-reset.phtml',
+				'email/user/password-changed' => __DIR__ . '/../view/zf2-user/email/password-changed.phtml'
 			)
 		)
 	),

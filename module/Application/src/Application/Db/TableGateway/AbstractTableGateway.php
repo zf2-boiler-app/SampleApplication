@@ -100,9 +100,18 @@ abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway i
 	 * @return int
 	 */
 	protected function executeUpdate(\Zend\Db\Sql\Update $oUpdate){
+		//Retrieve id to be updated
+		$aIdToBeUpdated = $this->selectWith($this->sql->select()
+			->where($oUpdate->getRawState('where'))
+			->columns(is_array($this->primary)?$this->primary:array($this->primary))
+		)->toArray();
+
+		//Execute update
 		$iReturn = parent::executeUpdate($oUpdate);
+
+		//Trigger update
 		$this->getEventManager()->trigger(self::EVENT_UPDATE_ENTITY,$this,array(
-			'entity_id' => is_array($this->primary)?array_values(array_intersect_key($oUpdate->getRawState('where'), array_flip($this->primary))):(int)$this->primary,
+			'entity_id' => $aIdToBeUpdated,
 			'entity_table' => $this->table,
 			'entity_primary' => $this->primary
 		));
@@ -115,9 +124,18 @@ abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway i
 	 * @return int
 	 */
 	protected function executeDelete(\Zend\Db\Sql\Delete $oDelete){
+		//Retrieve id to be deleted
+		$aIdToBeDeleted = $this->selectWith($this->sql->select()
+			->where($oDelete->getRawState('where'))
+			->columns(is_array($this->primary)?$this->primary:array($this->primary))
+		)->toArray();
+
+		//Execute delete
 		$iReturn = parent::executeDelete($oDelete);
+
+		//Trigger delete
 		$this->getEventManager()->trigger(self::EVENT_DELETE_ENTITY,$this,array(
-			'entity_id' => is_array($this->primary)?array_values(array_intersect_key($oUpdate->getRawState('where'), array_flip($this->primary))):(int)$this->primary,
+			'entity_id' => $aIdToBeDeleted,
 			'entity_table' => $this->table,
 			'entity_primary' => $this->primary
 		));
