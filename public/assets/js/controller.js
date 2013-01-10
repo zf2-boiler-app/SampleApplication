@@ -66,7 +66,6 @@ var Controller = {
 		Class.refactor(Request.HTML,{
 			'success': function(text){
 				this.previous(text);
-				top.console.log('ok');
 				window.behavior.apply(document.body,true);
 			}
 		});

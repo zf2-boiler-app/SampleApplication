@@ -72,7 +72,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 * @return \ZF2User\Service\UserService
 	 */
 	public function resendConfirmationEmail($sEmail){
-		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email is not a string');
 		$oUser = $this->getServiceLocator()->get('UserModel')->getUserByEmail($sEmail);
 
 		//Create email view body
@@ -316,11 +316,26 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	/**
 	 * @param string $sEmail
 	 * @throws \Exception
-	 * @return boolean
+	 * @return boolean|string
 	 */
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		return $this->getServiceLocator()->get('UserModel')->isUserEmailAvailable($sEmail);
+		if($this->getLoggedUser()->getUserEmail() === $sEmail)return str_ireplace(
+			'%value%',
+			$sEmail,
+			$this->getServiceLocator()->get('translator')->translate(
+				'The email address "%value%" is the same as currently used',
+				'validator'
+			)
+		);
+		return $this->getServiceLocator()->get('UserModel')->isUserEmailAvailable($sEmail)?true:str_ireplace(
+			'%value%',
+			$sEmail,
+			$this->getServiceLocator()->get('translator')->translate(
+				'The email adress "%value%" is unavailable',
+				'validator'
+			)
+		);
 	}
 
 	/**
@@ -351,7 +366,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		//Reset password
 		$oUserModel->changeUserPassword($oUser,md5($sPassword));
 
-		/*//Create email view body
+		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
 			'user_email' => $oUser->getUserEmail(),
 			'user_password' => $sPassword
@@ -373,7 +388,53 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 				->setBody($sHtml),
 				\Messenger\Service\MessengerService::MEDIA_EMAIL
 			);
-		});*/
+		});
+		return $this;
+	}
+
+	/**
+	 * @param string $sResetKey
+	 * @throws \Exception
+	 * @return \ZF2User\Service\UserService
+	 */
+	public function changeUserLoggedEmail($sEmail){
+		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email is ('.gettype($sEmail).') is not a string or is empty');
+		$oUserModel = $this->getServiceLocator()->get('UserModel');
+
+		$oUser = $this->getLoggedUser();
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		//Reset password
+		$oUserModel->changeUserEmail($oUser,$sEmail);
+
+		//Reload user
+		$oUser = $oUserModel->getUser($oUser->getUserId());
+
+		//Create email view body
+		$oView = new \Zend\View\Model\ViewModel(array(
+			'user_email' => $oUser->getUserEmail(),
+			'user_registration_key' => $oUser->getUserRegistrationKey()
+		));
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		//Retrieve Messenger service
+		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
+
+		//Render view & send email to user
+		$oMessengerService->renderView($oView->setTemplate('email/user/confirm-email'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
+			$oMessage = new \Messenger\Message();
+			$oMessengerService->sendMessage(
+				$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
+				->setTo($oUser)
+				->setSubject($oTranslator->translate('change_email'))
+				->setBody($sHtml),
+				\Messenger\Service\MessengerService::MEDIA_EMAIL
+			);
+		});
 		return $this;
 	}
 }

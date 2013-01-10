@@ -132,6 +132,16 @@ return array(
                 			)
                 		)
                 	),
+                	'change-email' => array(
+                		'type' => 'Zend\Mvc\Router\Http\Literal',
+                		'options' => array(
+                			'route' => '/change-email',
+                			'defaults' => array(
+                				'controller' => 'ZF2User\Controller\User',
+                				'action' => 'changeemail'
+                			)
+                		)
+                	)
                 )
             )
         )
@@ -156,7 +166,7 @@ return array(
     		'zf2user' => array(
     			'ZF2User\Controller\User' => array(
     				'js' => array(
-	    				'js/Zf2User/Controller/UserController.js',
+	    				'js/Zf2User/Controller/UserController.js'
 	    			)
     			)
     		)
@@ -209,6 +219,7 @@ return array(
 			'UserModel' => '\ZF2User\Factory\UserModelFactory',
 			'UserProviderModel' => '\ZF2User\Factory\UserProviderModelFactory',
 			'SessionManager' => '\ZF2User\Factory\SessionManagerFactory',
+			'ChangeEmailForm' => '\ZF2User\Factory\ChangeEmailFormFactory',
 			'ChangePasswordForm' => '\ZF2User\Factory\ChangePasswordFormFactory',
 			'LoginForm' => '\ZF2User\Factory\LoginFormFactory',
 			'RegisterForm' => '\ZF2User\Factory\RegisterFormFactory',

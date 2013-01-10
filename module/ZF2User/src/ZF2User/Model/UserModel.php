@@ -75,7 +75,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		|| (isset($aUserInfos['user_state']) && !self::userStateExists($aUserInfos['user_state'])))throw new \Exception('Infos for creating user infos are invalid');
 
 		//Generate user registration key
-		$aUserInfos['user_registration_key'] = uniqid();
+		$aUserInfos['user_registration_key'] = $this->generateRegistrationKey();
 
 		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_registration_key','user_state')))))return (int)$this->getLastInsertValue();
 		throw new \Exception('An error occurred when creating a new user');
@@ -104,7 +104,7 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		//Update user state and registration key
 		if(!$this->update(array(
 			'user_state'=> self::USER_STATUS_ACTIVE,
-			'user_registration_key' => str_shuffle(uniqid())
+			'user_registration_key' => $this->generateRegistrationKey()
 		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
 		return $this;
 	}
@@ -121,8 +121,26 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 		//Update user password and registration key
 		if(!$this->update(array(
 			'user_password'=> $sPassword,
-			'user_registration_key' => str_shuffle(uniqid())
+			'user_registration_key' => $this->generateRegistrationKey()
 		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user password');
+		return $this;
+	}
+
+	/**
+	 * Change user password
+	 * @param \ZF2User\Entity\UserEntity $oUser
+	 * @param string $sPassword
+	 * @throws \Exception
+	 * @return \ZF2User\Model\UserModel
+	 */
+	public function changeUserEmail(\ZF2User\Entity\UserEntity $oUser,$sEmail){
+		if(!is_string($sEmail) || !filter_var($sEmail,FILTER_VALIDATE_EMAIL))throw new \Exception('Email expects valid email adress');
+		//Update user email, state and registration key
+		if(!$this->update(array(
+			'user_email'=> $sEmail,
+			'user_registration_key' => $this->generateRegistrationKey(),
+			'user_state' => self::USER_STATUS_PENDING
+		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user email');
 		return $this;
 	}
 
@@ -163,5 +181,18 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 			default:
 				return false;
 		}
+	}
+
+	/**
+	 * Generate a unique registration key
+	 * @return string
+	 */
+	protected function generateRegistrationKey(){
+		$iIterator = 0;
+		$sRegistrationKey = str_shuffle(uniqid());
+		while($this->select(array('user_registration_key' => $sRegistrationKey))->count() && $iIterator < 5){
+			$sRegistrationKey = str_shuffle(uniqid());
+		}
+		return $iIterator > 5 ?uniqid():$sRegistrationKey;
 	}
 }

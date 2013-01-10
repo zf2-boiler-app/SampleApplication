@@ -21,10 +21,10 @@ Form.Validator.addAllThese([
 	}],
 	['emailIsAvailable',{
 		'errorMsg': function(eElement){
-			return oController.translate('email_is_unavailable');
+			return eElement.retrieve('email-available');
 		},
 		'test': function(eElement){
-			return !!eElement.retrieve('email-available',true);
+			return eElement.retrieve('email-available',true) === true;
 		}
 	}]
 ]);

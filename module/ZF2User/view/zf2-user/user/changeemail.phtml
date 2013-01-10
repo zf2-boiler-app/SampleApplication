@@ -1,6 +1,6 @@
-<?php if($this->passwordChanged === true){ ?>
+<?php if($this->emailChanged === true){ ?>
 <div class="alert alert-success">
-	<?=$this->translate('password_has_been_changed')?>
+	<?=$this->translate('email_has_been_changed_email_has_been_sent')?>
 </div>
 <button class="btn btn-small btn-primary pull-right" type="button" data-dismiss="modal"><?=$this->translate('close_modal')?></button>
 <?php }
@@ -13,6 +13,6 @@ else{
 	));
 ?>
 <script type="text/javascript">
-	document.id('user_password').focus();
+	document.id('user_new_email').focus();
 </script>
 <?php } ?>

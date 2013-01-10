@@ -1,17 +1,20 @@
 <?php
 namespace ZF2User\Validator;
 class EmailAddressAvailabilityValidator extends \Zend\Validator\AbstractValidator{
-    const UNAVAILABLE  = 'emailAddressInvalidUnavailable';
+    const SAME_AS_CURRENTLY_USED = 'emailAddressSameAsCurrentlyUsed';
+	const UNAVAILABLE  = 'emailAddressInvalidUnavailable';
 
     /**
      * @var array
      */
     protected $messageTemplates = array(
-        self::UNAVAILABLE => 'The email adress is unavailable'
+    	self::SAME_AS_CURRENTLY_USED => 'The email address "%value%" is the same as currently used',
+        self::UNAVAILABLE => 'The email adress "%value%" is unavailable'
     );
 
     protected $options = array(
-    	'checkUserEmailAvailability' => null
+    	'checkUserEmailAvailability' => null,
+    	'currentEmail' => null
     );
 
     /**
@@ -40,6 +43,16 @@ class EmailAddressAvailabilityValidator extends \Zend\Validator\AbstractValidato
         return call_user_func($this->options['checkUserEmailAvailability'],$sValue);
     }
 
+	/**
+	 * Check if Email is the same as current email
+	 * @param string $sEmail
+	 * @return boolean
+	 */
+    public function sameAsCurrentlyUsed($sEmail){
+    	if(empty($this->options['currentEmail']))return false;
+    	else return $sEmail === $this->options['currentEmail'];
+    }
+
     /**
      * @param callable $oCallback
      * @return \ZF2User\Validator\EmailAddressAvailabilityValidator
@@ -56,6 +69,10 @@ class EmailAddressAvailabilityValidator extends \Zend\Validator\AbstractValidato
      */
     public function isValid($sValue){
     	if(empty($sValue)|| !is_string($sValue))return false;
+    	if($this->sameAsCurrentlyUsed($sValue)){
+    		$this->error(self::SAME_AS_CURRENTLY_USED);
+    		return false;
+    	}
     	if($this->callCheckUserEmailAvailability($sValue))return true;
     	$this->error(self::UNAVAILABLE);
     	return false;

@@ -166,4 +166,20 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		)$this->view->passwordChanged = true;
 		return $this->view;
 	}
+
+	public function changeemailAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
+
+		//Check user is logged in
+		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
+
+		//Assign form
+		$this->view->form = $this->getServiceLocator()->get('ChangeEmailForm');
+		if(
+			$this->getRequest()->isPost()
+			&& $this->view->form->setData($this->params()->fromPost())->isValid()
+			&& $this->getServiceLocator()->get('UserService')->changeUserLoggedEmail($this->params()->fromPost('user_new_email'))
+		)$this->view->emailChanged = true;
+		return $this->view;
+	}
 }

@@ -16,8 +16,9 @@ return array(
 
 	'email' => 'Adresse email',
 	'email_already_confirmed' => 'Votre adresse email est déjà confirmée',
-	'email_confirmation_sent' => 'Vous allez recevoir un email vous permettant de valider votre accès',
+	'email_confirmation_sent' => 'Vous allez recevoir un email vous permettant de valider votre accès.',
 	'email_does_not_match_any_registered_user' => 'Cette adresse email ne correspond à aucun utilisateur enregistré',
+	'email_has_been_changed_email_has_been_sent' => 'Votre adresse email a été modifée, vous allez recevoir un email vous permettant de valider cette nouvelle adresse. Votre compte restera innactif en attendant cette validation.',
 	'email_or_password_wrong' => 'L\'adresse email et/ou le mot de passe semblent incorrects',
 
 	'forgot_your_password' => 'Mot de passe oublié',

@@ -25,7 +25,7 @@ var ZF2UserControllerUser = {
 					var bAvailable = oResponse.available === true;
 					//Display email availability checked
 					if(!bAvailable)eUserEmail.removeClass('validation-passed');
-					eUserEmail.store('email-available',bAvailable).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
+					eUserEmail.store('email-available',oResponse.available).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
 				}.bind(this)
 			}).send();
 			this.timer = null;
@@ -33,6 +33,10 @@ var ZF2UserControllerUser = {
 		return this;
 	},
 	
+	/**
+	 * @param string eUserEmail
+	 * @return ZF2UserControllerUser
+	 */
 	sendConfirmationEmail : function(sUserEmail){
 		if('string' !== typeof sUserEmail)throw 'User email expects string';
 		var eBody = document.id(document.body).spin();
@@ -56,6 +60,15 @@ var ZF2UserControllerUser = {
 			'title':this.translate('change_password'),
 			'url':this.url('zf2user/change-password')
 		});
+		return this;
+	},
+	
+	changeUserEmail : function(){
+		new Modal.Popup({
+			'title':this.translate('change_email'),
+			'url':this.url('zf2user/change-email')
+		});
+		return this;
 	},
 };
 ZF2UserControllerUser = new Class(ZF2UserControllerUser);

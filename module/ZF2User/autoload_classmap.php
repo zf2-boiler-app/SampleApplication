@@ -15,6 +15,7 @@ return array(
 	'ZF2User\Factory\AuthServiceFactory' => __DIR__.'/src/ZF2User/Factory/AuthServiceFactory.php',
 	'ZF2User\Factory\AuthStorageFactory' => __DIR__.'/src/ZF2User/Factory/AuthStorageFactory.php',
 	'ZF2User\Factory\HybridAuthAdapterFactory' => __DIR__.'/src/ZF2User/Factory/HybridAuthAdapterFactory.php',
+	'ZF2User\Factory\ChangeEmailFormFactory' => __DIR__.'/src/ZF2User/Factory/ChangeEmailFormFactory.php',
 	'ZF2User\Factory\ChangePasswordFormFactory' => __DIR__.'/src/ZF2User/Factory/ChangePasswordFormFactory.php',
 	'ZF2User\Factory\LoginFormFactory' => __DIR__.'/src/ZF2User/Factory/LoginFormFactory.php',
 	'ZF2User\Factory\RegisterFormFactory' => __DIR__.'/src/ZF2User/Factory/RegisterFormFactory.php',
@@ -25,11 +26,11 @@ return array(
 	'ZF2User\Factory\UserServiceFactory' => __DIR__.'/src/ZF2User/Factory/UserServiceFactory.php',
 
 	//Forms
+	'ZF2User\Form\ChangeEmailForm' => __DIR__.'/src/ZF2User/Form/ChangeEmailForm.php',
 	'ZF2User\Form\ChangePasswordForm' => __DIR__.'/src/ZF2User/Form/ChangePasswordForm.php',
 	'ZF2User\Form\LoginForm' => __DIR__.'/src/ZF2User/Form/LoginForm.php',
 	'ZF2User\Form\RegisterForm' => __DIR__.'/src/ZF2User/Form/RegisterForm.php',
 	'ZF2User\Form\ResetPasswordForm' => __DIR__.'/src/ZF2User/Form/ResetPasswordForm.php',
-
 
 	//Models
 	'ZF2User\Model\UserModel' => __DIR__.'/src/ZF2User/Model/UserModel.php',
