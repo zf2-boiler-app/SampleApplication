@@ -1,29 +1,16 @@
 <?php
 namespace ZF2User\Model;
 class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
-	/** User model events **/
-	const EVENT_USER_CREATED = 'user_created';
-
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
-
-	/**
-	 * @var string
-	 */
-	protected $primary = 'user_id';
 
 	/**
 	 * Constuctor
 	 * @param Adapter $oAdapter
 	 */
 	public function __construct(\Zend\Db\Adapter\Adapter $oAdapter){
-		parent::__construct(
-			'users',
-			$oAdapter,
-			null,
-			new \Zend\Db\ResultSet\ResultSet(\Zend\Db\ResultSet\ResultSet::TYPE_ARRAYOBJECT,new \ZF2User\Entity\UserEntity())
-		);
+		parent::__construct('users',$oAdapter,'\ZF2User\Entity\UserEntity');
 	}
 
 	/**
@@ -101,11 +88,11 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	 * @return \ZF2User\Model\UserModel
 	 */
 	public function activeUser(\ZF2User\Entity\UserEntity $oUser){
+		if(!$oUser->rowExistsInDatabase())throw new \Exception('User doesn\'t exist in database');
 		//Update user state and registration key
-		if(!$this->update(array(
-			'user_state'=> self::USER_STATUS_ACTIVE,
-			'user_registration_key' => $this->generateRegistrationKey()
-		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user state');
+		if(!$oUser->setUserState(self::USER_STATUS_ACTIVE)
+		->setUserRegistrationKey($this->generateRegistrationKey())
+		->save())throw new \Exception('An error occurred when updating user state');
 		return $this;
 	}
 
@@ -117,30 +104,29 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 	 * @return \ZF2User\Model\UserModel
 	 */
 	public function changeUserPassword(\ZF2User\Entity\UserEntity $oUser,$sPassword){
-		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password expects md5 hash');
+		if(!$oUser->rowExistsInDatabase())throw new \Exception('User doesn\'t exist in database');
 		//Update user password and registration key
-		if(!$this->update(array(
-			'user_password'=> $sPassword,
-			'user_registration_key' => $this->generateRegistrationKey()
-		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user password');
+		if(!$oUser->setUserPassword($sPassword)
+		->setUserRegistrationKey($this->generateRegistrationKey())
+		->save())throw new \Exception('An error occurred when updating user password');
 		return $this;
 	}
 
 	/**
-	 * Change user password
+	 * Change user email
 	 * @param \ZF2User\Entity\UserEntity $oUser
-	 * @param string $sPassword
+	 * @param string $sEmail
 	 * @throws \Exception
 	 * @return \ZF2User\Model\UserModel
 	 */
 	public function changeUserEmail(\ZF2User\Entity\UserEntity $oUser,$sEmail){
-		if(!is_string($sEmail) || !filter_var($sEmail,FILTER_VALIDATE_EMAIL))throw new \Exception('Email expects valid email adress');
+		if(!$oUser->rowExistsInDatabase())throw new \Exception('User doesn\'t exist in database');
+
 		//Update user email, state and registration key
-		if(!$this->update(array(
-			'user_email'=> $sEmail,
-			'user_registration_key' => $this->generateRegistrationKey(),
-			'user_state' => self::USER_STATUS_PENDING
-		),array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when updating user email');
+		if(!$oUser->setUserEmail($sEmail)
+		->setUserRegistrationKey($this->generateRegistrationKey())
+		->setUserState(self::USER_STATUS_PENDING)
+		->save())throw new \Exception('An error occurred when updating user email');
 		return $this;
 	}
 

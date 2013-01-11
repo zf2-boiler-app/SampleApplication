@@ -1,58 +1,47 @@
 <?php
 namespace ZF2User\Entity;
-class UserEntity{
+class UserEntity extends \Application\Db\RowGateway\AbstractRowGateway{
+
 	/**
-	 * @param array $aDatas
+	 * @param string $sEmail
+	 * @throws \Exception
 	 * @return \ZF2User\Entity\UserEntity
 	 */
-	public function exchangeArray($aDatas){
-		foreach($aDatas as $sChamps => $sValeur){
-			$this->$sChamps = $sValeur;
-		}
-		return $this;
+	public function setUserEmail($sEmail){
+		if(!is_string($sEmail) || !filter_var($sEmail,FILTER_VALIDATE_EMAIL))throw new \Exception('Email expects valid email adress');
+		return $this->offsetSet('user_email', $sEmail);
 	}
 
 	/**
-	 * @return array
-	 */
-	public function toArray(){
-		return get_object_vars($this);
-	}
-
-	/**
+	 * @param string $sPassword
 	 * @throws \Exception
-	 * @return string
+	 * @return \ZF2User\Entity\UserEntity
 	 */
-	public function getUserId(){
-		if(!isset($this->user_id))throw new\Exception('user_id is undefined');
-		return $this->user_id;
+	public function setUserPassword($sPassword){
+		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password expects md5 hash');
+		return $this->offsetSet('user_password', $sPassword);
+	}
+
+
+	/**
+	 * @param string $sUserRegistrationKey
+	 * @throws \Exception
+	 * @return\ZF2User\Entity\UserEntity
+	 */
+	public function setUserRegistrationKey($sUserRegistrationKey){
+		if(!is_string($sUserRegistrationKey)
+		|| strlen($sUserRegistrationKey) !== 13)throw new \Exception('User registration key "'.$sUserRegistrationKey.'" is not valid');
+		return $this->offsetSet('user_registration_key', $sUserRegistrationKey);
 	}
 
 	/**
+	 * @param string $sUserState
 	 * @throws \Exception
-	 * @return string
+	 * @return \ZF2User\Entity\UserEntity
 	 */
-	public function getUserEmail(){
-		if(!isset($this->user_email))throw new\Exception('user_email is undefined');
-		return $this->user_email;
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return string
-	 */
-	public function getUserRegistrationKey(){
-		if(!isset($this->user_registration_key))throw new\Exception('user_registration_key is undefined');
-		return $this->user_registration_key;
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return string
-	 */
-	public function getUserState(){
-		if(!isset($this->user_state))throw new\Exception('user_state is undefined');
-		return $this->user_state;
+	public function setUserState($sUserState){
+		if(!\ZF2User\Model\UserModel::userStateExists($sUserState))throw new \Exception('User state "'.$sUserState.'" is not valid');
+		return $this->offsetSet('user_state', $sUserState);
 	}
 
 	/**

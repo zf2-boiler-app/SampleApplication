@@ -1,144 +1,96 @@
 <?php
 namespace Application\Db\TableGateway;
-abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway implements \Zend\EventManager\EventsCapableInterface, \Zend\EventManager\SharedEventManagerAwareInterface{
-	const EVENT_CREATE_ENTITY = 'CREATE_ENTITY';
-	const EVENT_UPDATE_ENTITY = 'UPDATE_ENTITY';
-	const EVENT_DELETE_ENTITY = 'DELETE_ENTITY';
-
+abstract class AbstractTableGateway extends \Zend\Db\TableGateway\TableGateway{
 	/**
-	 * @var string|array
+	 * Constructor
+	 * @param string $sTable
+	 * @param \Zend\Db\Adapter\Adapter $oAdapter
+	 * @param \Application\Db\RowGateway\AbstractRowGateway $oEntity
 	 */
-	protected $primary = null;
-
-	/**
-	 * @var \Zend\EventManager\EventManager
-	 */
-	private $eventManager;
-
-	/**
-	 * @var \Zend\EventManager\SharedEventManagerInterface
-	 */
-	protected $sharedEventManager;
-
-	/**
-     * Constructor
-     * @param string $table
-     * @param Adapter $adapter
-     * @param Feature\AbstractFeature|Feature\FeatureSet|Feature\AbstractFeature[] $features
-     * @param ResultSetInterface $resultSetPrototype
-     * @param Sql $sql
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __construct($table, \Zend\Db\Adapter\Adapter $adapter, $features = null, \Zend\Db\ResultSet\ResultSetInterface $resultSetPrototype = null, \Zend\Db\Sql\Sql $sql = null){
-    	parent::__construct($table, $adapter,$features,$resultSetPrototype,$sql);
-    	$this->attachEvents();
+    public function __construct($sTable, \Zend\Db\Adapter\Adapter $oAdapter, $sRowGatewayClass){
+    	parent::__construct(
+    		$sTable,
+    		$oAdapter,
+    		array(
+    			new \Zend\Db\TableGateway\Feature\MetadataFeature(),
+    			new \Application\Db\TableGateway\Feature\EventFeature(),
+    			new \Application\Db\TableGateway\Feature\RowGatewayFeature($sRowGatewayClass)
+    		)
+    	);
 	}
 
 	/**
-	 * Attach events to Shared Event Manager, called by constructor
-	 * @return \Application\Db\TableGateway\AbstractTableGateway
+	 * @return array
 	 */
-	protected function attachEvents(){
-		return $this;
+	public function getPrimaryKey(){
+		$oMetadataFeature = $this->featureSet->getFeatureByClassName('Zend\Db\TableGateway\Feature\MetadataFeature');
+		if($oMetadataFeature === false || !isset($oMetadataFeature->sharedData['metadata']))throw new \Exception('No MetadataFeature could be consulted');
+		return (array)$oMetadataFeature->sharedData['metadata']['primaryKey'];
 	}
 
 	/**
-	 * Get EventManager
-	 * @return \Zend\EventManager\EventManager
+	 * @param string $sValue
+	 * @param string $sColumnName
+	 * @throws \Exception
+	 * @return mixed
 	 */
-	public function getEventManager(){
-		return $this->eventManager instanceof \Zend\EventManager\EventManager?$this->eventManager:$this->eventManager = new \Zend\EventManager\EventManager(__CLASS__);
+	public function offsetFormatDataForEntity($sValue,$sColumnName){
+		try{
+			$oColumn = $this->featureSet->getFeatureByClassName('Zend\Db\TableGateway\Feature\MetadataFeature')->sharedData['metadata']->getColumn($sColumnName, $this->getTable());
+		}
+		catch(\Exception $oException){
+			if(method_exists($this, 'formatDataForEntity'))return $this->customDataToEntite($sValue,$sColumnName);
+			else throw new \Exception('Unknown column name "'.$sColumnName.'"');
+		}
+		switch($sType = $oColumn->getDataType()){
+			case 'float':
+				return (float)$sValue;
+			case 'tinyint':
+				return (bool)$sValue;
+			case 'varchar':
+			case 'tinytext':
+			case 'text':
+				return (string)$sValue;
+			case 'datetime':
+			case 'timestamp':
+				if(!($sValue instanceof \DateTime))$sValue = new \Datetime((string)$sValue);
+				return $sValue;
+			default:
+				throw new \Exception('Mysql type "'.$sType.'" is not supported');
+		}
 	}
 
 	/**
-	 * Inject a SharedEventManager instance
-	 * @param \Zend\EventManager\SharedEventManagerInterface $oSharedEventManager
-	 * @return \Logger\Service\LoggerService
+	 * @param string $sValue
+	 * @param string $sColumnName
+	 * @throws \Exception
+	 * @return mixed
 	 */
-	public function setSharedManager(\Zend\EventManager\SharedEventManagerInterface $oSharedEventManager){
-		$this->sharedEventManager = $oSharedEventManager;
-		return $this;
-	}
-
-	/**
-	 * Get shared collections container
-	 * @return \Zend\EventManager\SharedEventManagerInterface
-	 */
-	public function getSharedManager(){
-		return $this->sharedEventManager instanceof \Zend\EventManager\SharedEventManagerInterface
-		?$this->sharedEventManager
-		:$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
-	}
-
-	/**
-	 * Remove any shared collections
-	 * @return \Logger\Service\LoggerService
-	 */
-	public function unsetSharedManager(){
-		$this->sharedEventManager = null;
-		return $this;
-	}
-
-	/**
-	 * @see \Zend\Db\TableGateway\AbstractTableGateway::executeInsert()
-	 * @param \Zend\Db\Sql\Insert $oInsert
-	 * @return int
-	 */
-	protected function executeInsert(\Zend\Db\Sql\Insert $oInsert){
-		$iReturn = parent::executeInsert($oInsert);
-		$this->getEventManager()->trigger(self::EVENT_CREATE_ENTITY,$this,array(
-			'entity_id' => (int)$this->getLastInsertValue(),
-			'entity_table' => $this->table,
-			'entity_primary' => $this->primary
-		));
-		return $iReturn;
-	}
-
-	/**
-	 * @see \Zend\Db\TableGateway\AbstractTableGateway::executeUpdate()
-	 * @param \Zend\Db\Sql\Update $oUpdate
-	 * @return int
-	 */
-	protected function executeUpdate(\Zend\Db\Sql\Update $oUpdate){
-		//Retrieve id to be updated
-		$aIdToBeUpdated = $this->selectWith($this->sql->select()
-			->where($oUpdate->getRawState('where'))
-			->columns(is_array($this->primary)?$this->primary:array($this->primary))
-		)->toArray();
-
-		//Execute update
-		$iReturn = parent::executeUpdate($oUpdate);
-
-		//Trigger update
-		$this->getEventManager()->trigger(self::EVENT_UPDATE_ENTITY,$this,array(
-			'entity_id' => $aIdToBeUpdated,
-			'entity_table' => $this->table,
-			'entity_primary' => $this->primary
-		));
-		return $iReturn;
-	}
-
-	/**
-	 * @see \Zend\Db\TableGateway\AbstractTableGateway::executeDelete()
-	 * @param \Zend\Db\Sql\Delete $oDelete
-	 * @return int
-	 */
-	protected function executeDelete(\Zend\Db\Sql\Delete $oDelete){
-		//Retrieve id to be deleted
-		$aIdToBeDeleted = $this->selectWith($this->sql->select()
-			->where($oDelete->getRawState('where'))
-			->columns(is_array($this->primary)?$this->primary:array($this->primary))
-		)->toArray();
-
-		//Execute delete
-		$iReturn = parent::executeDelete($oDelete);
-
-		//Trigger delete
-		$this->getEventManager()->trigger(self::EVENT_DELETE_ENTITY,$this,array(
-			'entity_id' => $aIdToBeDeleted,
-			'entity_table' => $this->table,
-			'entity_primary' => $this->primary
-		));
-		return $iReturn;
+	public function offsetFormatDataForDb($sValue,$sColumnName){
+		try{
+			$oColumn = $this->featureSet->getFeatureByClassName('Zend\Db\TableGateway\Feature\MetadataFeature')->sharedData['metadata']->getColumn($sColumnName, $this->getTable());
+		}
+		catch(\Exception $oException){
+			if(method_exists($this, 'formatDataForDb'))return $this->customDataToEntite($sValue,$sColumnName);
+			else throw new \Exception('Unknown column name "'.$sColumnName.'"');
+		}
+		switch($sType = $oColumn->getDataType()){
+			case 'float':
+				return (float)$sValue;
+			case 'tinyint':
+				return (int)!!$sValue;
+			case 'varchar':
+			case 'text':
+			case 'tinytext':
+				return (string)$sValue;
+			case 'datetime':
+				if(!($sValue instanceof \DateTime))$sValue = new \Datetime((string)$sValue);
+				return $sValue->format(DATE_ISO8601);
+			case 'timestamp':
+				if(!($sValue instanceof \DateTime))$sValue = new \Datetime((string)$sValue);
+				return $sValue->getTimestamp();
+			default:
+				throw new \Exception('Mysql type "'.$sType.'" is not supported');
+		}
 	}
 }
