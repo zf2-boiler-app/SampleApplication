@@ -35,10 +35,6 @@
         {
 		    "type": "vcs",
 		    "url": "http://github.com/Nodge/lessphp"
-		},
-        {
-		    "type": "vcs",
-		    "url": "https://github.com/neilime/InlineStyle"
 		}
     ],
     "require": {
