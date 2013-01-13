@@ -43,37 +43,7 @@ return array(
 	        			'action' => 'privacy',
 	        		),
 	        	),
-        	),
-            // The following is a route to simplify getting started creating
-            // new controllers and actions without needing to create a new
-            // module. Simply drop new controllers in, and you can access them
-            // using the path /application/:controller/:action
-            'application' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/application',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route' => '/[:controller[/:action]]',
-                            'constraints' => array(
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ),
-                            'defaults' => array(
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+        	)
         ),
     ),
     'asset_bundle' => array(
@@ -177,14 +147,18 @@ return array(
         'exception_template'       => 'error/index',
         'template_map' => array(
             'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
+        	'layout/default' => __DIR__ . '/../view/layout/default.phtml',
         	'header/logged' => __DIR__ . '/../view/application/header/logged.phtml',
         	'header/unlogged' => __DIR__ . '/../view/application/header/unlogged.phtml',
-            'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
+        	'footer/footer' => __DIR__ . '/../view/application/footer/footer.phtml',
             'error/404' => __DIR__ . '/../view/error/404.phtml',
             'error/index' => __DIR__ . '/../view/error/index.phtml'
         ),
         'template_path_stack' => array(__DIR__ . '/../view'),
-    	'strategies' => array('ViewJsonStrategy')
+    	'strategies' => array('ViewJsonStrategy'),
+    	'specialLayout' => array(
+    		'default' => 'layout/default'
+    	)
     ),
     'view_helpers' => array(
         'factories' => array(

@@ -16,23 +16,9 @@
 ?>
 	</head>
 	<body>
-        <header data-behavior="BS.Dropdown BS.DismissPopup"><?=$this->layout()->header?></header>
-        <div class="container" data-behavior="BS.Dropdown BS.DismissPopup">
-        	<!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
-	    	<div class="row-fluid">
-    			<div class="span12"><?=$this->layout()->content?></div>
-    		</div>
-			<hr>
-            <footer>
-            	<a href="<?=$this->url('home')?>"><?=$this->translate('application_name')?></a> |
-				<a href="<?=$this->url('terms')?>"><?=$this->translate('terms')?></a> |
-				<a href="<?=$this->url('privacy')?>"><?=$this->translate('privacy')?></a>
-                <span class="pull-right">&copy; <?=$this->translate('application_name').' '.date('Y')?></span>
-            </footer>
-
-        </div>
-        <!-- /container -->
         <?php
+        	echo $this->layout()->specialLayout;
+
         	//Javascript files
        	 	echo $this->inlineScript();
 
