@@ -111,7 +111,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
 
-		if($this->isUserEmailAvailable($sEmail))return $oTranslator->translate('email_does_not_match_any_registered_user');
+		if($this->isUserEmailAvailable($sEmail) === true)return $oTranslator->translate('email_does_not_match_any_registered_user');
 		$oUser = $this->getServiceLocator()->get('UserModel')->getUserByEmail($sEmail);
 
 		//Create email view body
@@ -268,7 +268,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 */
 	public function deleteLoggedUser(){
 		//Delete user
-		$this->getServiceLocator()->get('UserModel')->deleteUser($this->getLoggedUser());
+		$this->getLoggedUser()->delete();
 		//Log out user
 		$this->logout();
 		return $this;
@@ -308,7 +308,14 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function getLoggedUser(){
 		$oAuthService = $this->getServiceLocator()->get('AuthService');
 		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
-		$oUser = $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
+		//Prevent from session value error
+		try{
+			$oUser = $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
+		}
+		catch(\Exception $oException){
+			$this->logout();
+			throw new \Exception('An error occurred when retrieving logged user');
+		}
 		if(!$oUser->isUserActive())throw new \Exception('User is not active');
 		return $oUser;
 	}
@@ -320,7 +327,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 */
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		if($this->getLoggedUser()->getUserEmail() === $sEmail)return str_ireplace(
+		if($this->getServiceLocator()->get('AuthService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sEmail)return str_ireplace(
 			'%value%',
 			$sEmail,
 			$this->getServiceLocator()->get('translator')->translate(
@@ -435,6 +442,6 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 				\Messenger\Service\MessengerService::MEDIA_EMAIL
 			);
 		});
-		return $this;
+		return $this->logout();
 	}
 }

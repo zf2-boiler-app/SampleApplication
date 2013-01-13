@@ -8,11 +8,15 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 
 	/**
 	 * Constructor
+	 * @param array $aPrimaryKey
 	 * @param \Application\Db\TableGateway\AbstractTableGateway $oModel
 	 */
-	public function __construct(\Application\Db\TableGateway\AbstractTableGateway $oModel){
+	public function __construct(array $aPrimaryKey,\Application\Db\TableGateway\AbstractTableGateway $oModel){
 		$this->model = $oModel;
-		parent::__construct($oModel->getPrimaryKey(),$oModel->getTable(),$oModel->getAdapter());
+		$this->featureSet = new \Zend\Db\RowGateway\Feature\FeatureSet(array(
+			new \Application\Db\RowGateway\Feature\EventFeature()
+		));
+		parent::__construct($aPrimaryKey, $oModel->getTable(),$oModel->getAdapter());
 	}
 
 	/**
@@ -34,6 +38,18 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 		else parent::__set($sColumnName, $sValue);
 	}
 
+	public function __call($sMethodName, $aArguments){
+		if(preg_match('/^get([A-Z]{1}[a-zA-Z]+$)/', $sMethodName,$aMatches))return $this->__get(self::getColumnFromMethod($aMatches[1]));
+		throw new \Exception('Undefined method '.$sMethodName);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getPrimaryKeyColumn(){
+		return $this->primaryKeyColumn;
+	}
+
 	/**
 	 * Save
 	 * @return integer
@@ -41,6 +57,7 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	public function save(){
 		$this->initialize();
 		if(!$this->rowExistsInDatabase())throw new \Exception('Save method is not allowed to insert rows');
+
 		$aData = $this->data;
 		$aWhere = array();
 
@@ -50,12 +67,28 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 			if($aData[$sPkColumn] == $this->primaryKeyData[$sPkColumn])unset($aData[$sPkColumn]);
 		}
 
-		//Update row datas
-		$iRowsAffected = $this->sql->prepareStatementForSqlObject(
-			$this->sql->update()
-			->set(array_map(array($this->model,'offsetFormatDataFromEntity'),$aData,array_keys($aData)))
-			->where($aWhere)
-		)->execute()->getAffectedRows();
+		$aKeys = array_keys($aData);
+
+		$oUpdate = $this->sql->update()
+		->set(array_combine($aKeys,array_map(array($this->model,'offsetFormatDataForDb'),$aData,$aKeys)))
+		->where($aWhere);
+
+		//Add entity_update value
+		if(in_array('entity_update',$this->model->getColumns()))$oUpdate->set(array('entity_update' => new \Zend\Db\Sql\Predicate\Expression('NOW()')),\Zend\Db\Sql\Update::VALUES_MERGE);
+
+		//Apply preSave features
+		$this->featureSet->apply('preSave', array($oUpdate));
+
+		//Update row data
+		$oStatement = $this->sql->prepareStatementForSqlObject($oUpdate);
+		$oResult = $oStatement->execute();
+		$iRowsAffected = $oResult->getAffectedRows();
+
+		//Apply postSave features
+		$this->featureSet->apply('postSave', array($oStatement, $oResult,array($aWhere)));
+
+		//Clean up
+		unset($oUpdate,$oStatement,$oResult);
 
 		//Make sure data and original data are in sync after save
 		$this->populate(
@@ -66,6 +99,41 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	}
 
 	/**
+	 * Delete
+	 */
+	public function delete(){
+		$this->initialize();
+		if(!$this->rowExistsInDatabase())throw new \Exception('Delete method is not allowed to non inserted rows');
+
+		$aWhere = array();
+
+		//Primary key is always an array even if its a single column
+		foreach($this->primaryKeyColumn as $sPkColumn){
+			$aWhere[$sPkColumn] = $this->primaryKeyData[$sPkColumn];
+		}
+
+		$oDelete = $this->sql->delete()->where($aWhere);
+
+		//Apply preSave features
+		$this->featureSet->apply('preDelete', array($oDelete));
+
+		$oStatement = $this->sql->prepareStatementForSqlObject($oDelete);
+		$oResult = $oStatement->execute();
+
+		// detach from database
+		if($oResult->getAffectedRows() == 1)$this->primaryKeyData = null;
+		else throw new \Exception('No rows have been deleted');
+
+		//Apply postSave features
+		$this->featureSet->apply('postDelete', array($oStatement, $oResult,array($aWhere)));
+
+		//Clean up
+		unset($oUpdate,$oStatement,$oResult);
+
+
+	}
+
+	/**
 	 * Populate Data
 	 * @param  array $rowData
 	 * @param  bool  $rowExistsInDatabase
@@ -73,7 +141,8 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	 */
 	public function populate(array $aRowData, $bRowExistsInDatabase = false){
 		$this->initialize();
-		$this->data = array_map(array($this->model,'offsetFormatDataForEntity'),$aRowData,array_keys($aRowData));
+		$aKeys = array_keys($aRowData);
+		$this->data = array_combine($aKeys,array_map(array($this->model,'offsetFormatDataForEntity'),$aRowData,$aKeys));
 		if($bRowExistsInDatabase == true)$this->processPrimaryKeyData();
 		else $this->primaryKeyData = null;
 		return $this;
@@ -84,7 +153,7 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	 * @return string
 	 */
 	private static function getColumnFromMethod($sMethodName){
-		return ltrim(strtolower(preg_replace('','_$1',$sMethodName)),'_');
+		return ltrim(strtolower(preg_replace('/([A-Z])/','_$1',$sMethodName)),'_');
 	}
 
 	/**
@@ -94,6 +163,6 @@ abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	private static function getMethodFromColumn($sColumnName){
 		return ucfirst(join('',array_map(function($sPart){
 			return ucfirst($sPart);
-		}), explode('_',$sColumnName)));
+		}, explode('_',$sColumnName))));
 	}
 }

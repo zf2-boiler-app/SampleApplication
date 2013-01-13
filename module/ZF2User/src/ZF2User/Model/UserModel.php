@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Model;
-class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
+class UserModel extends \Application\Db\TableGateway\TableGateway{
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';
@@ -66,19 +66,6 @@ class UserModel extends \Application\Db\TableGateway\AbstractTableGateway{
 
 		if($this->insert(array_intersect_key($aUserInfos, array_flip(array('user_email','user_password','user_registration_key','user_state')))))return (int)$this->getLastInsertValue();
 		throw new \Exception('An error occurred when creating a new user');
-	}
-
-
-	/**
-	 * Delete user
-	 * @param \ZF2User\Entity\UserEntity $oUser
-	 * @throws \Exception
-	 * @return \ZF2User\Model\UserModel
-	 */
-	public function deleteUser(\ZF2User\Entity\UserEntity $oUser){
-		//Update user state and registration key
-		if(!$this->delete(array('user_id' => $oUser->getUserId())))throw new \Exception('An error occurred when deleting user');
-		return $this;
 	}
 
 	/**

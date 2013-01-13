@@ -70,11 +70,11 @@ class EmailAddressAvailabilityValidator extends \Zend\Validator\AbstractValidato
     public function isValid($sValue){
     	if(empty($sValue)|| !is_string($sValue))return false;
     	if($this->sameAsCurrentlyUsed($sValue)){
-    		$this->error(self::SAME_AS_CURRENTLY_USED);
+    		$this->error(self::SAME_AS_CURRENTLY_USED,$sValue);
     		return false;
     	}
     	if($this->callCheckUserEmailAvailability($sValue))return true;
-    	$this->error(self::UNAVAILABLE);
+    	$this->error(self::UNAVAILABLE,$sValue);
     	return false;
     }
 }

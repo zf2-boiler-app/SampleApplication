@@ -20,7 +20,7 @@ class Module{
     		\Zend\Mvc\MvcEvent::EVENT_RENDER,
     		array($this, 'onRender')
     	);
-    	
+
     	//Process for error MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
     		\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,
@@ -36,12 +36,18 @@ class Module{
 	    	//Set header view
 	    	$oHeaderView = new \Zend\View\Model\ViewModel();
 	    	if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
-		    	$oHeaderView->setTemplate('header/logged');
-		    	$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
+	    	//Prevent from session value error
+				try{
+					$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
+					$oHeaderView->setTemplate('header/logged');
+				}
+				catch(\Exception $oException){
+					$oHeaderView->setTemplate('header/unlogged');
+				}
 	    	}
 	    	else $oHeaderView->setTemplate('header/unlogged');
 	    	$oEvent->getViewModel()->addChild($oHeaderView,'header');
-	    	
+
 	    	//Js Controller view helper
 	    	$oServiceManager = $oEvent->getApplication()->getServiceManager();
 	    	$aConfiguration = $oServiceManager->get('Config');
@@ -50,7 +56,7 @@ class Module{
 	    	});
     	}
     }
-    
+
     /**
      * @param \Zend\Mvc\MvcEvent $oEvent
      */

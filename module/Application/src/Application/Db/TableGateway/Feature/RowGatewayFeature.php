@@ -15,12 +15,21 @@ class RowGatewayFeature extends \Zend\Db\TableGateway\Feature\RowGatewayFeature{
 			'This feature "%s" expects the TableGateway to be an instance of \Application\Db\TableGateway\AbstractTableGateway',
 			__CLASS__
 		));
+		
+		$oMetadata = $this->tableGateway->featureSet->getFeatureByClassName('Zend\Db\TableGateway\Feature\MetadataFeature');
+		if($oMetadata === false || !isset($oMetadata->sharedData['metadata'])) {
+			throw new Exception\RuntimeException(
+				'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted to find the primary key necessary for RowGateway object creation.'
+			);
+		}
+		$aPrimaryKey = (array)$oMetadata->sharedData['metadata']['primaryKey'];
+		
 		if(!$this->tableGateway->resultSetPrototype instanceof \Zend\Db\ResultSet\ResultSet)throw new \Exception(sprintf(
 			'This feature "%s" expects the ResultSet to be an instance of \Zend\Db\ResultSet\ResultSet',
 			__CLASS__
 		));
     	$sRowGatewayClass = $this->constructorArguments[0];
-    	$oRowGateway = new $sRowGatewayClass($this->tableGateway);
+    	$oRowGateway = new $sRowGatewayClass($aPrimaryKey,$this->tableGateway);
     	if($oRowGateway instanceof \Application\Db\RowGateway\AbstractRowGateway)$this->tableGateway->resultSetPrototype->setArrayObjectPrototype($oRowGateway);
     	else throw new \Exception($sRowGatewayClass.' is not an instance of \Application\Db\RowGateway\AbstractRowGateway');
 	}
