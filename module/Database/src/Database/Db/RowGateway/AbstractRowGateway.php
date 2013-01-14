@@ -1,20 +1,20 @@
 <?php
-namespace Application\Db\RowGateway;
+namespace Database\Db\RowGateway;
 abstract class AbstractRowGateway extends \Zend\Db\RowGateway\RowGateway{
 	/**
-	 * @var \Application\Db\TableGateway\AbstractTableGateway
+	 * @var \Database\Db\TableGateway\AbstractTableGateway
 	 */
 	protected $model;
 
 	/**
 	 * Constructor
 	 * @param array $aPrimaryKey
-	 * @param \Application\Db\TableGateway\AbstractTableGateway $oModel
+	 * @param \Database\Db\TableGateway\AbstractTableGateway $oModel
 	 */
-	public function __construct(array $aPrimaryKey,\Application\Db\TableGateway\AbstractTableGateway $oModel){
+	public function __construct(array $aPrimaryKey,\Database\Db\TableGateway\AbstractTableGateway $oModel){
 		$this->model = $oModel;
 		$this->featureSet = new \Zend\Db\RowGateway\Feature\FeatureSet(array(
-			new \Application\Db\RowGateway\Feature\EventFeature()
+			new \Database\Db\RowGateway\Feature\EventFeature()
 		));
 		parent::__construct($aPrimaryKey, $oModel->getTable(),$oModel->getAdapter());
 	}

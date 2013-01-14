@@ -1,5 +1,5 @@
 <?php
-namespace Application\Db\TableGateway\Feature;
+namespace Database\Db\TableGateway\Feature;
 class EventFeature extends \Zend\Db\TableGateway\Feature\EventFeature{
 
 	/**
@@ -10,11 +10,11 @@ class EventFeature extends \Zend\Db\TableGateway\Feature\EventFeature{
 	/**
 	 * Constructor
 	 * @param \Zend\EventManager\EventManagerInterface $oEventManager
-	 * @param \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent $oTableGatewayEvent
+	 * @param \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent $oTableGatewayEvent
 	 */
-	public function __construct(\Zend\EventManager\EventManagerInterface $oEventManager = null, \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent $oTableGatewayEvent = null){
-		parent::__construct($oEventManager,$oTableGatewayEvent?:new \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent());
-		$this->eventManager->setIdentifiers('Application\Db\TableGateway\TableGateway');
+	public function __construct(\Zend\EventManager\EventManagerInterface $oEventManager = null, \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent $oTableGatewayEvent = null){
+		parent::__construct($oEventManager,$oTableGatewayEvent?:new \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent());
+		$this->eventManager->setIdentifiers('Database\Db\TableGateway\TableGateway');
 	}
 
 	/**

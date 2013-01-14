@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Model;
-class UserProviderModel extends \Application\Db\TableGateway\TableGateway{
+class UserProviderModel extends \Database\Db\TableGateway\TableGateway{
 	private $userModel;
 
 	/**
@@ -23,13 +23,13 @@ class UserProviderModel extends \Application\Db\TableGateway\TableGateway{
 	}
 
 	/**
-	 * @see \Application\Db\TableGateway\AbstractTableGateway::attachEvents()
+	 * @see \Database\Db\TableGateway\AbstractTableGateway::attachEvents()
 	 * @return
 	 */
 	protected function attachEvents(){
 		$this->getSharedManager()->attach(
 			'ZF2User\Model\UserModel',
-			\Application\Db\TableGateway\AbstractTableGateway::EVENT_CREATE_ENTITY,
+			\Database\Db\TableGateway\AbstractTableGateway::EVENT_CREATE_ENTITY,
 			array($this,'onDeleteUserEntity')
 		);
 		return $this;

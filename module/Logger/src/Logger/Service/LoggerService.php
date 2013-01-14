@@ -38,13 +38,13 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 		$this->getSharedManager()->attach('Zend\Mvc\Application', \Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,array($this,'logError'));
 
 		//TableGateway
-		$this->getSharedManager()->attach('Application\Db\TableGateway\TableGateway','postInsert',array($this,'logCreateEntity'));
-		$this->getSharedManager()->attach('Application\Db\TableGateway\TableGateway','postUpdate',array($this,'logUpdateEntity'));
-		$this->getSharedManager()->attach('Application\Db\TableGateway\TableGateway','postDelete',array($this,'logDeleteEntity'));
+		$this->getSharedManager()->attach('Database\Db\TableGateway\TableGateway','postInsert',array($this,'logCreateEntity'));
+		$this->getSharedManager()->attach('Database\Db\TableGateway\TableGateway','postUpdate',array($this,'logUpdateEntity'));
+		$this->getSharedManager()->attach('Database\Db\TableGateway\TableGateway','postDelete',array($this,'logDeleteEntity'));
 
 		//RowGateway
-		$this->getSharedManager()->attach('Application\Db\RowGateway\RowGateway','postSave',array($this,'logUpdateEntity'));
-		$this->getSharedManager()->attach('Application\Db\RowGateway\RowGateway','postDelete',array($this,'logDeleteEntity'));
+		$this->getSharedManager()->attach('Database\Db\RowGateway\RowGateway','postSave',array($this,'logUpdateEntity'));
+		$this->getSharedManager()->attach('Database\Db\RowGateway\RowGateway','postDelete',array($this,'logDeleteEntity'));
 	}
 
 	/**

@@ -2,6 +2,8 @@
 return array(
     'modules' => array(
         'Application',
+    	'Database',
+    	'Templating',
     	'Neilime\AssetsBundle',
     	'DluTwBootstrap',
     	'ZF2User',

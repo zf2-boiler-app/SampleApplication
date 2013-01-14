@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Entity;
-class UserEntity extends \Application\Db\RowGateway\AbstractRowGateway{
+class UserEntity extends \Database\Db\RowGateway\AbstractRowGateway{
 
 	/**
 	 * @param string $sEmail

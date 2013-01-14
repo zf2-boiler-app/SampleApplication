@@ -1,17 +1,5 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 return array(
-	'db' => array(
-		'driver' => 'Pdo',
-		'driver_options' => array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')
-	),
 	'router' => array(
         'routes' => array(
             'home' => array(
@@ -78,7 +66,6 @@ return array(
     'service_manager' => array(
         'factories' => array(
             'translator' => 'Application\Translator\TranslatorServiceFactory',
-            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
             'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
             	$aConfiguration = $oServiceManager->get('config');
             	if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
@@ -155,10 +142,7 @@ return array(
             'error/index' => __DIR__ . '/../view/error/index.phtml'
         ),
         'template_path_stack' => array(__DIR__ . '/../view'),
-    	'strategies' => array('ViewJsonStrategy'),
-    	'specialLayout' => array(
-    		'default' => 'layout/default'
-    	)
+    	'strategies' => array('ViewJsonStrategy')
     ),
     'view_helpers' => array(
         'factories' => array(

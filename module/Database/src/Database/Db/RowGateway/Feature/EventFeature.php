@@ -1,22 +1,5 @@
 <?php
-namespace Application\Db\RowGateway\Feature;
-
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\Adapter\Driver\StatementInterface;
-use Zend\Db\ResultSet\ResultSetInterface;
-use Zend\Db\Sql\Delete;
-use Zend\Db\Sql\Insert;
-use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Update;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventsCapableInterface;
-
-/**
- * @category   Zend
- * @package    Zend_Db
- * @subpackage TableGateway
- */
+namespace Database\Db\RowGateway\Feature;
 class EventFeature extends \Zend\Db\RowGateway\Feature\AbstractFeature implements \Zend\EventManager\EventsCapableInterface{
 
 	/**
@@ -33,10 +16,10 @@ class EventFeature extends \Zend\Db\RowGateway\Feature\AbstractFeature implement
      * @param EventManagerInterface $oEventManager
      * @param EventFeature\TableGatewayEvent $oRowGatewayEvent
      */
-    public function __construct(\Zend\EventManager\EventManagerInterface $oEventManager = null, \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent $oRowGatewayEvent = null){
-        $this->eventManager = ($oEventManager instanceof \Zend\EventManager\EventManagerInterface)?$oEventManager:new EventManager();
-        $this->eventManager->setIdentifiers(array('Application\Db\RowGateway\RowGateway'));
-        $this->event = $oRowGatewayEvent?:new \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent();
+    public function __construct(\Zend\EventManager\EventManagerInterface $oEventManager = null, \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent $oRowGatewayEvent = null){
+        $this->eventManager = ($oEventManager instanceof \Zend\EventManager\EventManagerInterface)?$oEventManager:new \Zend\EventManager\EventManager();
+        $this->eventManager->setIdentifiers(array('Database\Db\RowGateway\RowGateway'));
+        $this->event = $oRowGatewayEvent?:new \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent();
     }
 
     /**
@@ -49,7 +32,7 @@ class EventFeature extends \Zend\Db\RowGateway\Feature\AbstractFeature implement
 
     /**
      * Retrieve composed event instance
-     * @return \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
+     * @return \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
      */
     public function getEvent(){
         return $this->event;

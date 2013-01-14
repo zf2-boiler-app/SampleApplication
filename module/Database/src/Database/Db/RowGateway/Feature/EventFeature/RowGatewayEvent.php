@@ -1,9 +1,9 @@
 <?php
-namespace Application\Db\RowGateway\Feature\EventFeature;
+namespace Database\Db\RowGateway\Feature\EventFeature;
 class RowGatewayEvent implements \Zend\EventManager\EventInterface{
 
     /**
-     * @var\Application\Db\RowGateway\AbstractRowGateway
+     * @var\Database\Db\RowGateway\AbstractRowGateway
      */
     protected $target = null;
 
@@ -55,7 +55,7 @@ class RowGatewayEvent implements \Zend\EventManager\EventInterface{
      * Set the event name
      * @see \Zend\EventManager\EventInterface::setName()
      * @param string $sName
-     * @return \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
+     * @return \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
      */
     public function setName($sName){
         $this->name = $sName;
@@ -66,7 +66,7 @@ class RowGatewayEvent implements \Zend\EventManager\EventInterface{
      * Set the event target/context
      * @see \Zend\EventManager\EventInterface::setTarget()
      * @param null|string|object $oTarget
-     * @return \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
+     * @return \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
      */
     public function setTarget($oTarget){
         $this->target = $oTarget;
@@ -76,7 +76,7 @@ class RowGatewayEvent implements \Zend\EventManager\EventInterface{
     /**
      * Set event parameters
      * @param array|\ArrayAccess $aParams
-     * @return \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
+     * @return \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
      */
     public function setParams( $aParams){
         $this->params = $aParams;
@@ -87,7 +87,7 @@ class RowGatewayEvent implements \Zend\EventManager\EventInterface{
      * Set a single parameter by key
      * @param string $sName
      * @param mixed $sValue
-     * @return \Application\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
+     * @return \Database\Db\RowGateway\Feature\EventFeature\RowGatewayEvent
      */
     public function setParam($sName, $sValue){
         $this->params[$sName] = $sValue;

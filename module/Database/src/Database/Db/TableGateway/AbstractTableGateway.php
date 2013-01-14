@@ -1,5 +1,5 @@
 <?php
-namespace Application\Db\TableGateway;
+namespace Database\Db\TableGateway;
 abstract class AbstractTableGateway extends \Zend\Db\TableGateway\AbstractTableGateway{
 	/**
 	 * @var array

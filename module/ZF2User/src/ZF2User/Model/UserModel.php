@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Model;
-class UserModel extends \Application\Db\TableGateway\TableGateway{
+class UserModel extends \Database\Db\TableGateway\TableGateway{
 	/** User state */
 	const USER_STATUS_PENDING = 'PENDING';
 	const USER_STATUS_ACTIVE = 'ACTIVE';

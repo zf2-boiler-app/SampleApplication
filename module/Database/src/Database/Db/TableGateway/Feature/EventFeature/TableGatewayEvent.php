@@ -1,7 +1,7 @@
 <?php
-namespace Application\Db\TableGateway\Feature\EventFeature;
+namespace Database\Db\TableGateway\Feature\EventFeature;
 class TableGatewayEvent extends \Zend\Db\TableGateway\Feature\EventFeature\TableGatewayEvent{
-    
+
     /**
      * Set the event name
      * @param string $sName
@@ -14,7 +14,7 @@ class TableGatewayEvent extends \Zend\Db\TableGateway\Feature\EventFeature\Table
     /**
      * Set the event target/context
      * @param null|string|object $sTarget
-     * @return \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
+     * @return \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
      */
     public function setTarget($oTarget){
         $this->target = $oTarget;
@@ -24,7 +24,7 @@ class TableGatewayEvent extends \Zend\Db\TableGateway\Feature\EventFeature\Table
     /**
      * Set event parameters
      * @param array|\ArrayAccess $aParams
-     * @return \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
+     * @return \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
      */
     public function setParams($aParams){
         $this->params = $aParams;
@@ -35,7 +35,7 @@ class TableGatewayEvent extends \Zend\Db\TableGateway\Feature\EventFeature\Table
      * Set a single parameter by key
      * @param string $sName
      * @param mixed $sValue
-     * @return \Application\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
+     * @return \Database\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
      */
     public function setParam($sName, $sValue){
         $this->params[$sName] = $sValue;
