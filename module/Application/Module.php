@@ -20,7 +20,7 @@ class Module{
     		\Zend\Mvc\MvcEvent::EVENT_RENDER,
     		array($this, 'onRender')
     	);
-    	
+
     	//Process for error MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
     		\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,
@@ -33,15 +33,38 @@ class Module{
      */
     public function onRender(\Zend\Mvc\MvcEvent $oEvent){
     	if(!$oEvent->getRequest()->isXmlHttpRequest()){
-	    	//Set header view
+    		//Define layout
+    		$aConfiguration = $oEvent->getApplication()->getServiceManager()->get('config');
+    		if(!isset($aConfiguration['view_manager']['specialLayout']) || !is_array($aConfiguration['view_manager']['specialLayout']))throw new \Exception('Special Layout config is undefined');
+    		$oLayoutView = new \Zend\View\Model\ViewModel();
+
+    		//Set header view
 	    	$oHeaderView = new \Zend\View\Model\ViewModel();
 	    	if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
-		    	$oHeaderView->setTemplate('header/logged');
-		    	$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
+	    		//Prevent from session value error
+				try{
+					$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
+					$oHeaderView->setTemplate('header/logged');
+				}
+				catch(\Exception $oException){
+					$oHeaderView->setTemplate('header/unlogged');
+				}
 	    	}
 	    	else $oHeaderView->setTemplate('header/unlogged');
 	    	$oEvent->getViewModel()->addChild($oHeaderView,'header');
-	    	
+
+	    	//Set header view
+	    	$oFooterView = new \Zend\View\Model\ViewModel();
+	    	$oEvent->getViewModel()->addChild($oFooterView->setTemplate('footer/footer'),'footer');
+
+	    	$oEvent->getViewModel()->addChild(
+	    		$oLayoutView->setTemplate(isset($aConfiguration['view_manager']['specialLayout'][$oEvent->getRouteMatch()->getMatchedRouteName()])
+	    			?$aConfiguration['view_manager']['specialLayout'][$oEvent->getRouteMatch()->getMatchedRouteName()]
+	    			:$aConfiguration['view_manager']['specialLayout']['default']
+	    		),
+	    		'specialLayout'
+	    	);
+
 	    	//Js Controller view helper
 	    	$oServiceManager = $oEvent->getApplication()->getServiceManager();
 	    	$aConfiguration = $oServiceManager->get('Config');
@@ -50,7 +73,7 @@ class Module{
 	    	});
     	}
     }
-    
+
     /**
      * @param \Zend\Mvc\MvcEvent $oEvent
      */

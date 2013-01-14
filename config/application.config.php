@@ -6,7 +6,8 @@ return array(
     	'DluTwBootstrap',
     	'ZF2User',
     	'Logger',
-    	'Messenger'
+    	'Messenger',
+    	'Blog'
     ),
     'module_listener_options' => array(
         'config_glob_paths' => array( 'config/autoload/{,*.}{global,local,private}.php'),

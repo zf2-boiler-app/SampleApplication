@@ -6,22 +6,6 @@ CREATE SCHEMA IF NOT EXISTS `zf2base` DEFAULT CHARACTER SET latin1 ;
 USE `zf2base` ;
 
 -- -----------------------------------------------------
--- Table `zf2base`.`users`
--- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `zf2base`.`users` (
-  `user_id` INT(11) NOT NULL AUTO_INCREMENT ,
-  `user_email` VARCHAR(250) NOT NULL ,
-  `user_password` VARCHAR(32) NOT NULL ,
-  `user_registration_key` VARCHAR(13) NOT NULL ,
-  `user_state` ENUM('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING' ,
-  `entity_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  `entity_update` TIMESTAMP NULL DEFAULT NULL ,
-  PRIMARY KEY (`user_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `zf2base`.`logs`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `zf2base`.`logs` (
@@ -36,13 +20,7 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`logs` (
   `log_controller_name` VARCHAR(250) NULL DEFAULT NULL ,
   `log_action_name` VARCHAR(50) NULL DEFAULT NULL ,
   `log_ending` TIMESTAMP NULL DEFAULT NULL ,
-  PRIMARY KEY (`log_id`) ,
-  INDEX `users_user_id_idx` (`log_user_id` ASC) ,
-  CONSTRAINT `users_user_id`
-    FOREIGN KEY (`log_user_id` )
-    REFERENCES `zf2base`.`users` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`log_id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -62,6 +40,22 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`errors` (
     REFERENCES `zf2base`.`logs` (`log_id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `zf2base`.`users`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `zf2base`.`users` (
+  `user_id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `user_email` VARCHAR(250) NOT NULL ,
+  `user_password` VARCHAR(32) NOT NULL ,
+  `user_registration_key` VARCHAR(13) NOT NULL ,
+  `user_state` ENUM('PENDING','ACTIVE','DELETE') NOT NULL DEFAULT 'PENDING' ,
+  `entity_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `entity_update` TIMESTAMP NULL DEFAULT NULL ,
+  PRIMARY KEY (`user_id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 

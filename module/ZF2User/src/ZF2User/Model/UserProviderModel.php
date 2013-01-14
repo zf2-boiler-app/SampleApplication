@@ -1,6 +1,6 @@
 <?php
 namespace ZF2User\Model;
-class UserProviderModel extends \Application\Db\TableGateway\AbstractTableGateway{
+class UserProviderModel extends \Application\Db\TableGateway\TableGateway{
 	private $userModel;
 
 	/**
