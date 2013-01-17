@@ -39,6 +39,9 @@ class Module{
 	    	$oEvent->getApplication()->getServiceManager()->get('viewhelpermanager')->setFactory('jsController', function() use($oEvent,$aConfiguration,$oServiceManager){
 	    		return new \Application\View\Helper\JsControllerHelper($oEvent->getRouteMatch(),$aConfiguration['router']['routes'],$oServiceManager);
 	    	});
+
+	    	//Set matchedRouteName var to layout
+	    	$oEvent->getViewModel()->setVariable('matchedRouteName', $oEvent->getMvcEvent()->getRouteMatch()->getMatchedRouteName());
     	}
     }
 

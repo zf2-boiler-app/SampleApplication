@@ -1,9 +1,19 @@
-<header data-behavior="BS.Dropdown BS.DismissPopup"><?=$this->layout()->header?></header>
+<header data-behavior="BS.Dropdown BS.DismissPopup">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<a class="brand" href="<?=$this->url('home')?>"><?=$this->translate('application_name')?></a>
+			<ul class="nav">
+				<li <?=$this->layout()->matchedRouteName === 'home'?' class="active"':''?>><a href="<?=$this->url('home')?>"><?=$this->translate('home')?></a></li>
+			</ul>
+			<?=$this->header?>
+		</div>
+	</div>
+</header>
 <div class="container" data-behavior="BS.Dropdown BS.DismissPopup">
 	<!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
 	<div class="row-fluid">
 		<div class="span12"><?=$this->layout()->content?></div>
 	</div>
 	<hr>
-	<footer><?=$this->layout()->footer?></footer>
+	<footer><?=$this->footer?></footer>
 </div>

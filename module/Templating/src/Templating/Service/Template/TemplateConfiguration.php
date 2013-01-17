@@ -2,33 +2,33 @@
 namespace Templating\Service\Template;
 class TemplateConfiguration extends \Zend\Stdlib\AbstractOptions{
 	/**
-	 * @var string
+	 * @var string|callable
 	 */
-	protected $layout;
+	protected $template;
 
 	/**
 	 * @var array
 	 */
-	protected $children;
+	protected $children = array();
 
 	/**
-	 * @param string $sLayout
+	 * @param string|callable $sTemplate
 	 * @throws \Exception
 	 * @return \Templating\Service\Template\TemplateConfiguration
 	 */
-	public function setLayout($sLayout){
-		if(!is_string($sLayout))throw new \Exception('Layout expects string, '.gettype($sModule).' given');
-		$this->layout = $sLayout;
+	public function setTemplate($sTemplate){
+		if(!is_string($sTemplate) && !is_callable($sTemplate))throw new \Exception('Template expects string or callable, '.gettype($sModule).' given');
+		$this->template = $sTemplate;
 		return $this;
 	}
 
 	/**
 	 * @throws \Exception
-	 * @return string
+	 * @return string|callable
 	 */
-	public function getLayout(){
-		if(is_string($this->layout))return $this->layout;
-		throw new \Exception('Layout is undefined');
+	public function getTemplate(){
+		if(is_string($this->template) || is_callable($this->template))return $this->template;
+		throw new \Exception('Template is undefined');
 	}
 
 	/**

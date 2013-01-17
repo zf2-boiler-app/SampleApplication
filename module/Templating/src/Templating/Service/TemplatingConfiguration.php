@@ -50,8 +50,8 @@ class TemplatingConfiguration extends \Zend\Stdlib\AbstractOptions{
 		if($oTemplateConfiguration instanceof \Traversable)$oTemplateConfiguration = \Zend\Stdlib\ArrayUtils::iteratorToArray($oTemplateConfiguration);
 
 		if(is_array($oTemplateConfiguration))$oTemplateConfiguration = new \Templating\Service\Template\TemplateConfiguration($oTemplateConfiguration);
-		elseif(is_string($oTemplateConfiguration))$oTemplateConfiguration = new \Templating\Service\Template\TemplateConfiguration(array(
-			'layout' => $oTemplateConfiguration
+		elseif(is_string($oTemplateConfiguration) || is_callable($oTemplateConfiguration))$oTemplateConfiguration = new \Templating\Service\Template\TemplateConfiguration(array(
+			'template' => $oTemplateConfiguration
 		));
 		if(!($oTemplateConfiguration instanceof \Templating\Service\Template\TemplateConfiguration))throw new \Exception(sprintf(
 			'% expects an array, Traversable object, string or \Templating\Service\Template\TemplateConfiguration object ; received "%s"',

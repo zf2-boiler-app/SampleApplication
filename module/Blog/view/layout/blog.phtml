@@ -1,9 +1,29 @@
 <div class="container" data-behavior="BS.Dropdown BS.DismissPopup">
-	<header data-behavior="BS.Dropdown BS.DismissPopup"><?=$this->layout()->header?></header>
+	<header data-behavior="BS.Dropdown BS.DismissPopup">
+		<div class="row">
+			<div class="span6">
+				<h1><?=$this->translate('application_name')?></h1>
+				<p class="lead"><?=$this->translate('blog_description')?></p>
+			</div>
+		</div>
+		<div class="navbar">
+			<div class="navbar-inner">
+				<ul class="nav">
+					<li><a href="<?=$this->url('blog/home')?>" <?=$this->layout()->matchedRouteName === 'blog/home'?' class="active"':''?>><?=$this->translate('home')?></a></li>
+					<li><a href="<?=$this->url('blog/news')?>" <?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><?=$this->translate('news')?></a></li>
+				</ul>
+				<?=$this->header?>
+			    <form class="navbar-search pull-right">
+			    	<input type="text" class="search-query" placeholder="<?=$this->translate('search')?>">
+			    </form>
+			</div>
+		</div>
+
+	</header>
 	<!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
 	<div class="row-fluid">
 		<div class="span12"><?=$this->layout()->content?></div>
 	</div>
 	<hr>
-	<footer><?=$this->layout()->footer?></footer>
+	<footer><?=$this->footer?></footer>
 </div>

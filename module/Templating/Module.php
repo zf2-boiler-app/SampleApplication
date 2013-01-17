@@ -1,6 +1,15 @@
 <?php
 namespace Templating;
 class Module{
+
+	/**
+	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 */
+	public function onBootstrap(\Zend\Mvc\MvcEvent $oEvent){
+		//Initialize templating service
+		$oEvent->getApplication()->getServiceManager()->get('TemplatingService');
+	}
+
 	/**
      * @return array
      */

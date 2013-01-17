@@ -12,6 +12,11 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	protected $configuration;
 
 	/**
+	 * @var \Zend\Mvc\MvcEvent
+	 */
+	protected $currentEvent;
+
+	/**
 	 * Constructor
 	 */
 	private function __construct(){
@@ -79,6 +84,32 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	}
 
 	/**
+	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 * @return \Templating\Service\TemplatingService
+	 */
+	protected function setCurrentEvent(\Zend\Mvc\MvcEvent $oEvent){
+		$this->currentEvent = $oEvent;
+		return $this;
+	}
+
+	/**
+	 * @return \Templating\Service\TemplatingService
+	 */
+	protected function unsetCurrentEvent(){
+		$this->currentEvent = null;
+		return $this;
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return \Zend\Mvc\MvcEvent
+	 */
+	protected function getCurrentEvent(){
+		if($this->currentEvent instanceof \Zend\Mvc\MvcEvent)return $this->currentEvent;
+		throw new \Exception('Current event is undefined');
+	}
+
+	/**
 	 * Define layout template
 	 * @param \Zend\Mvc\MvcEvent $oEvent
 	 * @return \Templating\Service\TemplatingService
@@ -86,21 +117,30 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	public function buildLayoutTemplate(\Zend\Mvc\MvcEvent $oEvent){
 		if($oEvent->getRequest()->isXmlHttpRequest())return $this;
 
-		$sModule = $oEvent->getControllerClass();
-		$oTemplate = $this->getConfiguration()->getTemplateMapForModule($sModule);
+		//Define current event
+		$this->setCurrentEvent($oEvent);
 
-		//Define layout
-		$oLayoutView = $this->setChildrenToView(new \Zend\View\Model\ViewModel(),$oTemplate->getChildren());
+		//Define module Name
 
-		//Set header view
-		$oFooterView = new \Zend\View\Model\ViewModel();
-		$oEvent->getViewModel()->addChild($oFooterView->setTemplate('footer/footer'),'footer');
+		/* @var $oRouter \Zend\Mvc\Router\RouteMatch */
+		$oRouter = $this->getCurrentEvent()->getRouteMatch();
+		if($oRouter instanceof \Zend\Mvc\Router\RouteMatch)$sModule = current(explode('\\',$oRouter->getParam('controller')));
+		if(!$sModule)$sModule = \Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP;
 
-		$oEvent->getViewModel()->addChild(
-			$oLayoutView->setTemplate($oTemplate->getConfiguration()->getLayout()),
-			'specialLayout'
+		//Retrieve template for module
+		$oTemplate = $this->getConfiguration()->hasTemplateMapForModule($sModule)
+			?$this->getConfiguration()->getTemplateMapForModule($sModule)
+			:$this->getConfiguration()->getTemplateMapForModule(\Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP);
+
+		//Set layout template and add its children
+		$sTemplate = $oTemplate->getConfiguration()->getTemplate();
+		if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
+		$this->setChildrenToView(
+			$oEvent->getViewModel()->setTemplate($sTemplate),
+			$oTemplate->getChildren()
 		);
-		return $this;
+		//Reset current event
+		return $this->unsetCurrentEvent();
 	}
 
 	/**
@@ -109,14 +149,16 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	protected function setChildrenToView(\Zend\View\Model\ViewModel $oParentView, array $aChildren){
-		foreach($aChildren as $sChildrenName => $sChildrenView){
-			$oChildrenView = new \Zend\View\Model\ViewModel();
-			if(is_string($sChildrenView))$oChildrenView->setTemplate($sChildrenView);
-			elseif($sChildrenView instanceof \Templating\Service\Template\Template)$oChildrenView = $this->setChildrenToView(
-				$oChildrenView->setTemplate($sChildrenView->getConfiguration()->getLayout()),
-				$sChildrenView->getChildren()
+		foreach($aChildren as $sChildrenName => $oChildrenTemplate){
+			$sTemplate = $oChildrenTemplate->getConfiguration()->getTemplate();
+			if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
+			$oParentView->addChild(
+				$this->setChildrenToView(
+					new \Zend\View\Model\ViewModel(),
+					$oChildrenTemplate->getChildren()
+				)->setTemplate($sTemplate),
+				$sChildrenName
 			);
-			$oParentView->addChild($oChildrenView,$sChildrenName);
 		}
 		return $oParentView;
 	}
