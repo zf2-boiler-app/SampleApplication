@@ -1,7 +1,7 @@
 <?php
 return array(
 	'blog' => 'Blog',
-	'blog_description' => 'Simple and minimalist.',
+	'blog_description' => 'Le Blog',
 
 	'news' => 'News',
 

@@ -40,8 +40,10 @@ class Module{
 	    		return new \Application\View\Helper\JsControllerHelper($oEvent->getRouteMatch(),$aConfiguration['router']['routes'],$oServiceManager);
 	    	});
 
+	    	/* TODO Remove Error log */error_log(print_r($oEvent->getRouteMatch()->getMatchedRouteName(),true));
+
 	    	//Set matchedRouteName var to layout
-	    	$oEvent->getViewModel()->setVariable('matchedRouteName', $oEvent->getMvcEvent()->getRouteMatch()->getMatchedRouteName());
+	    	$oEvent->getViewModel()->setVariable('matchedRouteName', $oEvent->getRouteMatch()->getMatchedRouteName());
     	}
     }
 

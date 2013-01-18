@@ -8,16 +8,29 @@ return array(
 					'route' => '/blog',
 					'defaults' => array(
 						'controller' => 'Blog\Controller\Index',
-						'action' => 'index',
-					),
+						'action' => 'index'
+					)
 				),
-				'may_terminate' => true
+				'may_terminate' => true,
+				'child_routes' => array(
+					'news' => array(
+						'type' => 'Zend\Mvc\Router\Http\Literal',
+						'options' => array(
+							'route' => '/news',
+							'defaults' => array(
+								'controller' => 'Blog\Controller\News',
+								'action' => 'index'
+							)
+						)
+					)
+				)
 			)
 		)
 	),
 	'controllers' => array(
 		'invokables' => array(
-			'Blog\Controller\Index' => 'Blog\Controller\IndexController'
+			'Blog\Controller\Index' => 'Blog\Controller\IndexController',
+			'Blog\Controller\News' => 'Blog\Controller\NewsController'
 		),
 	),
 	'translator' => array(

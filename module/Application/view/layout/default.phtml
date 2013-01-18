@@ -3,7 +3,7 @@
 		<div class="navbar-inner">
 			<a class="brand" href="<?=$this->url('home')?>"><?=$this->translate('application_name')?></a>
 			<ul class="nav">
-				<li <?=$this->layout()->matchedRouteName === 'home'?' class="active"':''?>><a href="<?=$this->url('home')?>"><?=$this->translate('home')?></a></li>
+				<li<?=$this->layout()->matchedRouteName === 'home'?' class="active"':''?>><a href="<?=$this->url('home')?>"><?=$this->translate('home')?></a></li>
 			</ul>
 			<?=$this->header?>
 		</div>

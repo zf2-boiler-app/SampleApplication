@@ -9,8 +9,8 @@
 		<div class="navbar">
 			<div class="navbar-inner">
 				<ul class="nav">
-					<li><a href="<?=$this->url('blog/home')?>" <?=$this->layout()->matchedRouteName === 'blog/home'?' class="active"':''?>><?=$this->translate('home')?></a></li>
-					<li><a href="<?=$this->url('blog/news')?>" <?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><?=$this->translate('news')?></a></li>
+					<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>><a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a></li>
+					<li<?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><a href="<?=$this->url('blog/news')?>"><?=$this->translate('news')?></a></li>
 				</ul>
 				<?=$this->header?>
 			    <form class="navbar-search pull-right">
