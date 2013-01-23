@@ -8,16 +8,10 @@ Introduction
 
 Easy to start a new application
 
-Requirements
-------------
-
-* [Zend Framework 2](https://github.com/zendframework/zf2) (latest master)
-
 Installation
 ------------
 
-Using Composer (recommended)
-----------------------------
+###### Using Composer (recommended)
 
 Clone the repository and manually invoke `composer` using the shipped
 `composer.phar`:
@@ -40,17 +34,20 @@ then pass it to `tar`:
 You would then invoke `composer` to install dependencies per the previous
 example.
 
-Using Git submodules
---------------------
+###### Using Git submodules
+
 Alternatively, you can install using native git submodules:
 
     git clone git://github.com/neilime/zf2-skeleton-app.git --recursive
 
-Virtual Host
-------------
+###### Virtual Host
+
 Afterwards, set up a virtual host to point to the public/ directory of the
 project and you should be ready to go!
 
+###### Configuration
+
+Edit config/autoload/local.php file to set your own configuration
 
 In app features
 ------------
@@ -97,6 +94,7 @@ In app features
 
 ###### Commons
 
+* Social integration
 * Twitter bootstrap
 * CkEditor
 * Multi translations files 
