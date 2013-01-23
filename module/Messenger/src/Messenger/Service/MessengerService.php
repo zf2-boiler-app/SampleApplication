@@ -149,8 +149,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 					$this->configuration['system_user']['email'],
 					$this->configuration['system_user']['name']
 				);
-				elseif($oFrom instanceof \ZF2User\Entity\UserEntity)$oFormatMessage->setFrom($oFrom->getUserEmail());
-				else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \ZF2User\Entity\UserEntity');
+				elseif($oFrom instanceof \User\Entity\UserEntity)$oFormatMessage->setFrom($oFrom->getUserEmail());
+				else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 				
 				//To Recipiants
 				foreach($oMessage->getTo() as $oTo){
@@ -158,8 +158,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 						$this->configuration['system_user']['email'],
 						$this->configuration['system_user']['name']
 					);
-					elseif($oTo instanceof \ZF2User\Entity\UserEntity)$oFormatMessage->addTo($oTo->getUserEmail());
-					else throw new \Exception('To Recipiant expects \Messenger\Message::SYSTEM_USER or \ZF2User\Entity\UserEntity');
+					elseif($oTo instanceof \User\Entity\UserEntity)$oFormatMessage->addTo($oTo->getUserEmail());
+					else throw new \Exception('To Recipiant expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 				}
 				
 				//Subject

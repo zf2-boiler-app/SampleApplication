@@ -1,0 +1,18 @@
+<?php if($this->emailChanged === true){ ?>
+<div class="alert alert-success">
+	<?=$this->translate('email_has_been_changed_email_has_been_sent')?>
+</div>
+<button class="btn btn-small btn-primary pull-right" type="button" data-dismiss="modal"><?=$this->translate('close_modal')?></button>
+<?php }
+else{
+	echo $this->form($this->form,null,array(
+		'ajax' => true,
+		'elements' => array(
+			'submit' => array('class' => 'btn-large')
+		)
+	));
+?>
+<script type="text/javascript">
+	document.id('user_new_email').focus();
+</script>
+<?php } ?>

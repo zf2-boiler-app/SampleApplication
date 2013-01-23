@@ -44,7 +44,7 @@ class JsControllerHelper extends \Zend\View\Helper\AbstractHelper implements \Ze
 
 	/**
 	 * @param \Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator
-	 * @return \ZF2User\Service\UserService
+	 * @return \Application\View\Helper\JsController
 	 */
 	public function setServiceLocator(\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
 		$this->serviceLocator = $oServiceLocator;

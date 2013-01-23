@@ -167,10 +167,10 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 
 	/**
 	 * Start loggin process
-	 * @param \Zend\Stdlib\RequestInterface $oRequest
+	 * @param \Zend\Http\Request $oRequest
 	 * @return \Logger\Service\LoggerService
 	 */
-	public function start(\Zend\Stdlib\RequestInterface $oRequest){
+	public function start(\Zend\Http\Request $oRequest){
 		self::$currentId = $this->getAdapter(self::LOG_TYPE_MVC_ACTION)->started(self::$currentId,new \DateTime(),$oRequest)->getLogId();
 		return $this;
 	}

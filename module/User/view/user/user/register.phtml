@@ -1,0 +1,18 @@
+<h3><?=$this->layout()->title?></h3>
+<?php if($this->isValid === true){ ?>
+<div class="alert alert-success">
+	<?=$this->translate('registration_completed_now_confirm_email')?>
+</div>
+<?php } else{
+	if(!empty($this->error))echo '<div class="alert alert-error">'.$this->error.'</div>';
+	echo $this->formTwb($this->form,null,array('elements' => array(
+		'submit' => array('class' => 'btn-large')
+	)));
+?>
+<fieldset>
+	<legend><?=$this->translate('or_use_another_service')?></legend>
+    <a class="btn btn-mini" href="<?=$this->url('User/register',array('service'=>'facebook'))?>"><i class="icon-facebook"></i> Facebook</a>
+    <a class="btn btn-mini" href="<?=$this->url('User/register',array('service'=>'twitter'))?>"><i class="icon-twitter"></i> Twitter</a>
+    <a class="btn btn-mini" href="<?=$this->url('User/register',array('service'=>'google'))?>"><i class="icon-google-plus"></i> Google+</a>
+</fieldset>
+<?php } ?>

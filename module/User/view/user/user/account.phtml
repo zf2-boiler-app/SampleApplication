@@ -1,0 +1,8 @@
+<h3><?=$this->layout()->title?></h3>
+<dl class="dl-horizontal">
+	<dt><?=$this->translate('email')?> :</dt>
+	<dd><?=$this->user->getUserEmail()?> | <a href="#" onclick="oController.changeUserEmail();return false;"><?=$this->translate('change_email')?></a></dd>
+	<dt><?=$this->translate('password')?> :</dt>
+	<dd><a href="#" onclick="oController.changeUserPassword();return false;"><?=$this->translate('change_password')?></a></dd>
+</dl>
+<a class="btn btn-small btn-danger" href="<?=$this->url('User/delete-account')?>" onclick="return confirm(oController.translate('confirm_delete_account'));"><?=$this->translate('delete_account')?></a>

@@ -115,7 +115,8 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 * @return \Templating\Service\TemplatingService
 	 */
 	public function buildLayoutTemplate(\Zend\Mvc\MvcEvent $oEvent){
-		if($oEvent->getRequest()->isXmlHttpRequest())return $this;
+		$oRequest = $oEvent->getRequest();
+		if(!($oRequest instanceof \Zend\Http\Request) || $oRequest->isXmlHttpRequest())return $this;
 
 		//Define current event
 		$this->setCurrentEvent($oEvent);

@@ -1,12 +1,13 @@
 <?php
 return array(
     'modules' => array(
+    	'ZFTool',
         'Application',
     	'Database',
     	'Templating',
     	'Neilime\AssetsBundle',
     	'DluTwBootstrap',
-    	'ZF2User',
+    	'User',
     	'Logger',
     	'Messenger',
     	'Blog'

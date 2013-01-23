@@ -1,5 +1,5 @@
 {
-    "name": "Neilime/ZF2Base",
+    "name": "ZF2 Skeleton App",
     "description": "ZF2 base project",
     "minimum-stability": "dev",
     "authors": [
@@ -40,7 +40,10 @@
     "require": {
         "php": ">=5.3.3",
         "ext-fileinfo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
         "zendframework/zendframework": "dev-master",
+        "zendframework/zftool": "dev-master",
         "neilime/zf2-assets-bundle": "dev-master",
         "twitter/bootstrap": "dev-master",
         "fortawesome/font-awesome": "dev-master",

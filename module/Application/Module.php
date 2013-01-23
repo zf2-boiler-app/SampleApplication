@@ -32,15 +32,14 @@ class Module{
      * @param \Zend\Mvc\MvcEvent $oEvent
      */
     public function onRender(\Zend\Mvc\MvcEvent $oEvent){
-    	if(!$oEvent->getRequest()->isXmlHttpRequest()){
+    	$oRequest = $oEvent->getRequest();
+    	if($oRequest instanceof \Zend\Http\Request && !$oRequest->isXmlHttpRequest()){
 	    	//Js Controller view helper
 	    	$oServiceManager = $oEvent->getApplication()->getServiceManager();
 	    	$aConfiguration = $oServiceManager->get('Config');
 	    	$oEvent->getApplication()->getServiceManager()->get('viewhelpermanager')->setFactory('jsController', function() use($oEvent,$aConfiguration,$oServiceManager){
 	    		return new \Application\View\Helper\JsControllerHelper($oEvent->getRouteMatch(),$aConfiguration['router']['routes'],$oServiceManager);
 	    	});
-
-	    	/* TODO Remove Error log */error_log(print_r($oEvent->getRouteMatch()->getMatchedRouteName(),true));
 
 	    	//Set matchedRouteName var to layout
 	    	$oEvent->getViewModel()->setVariable('matchedRouteName', $oEvent->getRouteMatch()->getMatchedRouteName());
@@ -51,7 +50,8 @@ class Module{
      * @param \Zend\Mvc\MvcEvent $oEvent
      */
      public function onError(\Zend\Mvc\MvcEvent $oEvent){
-     	if($oEvent->getRequest()->isXmlHttpRequest())$oEvent->getResult()->setTerminal(true);
+     	$oRequest = $oEvent->getRequest();
+     	if(!($oRequest instanceof \Zend\Http\Request) || $oRequest->isXmlHttpRequest())$oEvent->getResult()->setTerminal(true);
     }
 
     /**

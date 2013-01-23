@@ -4,7 +4,7 @@ class Message{
 	const SYSTEM_USER = 'system';
 	
 	/**
-	 * @var \ZF2User\Entity\UserEntity|string
+	 * @var \User\Entity\UserEntity|string
 	 */
 	protected $from;
 	
@@ -27,19 +27,19 @@ class Message{
 	
 	/**
 	 * Set From sender
-	 * @param \ZF2User\Entity\UserEntity|string $oFrom
+	 * @param \User\Entity\UserEntity|string $oFrom
 	 * @throws \Exception
 	 * @return \Messenger\Message
 	 */
 	public function setFrom($oFrom = self::SYSTEM_USER){
-		if($oFrom === self::SYSTEM_USER || $oFrom instanceof \ZF2User\Entity\UserEntity)$this->from = $oFrom;
-		else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \ZF2User\Entity\UserEntity');
+		if($oFrom === self::SYSTEM_USER || $oFrom instanceof \User\Entity\UserEntity)$this->from = $oFrom;
+		else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 		return $this;
 	}
 
 	/**
 	 * Retrieve From sender
-	 * @return \ZF2User\Entity\UserEntity|string
+	 * @return \User\Entity\UserEntity|string
 	 */
 	public function getFrom(){
 		return $this->from;
@@ -47,7 +47,7 @@ class Message{
 
 	/**
 	 * Set To recipients
-	 * @param \ZF2User\Entity\UserEntity|string|array $aTo
+	 * @param \User\Entity\UserEntity|string|array $aTo
 	 * @throws \Exception
 	 * @return \Messenger\Message
 	 */
@@ -58,19 +58,19 @@ class Message{
 
 	/**
 	 * Add one or more recipients to the To recipients
-	 * @param \ZF2User\Entity\UserEntity|string|array $aTo
+	 * @param \User\Entity\UserEntity|string|array $aTo
 	 * @throws \Exception
 	 * @return \Messenger\Message
 	 */
 	public function addTo($aTo){
-		if($aTo === self::SYSTEM_USER || $aTo instanceof \ZF2User\Entity\UserEntity)$aTo = array($aTo);
+		if($aTo === self::SYSTEM_USER || $aTo instanceof \User\Entity\UserEntity)$aTo = array($aTo);
 		elseif($aTo instanceof \Traversable)$aTo = \Zend\Stdlib\ArrayUtils::iteratorToArray($aTo);
-		elseif(!is_array($aTo))throw new \Exception('To recipients expects \Messenger\Message::SYSTEM_USER, \ZF2User\Entity\UserEntity, array or Traversable object');
+		elseif(!is_array($aTo))throw new \Exception('To recipients expects \Messenger\Message::SYSTEM_USER, \User\Entity\UserEntity, array or Traversable object');
 		$this->to = array_unique(array_merge(
 			$this->to,
 			array_filter($aTo,function($oTo){
-				if($oTo === self::SYSTEM_USER || $oTo instanceof \ZF2User\Entity\UserEntity)return true;
-				else throw new \Exception('Recipient expects \Messenger\Message::SYSTEM_USER or \ZF2User\Entity\UserEntity');
+				if($oTo === self::SYSTEM_USER || $oTo instanceof \User\Entity\UserEntity)return true;
+				else throw new \Exception('Recipient expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 			})
 		));		
 		return $this;
