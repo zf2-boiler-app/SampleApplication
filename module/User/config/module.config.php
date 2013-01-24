@@ -173,7 +173,7 @@ return array(
 	),
 	'asset_bundle' => array(
     	'assets' => array(
-    		'User' => array(
+    		'user' => array(
     			'User\Controller\User' => array(
     				'js' => array(
 	    				'js/User/Controller/UserController.js'
@@ -240,5 +240,13 @@ return array(
        	'invokables' => array(
         	'userMustBeLoggedIn' => 'User\Mvc\Controller\Plugin\UserMustBeLoggedInPlugin',
        	)
-    )
+    ),
+	'view_helpers' => array(
+		'factories' => array(
+			'userAvatar' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				$oUserAvavatarHelper = new \User\View\Helper\UserAvatarHelper();
+				return $oUserAvavatarHelper->setAvatarsPath(getcwd().'/data/avatars');
+			}
+		)
+	)
 );

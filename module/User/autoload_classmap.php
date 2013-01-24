@@ -49,5 +49,8 @@ return array(
 
 	//Validators
 	'User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/User/Validator/EmailAddressAvailabilityValidator.php',
-	'User\Validator\UserLoggedPasswordValidator' => __DIR__.'/src/User/Validator/UserLoggedPasswordValidator.php'
+	'User\Validator\UserLoggedPasswordValidator' => __DIR__.'/src/User/Validator/UserLoggedPasswordValidator.php',
+
+	//View helpers
+	'User\View\Helper\UserAvatarHelper' => __DIR__.'/src/User/View/Helper/UserAvatarHelper.php'
 );

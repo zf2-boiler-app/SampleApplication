@@ -20,7 +20,8 @@ class ChangeEmailForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'required' => true,
 				'class' => 'required validate-email emailIsAvailable',
-				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));'
+				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));',
+				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'email'

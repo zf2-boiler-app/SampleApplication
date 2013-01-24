@@ -16,7 +16,8 @@ class LoginForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'placeholder' => 'email',
 				'required' => true,
-				'class' => 'required validate-email'
+				'class' => 'required validate-email',
+				'autofocus' => 'autofocus'
 			)
 		))
 		->add(array(

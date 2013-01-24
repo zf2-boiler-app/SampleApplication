@@ -12,7 +12,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		parent::__construct('register',$aOptions);
 		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		if(!isset($this->options['checkUserEmailAvailability']))throw new \Exception('Option "checkUserEmailAvailability" is undefined');
-		
+
 		$oCaptchaImage = new \Zend\Captcha\Image(array(
 			'font' =>  './data/fonts/ARIAL.ttf',
 			'fsize' => 30,
@@ -29,7 +29,9 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'required' => true,
 				'class' => 'required validate-email emailIsAvailable',
-				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));'
+				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));',
+				'autocomplete' => 'off',
+				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'email'
@@ -40,7 +42,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'type'  => 'password',
 				'required' => true,
-				'class' => 'required maxLength:32'
+				'class' => 'required maxLength:32',
+				'autocomplete' => 'off'
 			),
 			'options' => array(
 				'label' => 'password'
@@ -51,7 +54,8 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'type'  => 'password',
 				'class' => 'required validate-match matchInput:\'user_password\' matchName:\''.$this->translate('password').'\'',
-				'required' => true
+				'required' => true,
+				'autocomplete' => 'off'
 			),
 			'options' => array(
 				'label' => 'confirm_password'
@@ -63,6 +67,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'required' => true,
 				'placeholder' => sprintf($this->translate('enter_the_x_characters'),$oCaptchaImage->getWordlen()),
+				'autocomplete' => 'off'
 			),
 			'options' => array(
 				'label' => 'im_not_a_robot',

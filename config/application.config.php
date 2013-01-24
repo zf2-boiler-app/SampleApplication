@@ -5,7 +5,7 @@ return array(
         'Application',
     	'Database',
     	'Templating',
-    	'Neilime\AssetsBundle',
+    	'AssetsBundle',
     	'DluTwBootstrap',
     	'User',
     	'Logger',

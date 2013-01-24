@@ -15,7 +15,8 @@ class ResetPasswordForm extends \Application\Form\AbstractForm{
 			'name' => 'user_email',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required validate-email'
+				'class' => 'required validate-email',
+				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'email'

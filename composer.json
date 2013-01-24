@@ -34,7 +34,7 @@
         },
         {
 		    "type": "vcs",
-		    "url": "http://github.com/Nodge/lessphp"
+		    "url": "http://github.com/neilime/lessphp"
 		}
     ],
     "require": {

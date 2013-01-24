@@ -1,3 +1,10 @@
-<li><a href="<?=$this->url('User/account')?>"><?=$this->translate('account')?></a></li>
-<li class="divider"></li>
-<li><a href="<?=$this->url('User/logout')?>"><?=$this->translate('logout')?></a></li>
+<ul class="nav pull-right">
+	<li class="menu">
+		<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?=$this->layout()->loggedUser->getUserEmail()?> <b class="caret"></b></a>
+		<ul class="dropdown-menu menu-dropdown">
+			<li><a href="<?=$this->url('User/account')?>"><?=$this->translate('account')?></a></li>
+			<li class="divider"></li>
+			<li><a href="<?=$this->url('User/logout')?>"><?=$this->translate('logout')?></a></li>
+		</ul>
+	</li>
+</ul>

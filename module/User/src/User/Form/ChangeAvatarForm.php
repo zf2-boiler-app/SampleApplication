@@ -17,7 +17,8 @@ class ChangeAvatarForm extends \Application\Form\AbstractForm{
 			'name' => 'user_new_avatar',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required'
+				'class' => 'required',
+				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'avatar'

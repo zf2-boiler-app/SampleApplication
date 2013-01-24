@@ -39,11 +39,11 @@ var UserControllerUser = {
 	 */
 	sendConfirmationEmail : function(sUserEmail){
 		if('string' !== typeof sUserEmail)throw 'User email expects string';
-		var eBody = document.id(document.body).spin();
 		new Modal.Popup({
 			'title':this.translate('resend_confirmation_email'),
 			'url':this.url('User/resend-confirmation-email'),
-			'data':{'email':sUserEmail}
+			'data':{'email':sUserEmail},
+			'method':'post'
 		});		
 	},
 	

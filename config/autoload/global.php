@@ -14,7 +14,7 @@ return array(
 	'asset_bundle' => array(
 		'production' => false,
 		'cachePath' => '@zfRootPath/public/assets/cache',
-		'assetPath' => '@zfRootPath/public/assets',
+		'assetsPath' => '@zfRootPath/public/assets',
 		'cacheUrl' => '@zfBaseUrl/assets/cache/',
 	)
 );

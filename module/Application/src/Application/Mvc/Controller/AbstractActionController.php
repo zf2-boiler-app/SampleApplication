@@ -1,6 +1,6 @@
 <?php
 namespace Application\Mvc\Controller;
-abstract class AbstractActionController extends \Neilime\AssetsBundle\Mvc\Controller\AbstractActionController{
+abstract class AbstractActionController extends \AssetsBundle\Mvc\Controller\AbstractActionController{
 	/**
 	 * @var array
 	 */
@@ -9,7 +9,7 @@ abstract class AbstractActionController extends \Neilime\AssetsBundle\Mvc\Contro
 		'Zend\View\Model\JsonModel' => array('application/json'),
 		'Zend\View\Model\FeedModel' => array('application/rss+xml')
 	);
-	
+
 	/**
 	 * @var \Zend\View\Model\ViewModel
 	 */

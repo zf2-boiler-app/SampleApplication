@@ -19,7 +19,8 @@ class ChangePasswordForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'type'  => 'password',
 				'required' => true,
-				'class' => 'required maxLength:32'
+				'class' => 'required maxLength:32',
+				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'current_password'
