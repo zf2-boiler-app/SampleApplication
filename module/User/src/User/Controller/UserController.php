@@ -50,9 +50,9 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		//Try to define redirect url
 		if(
 			empty($this->getServiceLocator()->get('Session')->redirect)
-			&& $sHttpReferer = $oRequest->getServer('HTTP_REFERER')
+			&& ($sHttpReferer = $this->getRequest()->getServer('HTTP_REFERER'))
 			&& is_array($aInfosUrl = parse_url($sHttpReferer))
-			&& $oRequest->getServer('HTTP_HOST') === $aInfosUrl['host']
+			&& $this->getRequest()->getServer('HTTP_HOST') === $aInfosUrl['host']
 		)$this->getServiceLocator()->get('Session')->redirect = $sHttpReferer;
 
 		return $this->view;
