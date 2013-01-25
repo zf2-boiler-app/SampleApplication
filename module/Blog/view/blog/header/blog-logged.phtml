@@ -1,0 +1,8 @@
+<div class="btn-group pull-right">
+	<button data-toggle="dropdown" class="btn btn-mini dropdown-toggle"><?=$this->layout()->loggedUser->getUserEmail()?> <span class="caret"></span></button>
+	<ul class="dropdown-menu">
+		<li><a href="<?=$this->url('User/account')?>"><?=$this->translate('account')?></a></li>
+		<li class="divider"></li>
+		<li><a href="<?=$this->url('User/logout')?>"><?=$this->translate('logout')?></a></li>
+	</ul>
+</div>

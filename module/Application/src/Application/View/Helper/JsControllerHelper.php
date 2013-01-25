@@ -77,14 +77,22 @@ class JsControllerHelper extends \Zend\View\Helper\AbstractHelper implements \Ze
 	 * @return
 	 */
 	public function __invoke(){
-		$sControllerName = $this->routeMatch?str_ireplace('\\','',$this->routeMatch->getParam('controller')):'NoController';
+		if($this->routeMatch){
+			$sControllerName = str_ireplace('\\','',$this->routeMatch->getParam('controller'));
+			$sControllerActionName = $sControllerName.ucfirst($this->routeMatch->getParam('action'));
+		}
+		else $sControllerName = $sControllerActionName = 'NoController';
+
 		return $this->getServiceLocator()->get('inlineScript')->__invoke(\Zend\View\Helper\HeadScript::SCRIPT)->appendScript('
 			var oControllerOptions = {
 				\'locale\':'.$this->getServiceLocator()->get('escapeJson')->__invoke(str_ireplace('_','-',$this->getServiceLocator()->getServiceLocator()->get('translator')->getLocale())).',
 	            \'texts\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($this->getTranslationMessages()).',
 				\'routes\':'.$this->getServiceLocator()->get('escapeJson')->__invoke($this->routes).',
 			};
-			oController = (\'undefined\' === typeof '.$sControllerName.')?new Controller(oControllerOptions):new '.$sControllerName.'(oControllerOptions);
+			var oController;
+			if(\'undefined\' !== typeof '.$sControllerActionName.')oController = new '.$sControllerActionName.'(oControllerOptions);
+			else if(\'undefined\' !== typeof '.$sControllerName.')oController = new '.$sControllerName.'(oControllerOptions);
+			else oController = new Controller(oControllerOptions);
 		');
 	}
 }

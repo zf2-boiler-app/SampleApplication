@@ -2,12 +2,11 @@
 namespace User\Controller;
 class UserController extends \Application\Mvc\Controller\AbstractActionController{
 	public function loginAction(){
-		$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
-			?$this->url()->fromRoute('home')
-			:$this->getServiceLocator()->get('Session')->redirect;
-
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('AuthService')->hasIdentity()){
+			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
+				?$this->url()->fromRoute('home')
+				:$this->getServiceLocator()->get('Session')->redirect;
 			unset($this->getServiceLocator()->get('Session')->redirect);
 			return $this->redirect()->toUrl($sRedirectUrl);
 		}
@@ -33,6 +32,9 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 				$this->params()->fromPost('user_password')
 			)) === true
 		)){
+			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
+				?$this->url()->fromRoute('home')
+				:$this->getServiceLocator()->get('Session')->redirect;
 			unset($this->getServiceLocator()->get('Session')->redirect);
 			return $this->redirect()->toUrl($sRedirectUrl);
 		}
@@ -44,6 +46,15 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 			}
 			else throw new \Exception('Authenticate process return invalid : '.gettype($bReturn));
 		}
+
+		//Try to define redirect url
+		if(
+			empty($this->getServiceLocator()->get('Session')->redirect)
+			&& $sHttpReferer = $oRequest->getServer('HTTP_REFERER')
+			&& is_array($aInfosUrl = parse_url($sHttpReferer))
+			&& $oRequest->getServer('HTTP_HOST') === $aInfosUrl['host']
+		)$this->getServiceLocator()->get('Session')->redirect = $sHttpReferer;
+
 		return $this->view;
 	}
 
@@ -131,71 +142,6 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
 		$this->getServiceLocator()->get('UserService')->resetPassword($sResetKey);
-		return $this->view;
-	}
-
-	public function accountAction(){
-		//Check user is logged in
-		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
-		//Define title
-		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('account');
-		return $this->view->setVariable('user', $this->getServiceLocator()->get('UserService')->getLoggedUser());
-	}
-
-	public function deleteaccountAction(){
-		//Check user is logged in
-		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
-
-		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('delete_account');
-		$this->getServiceLocator()->get('UserService')->deleteLoggedUser();
-		return $this->view;
-	}
-
-	public function changeemailAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
-
-		//Check user is logged in
-		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
-
-		//Assign form
-		$this->view->form = $this->getServiceLocator()->get('ChangeEmailForm');
-		if(
-				$this->getRequest()->isPost()
-				&& $this->view->form->setData($this->params()->fromPost())->isValid()
-				&& $this->getServiceLocator()->get('UserService')->changeUserLoggedEmail($this->params()->fromPost('user_new_email'))
-		)$this->view->emailChanged = true;
-		return $this->view;
-	}
-
-	public function changeavatarAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
-
-		//Check user is logged in
-		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
-
-		//Assign form
-		$this->view->form = $this->getServiceLocator()->get('ChangeAvatarForm');
-		if(
-			$this->getRequest()->isPost()
-			&& $this->view->form->setData($this->params()->fromPost())->isValid()
-			&& $this->getServiceLocator()->get('UserService')->changeUserLoggedAvatar($this->params()->fromFile('user_new_avatar'))
-		)$this->view->avatarChanged = true;
-		return $this->view;
-	}
-
-	public function changepasswordAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \Exception('Only ajax requests are allowed for this action');
-
-		//Check user is logged in
-		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
-
-		//Assign form
-		$this->view->form = $this->getServiceLocator()->get('ChangePasswordForm');
-		if(
-				$this->getRequest()->isPost()
-				&& $this->view->form->setData($this->params()->fromPost())->isValid()
-				&& $this->getServiceLocator()->get('UserService')->changeUserLoggedPassword($this->params()->fromPost('user_new_password'))
-		)$this->view->passwordChanged = true;
 		return $this->view;
 	}
 }

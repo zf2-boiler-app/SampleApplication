@@ -33,6 +33,14 @@
             }
         },
         {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "arian/iFrameFormRequest",
+                "source": {"url": "https://github.com/arian/iFrameFormRequest.git","type": "git","reference": "master"}
+            }
+        },
+        {
 		    "type": "vcs",
 		    "url": "http://github.com/neilime/lessphp"
 		}
@@ -42,15 +50,19 @@
         "ext-fileinfo": "*",
         "ext-pdo_mysql": "*",
         "ext-mbstring": "*",
+        
         "zendframework/zendframework": "dev-master",
         "zendframework/zftool": "dev-master",
+        
         "neilime/zf2-assets-bundle": "dev-master",
-        "twitter/bootstrap": "dev-master",
-        "fortawesome/font-awesome": "dev-master",
         "dlu/dlutwbootstrap": "dev-master",
         "dino/dompdf-module": "dev-master",
         "hybridauth/hybridauth": "dev-master",
+        "inlinestyle/inlinestyle": "dev-master",
+        
+        "twitter/bootstrap": "dev-master",
+        "fortawesome/font-awesome": "dev-master",
         "fabiomcosta/mootools-meio-mask": "dev-master",
-        "inlinestyle/inlinestyle": "dev-master"
+        "arian/iFrameFormRequest" : "dev-master"
     }
 }

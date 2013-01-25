@@ -56,7 +56,7 @@ return array(
 					'specialLayout' => array(
 						'template' => 'layout/blog',
 						'children' => array(
-							'header' => function(\Zend\Mvc\MvcEvent $oEvent){
+							'userSection' => function(\Zend\Mvc\MvcEvent $oEvent){
 								try{
 									if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
 		    							$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
@@ -65,6 +65,16 @@ return array(
 								}
 								catch(\Exception $oException){}
 	    						return 'header/blog-unlogged';
+							},
+							'navbar' => function(\Zend\Mvc\MvcEvent $oEvent){
+								try{
+									if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
+										$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
+										return 'navbar/blog-logged';
+									}
+								}
+								catch(\Exception $oException){}
+								return 'navbar/blog-unlogged';
 							},
 							'footer' => 'footer/footer'
 						)
@@ -77,7 +87,9 @@ return array(
 		'template_map' => array(
 			'layout/blog' => __DIR__ . '/../view/layout/blog.phtml',
 			'header/blog-logged' => __DIR__ . '/../view/blog/header/blog-logged.phtml',
-			'header/blog-unlogged' => __DIR__ . '/../view/blog/header/blog-unlogged.phtml'
+			'header/blog-unlogged' => __DIR__ . '/../view/blog/header/blog-unlogged.phtml',
+			'navbar/blog-logged' => __DIR__ . '/../view/blog/navbar/blog-logged.phtml',
+			'navbar/blog-unlogged' => __DIR__ . '/../view/blog/navbar/blog-unlogged.phtml'
 		),
 		'template_path_stack' => array('Blog' => __DIR__ . '/../view'),
 	)

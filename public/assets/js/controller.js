@@ -66,7 +66,7 @@ var Controller = {
 		Class.refactor(Request.HTML,{
 			'success': function(text){
 				this.previous(text);
-				window.behavior.apply(document.body,true);
+				window.behavior.apply(this.options.container,true);
 			}
 		});
 	},

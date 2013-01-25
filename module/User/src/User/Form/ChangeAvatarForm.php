@@ -15,9 +15,10 @@ class ChangeAvatarForm extends \Application\Form\AbstractForm{
 		$this->setAttribute('method', 'post')
 		->add(array(
 			'name' => 'user_new_avatar',
+			'type' => 'Zend\Form\Element\File',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required',
+				'class' => 'required validate-file-extension:\'png,jpg,gif,jpeg\'',
 				'autofocus' => 'autofocus'
 			),
 			'options' => array(
@@ -36,14 +37,7 @@ class ChangeAvatarForm extends \Application\Form\AbstractForm{
 		))
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_new_avatar',
-			'type' => 'Zend\InputFilter\FileInput',
-    		'required' => true,
-    		'validators' => array(
-    			array(
-    				'name' => 'File\Extension',
-    				'options' => array('extension' => 'png')
-    			)
-    		)
+			'required' => true
 		)));
 	}
 }

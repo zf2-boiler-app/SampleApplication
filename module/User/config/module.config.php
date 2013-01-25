@@ -1,8 +1,12 @@
 <?php
 return array(
-    'controllers' => array(
+    'paths' => array(
+    	'avatarsPath' => getcwd().'/data/avatars'
+    ),
+	'controllers' => array(
         'invokables' => array(
             'User\Controller\User' => 'User\Controller\UserController',
+        	'User\Controller\UserAccount' => 'User\Controller\UserAccountController',
         ),
     ),
     'router' => array(
@@ -107,7 +111,7 @@ return array(
                 		'options' => array(
                 			'route' => '/account',
                 			'defaults' => array(
-                				'controller' => 'User\Controller\User',
+                				'controller' => 'User\Controller\UserAccount',
                 				'action' => 'account'
                 			)
                 		)
@@ -117,7 +121,7 @@ return array(
                 		'options' => array(
                 			'route' => '/delete-account',
                 			'defaults' => array(
-                				'controller' => 'User\Controller\User',
+                				'controller' => 'User\Controller\UserAccount',
                 				'action' => 'deleteaccount'
                 			)
                 		)
@@ -127,7 +131,7 @@ return array(
                 		'options' => array(
                 			'route' => '/change-password',
                 			'defaults' => array(
-                				'controller' => 'User\Controller\User',
+                				'controller' => 'User\Controller\UserAccount',
                 				'action' => 'changepassword'
                 			)
                 		)
@@ -137,7 +141,7 @@ return array(
                 		'options' => array(
                 			'route' => '/change-email',
                 			'defaults' => array(
-                				'controller' => 'User\Controller\User',
+                				'controller' => 'User\Controller\UserAccount',
                 				'action' => 'changeemail'
                 			)
                 		)
@@ -147,7 +151,7 @@ return array(
                 		'options' => array(
                 			'route' => '/change-avatar',
                 			'defaults' => array(
-                				'controller' => 'User\Controller\User',
+                				'controller' => 'User\Controller\UserAccount',
                 				'action' => 'changeavatar'
                 			)
                 		)
@@ -175,9 +179,11 @@ return array(
     	'assets' => array(
     		'user' => array(
     			'User\Controller\User' => array(
-    				'js' => array(
-	    				'js/User/Controller/UserController.js'
-	    			)
+    				'login' => array('js' => array('js/User/Controller/UserLoginController.js')),
+    				'register' => array('js' => array('js/User/Controller/UserRegisterController.js')),
+    			),
+    			'User\Controller\UserAccount' => array(
+    				'js' => array('js/User/Controller/UserAccountController.js')
     			)
     		)
     	)
@@ -222,6 +228,7 @@ return array(
 	'service_manager' => array(
 		'factories' => array(
 			'UserService' => '\User\Factory\UserServiceFactory',
+			'UserAccountService' => '\User\Factory\UserAccountServiceFactory',
 			'AuthAdapter' => '\User\Factory\AuthAdapterFactory',
 			'AuthStorage' => '\User\Factory\AuthStorageFactory',
 			'HybridAuthAdapter' => '\User\Factory\HybridAuthAdapterFactory',
@@ -229,6 +236,7 @@ return array(
 			'UserModel' => '\User\Factory\UserModelFactory',
 			'UserProviderModel' => '\User\Factory\UserProviderModelFactory',
 			'SessionManager' => '\User\Factory\SessionManagerFactory',
+			'ChangeAvatarForm' => '\User\Factory\ChangeAvatarFormFactory',
 			'ChangeEmailForm' => '\User\Factory\ChangeEmailFormFactory',
 			'ChangePasswordForm' => '\User\Factory\ChangePasswordFormFactory',
 			'LoginForm' => '\User\Factory\LoginFormFactory',
@@ -244,8 +252,10 @@ return array(
 	'view_helpers' => array(
 		'factories' => array(
 			'userAvatar' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				$aConfiguration = $oServiceManager->getServiceLocator()->get('Config');
+				if(!isset($aConfiguration['paths']['avatarsPath']))throw new \Exception('Avatars path configuration is undefined');
 				$oUserAvavatarHelper = new \User\View\Helper\UserAvatarHelper();
-				return $oUserAvavatarHelper->setAvatarsPath(getcwd().'/data/avatars');
+				return $oUserAvavatarHelper->setAvatarsPath($aConfiguration['paths']['avatarsPath']);
 			}
 		)
 	)

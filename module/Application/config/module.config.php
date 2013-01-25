@@ -52,8 +52,10 @@ return array(
 					'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
 					'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source',
 					'js/MeioMask/behavior.js',
+					'@zfRootPath/vendor/arian/iFrameFormRequest/Source/iFrameFormRequest.js',
 					'js/controller.js',
-					'js/Modal'
+					'js/Modal',
+					'js/Validator/common.js'
 				),
 				'media' => array(
 					'@zfRootPath/vendor/fortawesome/font-awesome/font',

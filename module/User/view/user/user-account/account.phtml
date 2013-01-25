@@ -1,7 +1,9 @@
 <h3><?=$this->layout()->title?></h3>
 <div class="row-fluid" style="margin-bottom:10px;">
 	<div class="span2">
-		<img src="data:image/png;base64,<?=$this->userAvatar($this->user)?>" class="img-rounded img-polaroid">
+		<a href="#" onclick="oController.changeUserAvatar();return false;">
+			<img id="user-avatar" src="data:image/png;base64,<?=$this->userAvatar($this->user)?>" class="img-rounded img-polaroid"  data-behavior="BS.Twipsy" title="<?=$this->translate('change_avatar')?>"/>
+		</a>
 	</div>
 	<div class="span10">
 		<dl class="dl-horizontal">
@@ -10,10 +12,9 @@
 			<dt><?=$this->translate('password')?> :</dt>
 			<dd><a href="#" onclick="oController.changeUserPassword();return false;"><?=$this->translate('change_password')?></a></dd>
 		</dl>
-	</div>
-</div>
-<div class="row-fluid">
-	<div class="span12">
-		<a class="btn btn-small btn-danger" href="<?=$this->url('User/delete-account')?>" onclick="return confirm(oController.translate('confirm_delete_account'));"><?=$this->translate('delete_account')?></a>
+		<a class="btn btn-small btn-danger pull-right" href="<?=$this->url('User/delete-account')?>" onclick="return confirm(oController.translate('confirm_delete_account'));">
+			<i class="icon-warning-sign"></i>
+			<?=$this->translate('delete_account')?>
+		</a>
 	</div>
 </div>

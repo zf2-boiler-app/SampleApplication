@@ -33,7 +33,11 @@ class Module{
      */
     public function onRender(\Zend\Mvc\MvcEvent $oEvent){
     	$oRequest = $oEvent->getRequest();
-    	if($oRequest instanceof \Zend\Http\Request && !$oRequest->isXmlHttpRequest()){
+    	if($oRequest instanceof \Zend\Http\Request && !$oRequest->isXmlHttpRequest()
+    	&& (
+    		!(($oView = $oEvent->getResult()) instanceof \Zend\View\Model\ModelInterface)
+    		|| !$oView->terminate()
+    	)){
 	    	//Js Controller view helper
 	    	$oServiceManager = $oEvent->getApplication()->getServiceManager();
 	    	$aConfiguration = $oServiceManager->get('Config');

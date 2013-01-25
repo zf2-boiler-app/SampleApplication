@@ -6,27 +6,27 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @var array
 	 */
 	private $configuration;
-	
+
 	/**
-	 * @var \Neilime\AssetsBundle\Service\Service
+	 * @var \AssetsBundle\Service\Service
 	 */
 	private $assetsBundleService;
-	
+
 	/**
 	 * @var \Messenger\Mail\InlineStyle\InlineStyleService
 	 */
 	private $inlineStyle;
-	
+
 	/**
 	 * @var \Zend\I18n\Translator\Translator
 	 */
 	private $translator;
-	
+
 	/**
 	 * @var \Zend\Mvc\Router\RouteStackInterface
 	 */
 	private $router;
-	
+
 	/**
 	 * @var array<\Zend\View\Renderer\RendererInterface>
 	 */
@@ -36,12 +36,12 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @var array<\Zend\Mail\Transport\TransportInterface>
 	 */
 	private $transporters = array();
-	
+
 	/**
 	 * @var \Zend\EventManager\SharedEventManagerInterface
 	 */
 	protected $sharedEventManager;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -51,7 +51,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 			|| ($aConfiguration['system_user']['email'] = filter_var($aConfiguration['system_user']['email'],FILTER_VALIDATE_EMAIL)) === false
 			|| !is_array($aConfiguration['transporters'])
 		)throw new \Exception('Messenger Service configuration is not valid');
-		
+
 		//Set transporters
 		foreach($aConfiguration['transporters'] as $sMedia => $oTransporter){
 			$this->setTransporter($oTransporter, $sMedia);
@@ -59,11 +59,11 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		unset($aConfiguration['transporters']);
 		$this->configuration = $aConfiguration;
 	}
-	
+
 	/**
 	 * Instantiate a messenger
 	 * @param array|Traversable $aConfiguration
-	 * @param \Neilime\AssetsBundle\Service\Service $oAssetsBundleService
+	 * @param \AssetsBundle\Service\Service $oAssetsBundleService
 	 * @param \Zend\I18n\Translator\Translator $oTranslator
 	 * @param \Zend\Mvc\Router\RouteStackInterface $oRouter
 	 * @param \Messenger\Mail\InlineStyle $oInlineStyle
@@ -71,9 +71,9 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @return array|Traversable
 	 */
 	public static function factory($aConfiguration,
-		\Neilime\AssetsBundle\Service\Service $oAssetsBundleService, 
+		\AssetsBundle\Service\Service $oAssetsBundleService,
 		\Messenger\Mail\InlineStyle\InlineStyleService $oInlineStyle,
-		\Zend\I18n\Translator\Translator $oTranslator, 
+		\Zend\I18n\Translator\Translator $oTranslator,
 		\Zend\Mvc\Router\RouteStackInterface $oRouter
 	){
 		if($aConfiguration instanceof \Traversable)$aConfiguration = \Zend\Stdlib\ArrayUtils::iteratorToArray($aConfiguration);
@@ -84,8 +84,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		->setInlineStyle($oInlineStyle)
 		->setTranslator($oTranslator)
 		->setRouter($oRouter);
-	}	
-	
+	}
+
 	/**
 	 * @param \Messenger\Message $oMessage
 	 * @param string|array $aMedias
@@ -101,22 +101,22 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				case self::MEDIA_EMAIL:
 					//Format message for email transporter
 					$oMessage = $this->formatMessageForMedia($oMessage, $sMedia);
-					
+
 					//Retrieve transporter
 					$oTransporter = $this->getTransporter(self::MEDIA_EMAIL);
-					
+
 					//Retrieve le renderer
 					$oRenderer = $this->getRenderer(self::MEDIA_EMAIL);
-					
+
 					//Header view
 					$oHeaderView = new \Zend\View\Model\ViewModel(array('subject' => $oMessage->getSubject()));
-					
+
 					//Content view
 					$oContentView = new \Zend\View\Model\ViewModel(array('content'=> $oMessage->getBodyText()));
-					
+
 					//InlineStyle
 					$oInlineStyle = $this->getInlineStyle();
-					
+
 					$oRenderer->layout()->subject = $oMessage->getSubject();
 					$oRenderer->layout()->addChild($oHeaderView->setTemplate('email/header'), 'header')->addChild($oContentView->setTemplate('email/default'));
 					return $this->renderView($oRenderer->layout(),function($sHtml) use($oMessage,$oTransporter,$oInlineStyle){
@@ -129,7 +129,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		}
 		return $this;
 	}
-	
+
 	/**
 	 * @param \Messenger\Message $oMessage
 	 * @param string $sMedia
@@ -141,8 +141,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 			case self::MEDIA_EMAIL:
 				$oFormatMessage = new \Messenger\Mail\Message();
 				$oFormatMessage->setEncoding('UTF-8');
-				
-				
+
+
 				//From Sender
 				$oFrom = $oMessage->getFrom();
 				if($oFrom === \Messenger\Message::SYSTEM_USER)$oFormatMessage->setFrom(
@@ -151,7 +151,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				);
 				elseif($oFrom instanceof \User\Entity\UserEntity)$oFormatMessage->setFrom($oFrom->getUserEmail());
 				else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
-				
+
 				//To Recipiants
 				foreach($oMessage->getTo() as $oTo){
 					if($oTo === \Messenger\Message::SYSTEM_USER)$oFormatMessage->addTo(
@@ -161,10 +161,10 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 					elseif($oTo instanceof \User\Entity\UserEntity)$oFormatMessage->addTo($oTo->getUserEmail());
 					else throw new \Exception('To Recipiant expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 				}
-				
+
 				//Subject
 				$oFormatMessage->setSubject($oMessage->getSubject());
-				
+
 				//Body
 				$oFormatMessage->setBody($oMessage->getBody());
 				break;
@@ -173,7 +173,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		}
 		return $oFormatMessage;
 	}
-	
+
 	/**
 	 * Render single view
 	 * @param \Zend\View\Model\ViewModel $oView
@@ -183,13 +183,13 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 */
 	public function renderView(\Zend\View\Model\ViewModel $oView,\Closure $oCallback){
 		if(!is_callable($oCallback))throw new \Exception('$oCallback is not a valid callback : '.(is_object($oCallback)?get_class($oCallback):print_r($oCallback,true)));
-	
+
 		$oRenderer = $this->getRenderer('default');
 		$oRenderer->plugin('view_model')->setRoot($oView);
 		$oMessageView = new \Zend\View\View();
 		$oMessageView->setResponse(new \Zend\Stdlib\Response());
 		$oMessageView->getEventManager()->attach(new \Zend\View\Strategy\PhpRendererStrategy($oRenderer));
-		
+
 		//Manage assets
 		$oAssetsBundleService = $this->getAssetsBundleService();
 		$oMessageView->getEventManager()->attach(
@@ -201,7 +201,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				));
 			}
 		);
-		
+
 		//Process after rendering
 		$oMessageView->getEventManager()->attach(\Zend\View\ViewEvent::EVENT_RESPONSE,function(\Zend\View\ViewEvent $oEvent) use($oCallback){
 			$oCallback($oEvent->getResult());
@@ -209,7 +209,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$oMessageView->render($oRenderer->layout());
 		return $this;
 	}
-	
+
 	/**
 	 * Retrieve media renderer
 	 * @param string $sMedia
@@ -231,7 +231,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				$oLayout = new \Zend\View\Model\ViewModel();
 				$this->renderers[$sMedia]->setResolver(new \Zend\View\Resolver\TemplateMapResolver($this->configuration['view_manager']['template_map']))
 				->plugin('view_model')->setRoot($oLayout->setTemplate('email/layout'));
-	
+
 				//Footer view
 				$oVueFooter = new \Zend\View\Model\ViewModel();
 				$this->renderers[$sMedia]->layout()->addChild($oVueFooter->setTemplate('email/footer'),'footer');
@@ -245,7 +245,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 			'translate',
 			$oTranslateHelper->setTranslator($this->getTranslator())->setTranslatorEnabled(true)
 		);
-		
+
 		$oUrlHelper = new \Zend\View\Helper\Url();
 		$this->renderers[$sMedia]->getHelperPluginManager()->setService(
 			'url',
@@ -255,23 +255,23 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	}
 
 	/**
-	 * @param \Neilime\AssetsBundle\Service\Service
+	 * @param \AssetsBundle\Service\Service
 	 * @return \Messenger\Service\MessengerService
 	 */
-	public function setAssetsBundleService(\Neilime\AssetsBundle\Service\Service $oAssetsBundleService){
+	public function setAssetsBundleService(\AssetsBundle\Service\Service $oAssetsBundleService){
 		$this->assetsBundleService = $oAssetsBundleService;
 		return $this;
 	}
-	
+
 	/**
 	 * @throws \Exception
-	 * @return \Neilime\AssetsBundle\Service\Service
+	 * @return \AssetsBundle\Service\Service
 	 */
 	private function getAssetsBundleService(){
-		if($this->assetsBundleService instanceof \Neilime\AssetsBundle\Service\Service)return $this->assetsBundleService;
+		if($this->assetsBundleService instanceof \AssetsBundle\Service\Service)return $this->assetsBundleService;
 		throw new \Exception('AssetsBundle Service is undefined');
 	}
-	
+
 	/**
 	 * @param \Messenger\Mail\InlineStyle\InlineStyleService
 	 * @return \Messenger\Service\MessengerService
@@ -280,7 +280,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$this->inlineStyle = $oInlineStyle;
 		return $this;
 	}
-	
+
 	/**
 	 * @throws \Exception
 	 * @return \Messenger\Mail\InlineStyle\InlineStyleService
@@ -289,7 +289,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		if($this->inlineStyle instanceof \Messenger\Mail\InlineStyle\InlineStyleService)return $this->inlineStyle;
 		throw new \Exception('InlineStyle is undefined');
 	}
-	
+
 	/**
 	 * @param \Zend\Mail\Transport\TransportInterface $oTransporter
 	 * @param string $sMedia
@@ -301,7 +301,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$this->transporters[$sMedia] = $oTransporter;
 		return $this;
 	}
-	
+
 	/**
 	 * Retrieve media transporter
 	 * @param string $sMedia
@@ -313,7 +313,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		if(isset($this->transporters[$sMedia]) && $this->transporters[$sMedia] instanceof \Zend\Mail\Transport\TransportInterface)return $this->transporters[$sMedia];
 		else throw new \Exception('Transporter si not defined for media "'.$sMedia.'"');
 	}
-	
+
 	/**
 	 * @param \Zend\I18n\Translator\Translator $oTranslator
 	 * @return \Messenger\Service\MessengerService
@@ -322,7 +322,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$this->translator = $oTranslator;
 		return $this;
 	}
-	
+
 	/**
 	 * @throws \Exception
 	 * @return \Zend\I18n\Translator\Translator
@@ -331,7 +331,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		if($this->translator instanceof \Zend\I18n\Translator\Translator)return $this->translator;
 		throw new \Exception('Translator is undefined');
 	}
-	
+
 	/**
 	 * @param \Zend\Mvc\Router\RouteStackInterface $oRouter
 	 * @return \Messenger\Service\MessengerService
@@ -340,7 +340,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$this->router = $oRouter;
 		return $this;
 	}
-	
+
 	/**
 	 * @throws \Exception
 	 * @return \Zend\Mvc\Router\RouteStackInterface
@@ -349,7 +349,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		if($this->router instanceof \Zend\Mvc\Router\RouteStackInterface)return $this->router;
 		throw new \Exception('Router is undefined');
 	}
-	
+
 	/**
 	 * Inject a SharedEventManager instance
 	 * @param \Zend\EventManager\SharedEventManagerInterface $oSharedEventManager
@@ -359,7 +359,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		$this->sharedEventManager = $oSharedEventManager;
 		return $this;
 	}
-	
+
 	/**
 	 * Get shared collections container
 	 * @return \Zend\EventManager\SharedEventManagerInterface
@@ -369,7 +369,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		?$this->sharedEventManager
 		:$this->sharedEventManager = \Zend\EventManager\StaticEventManager::getInstance();
 	}
-	
+
 	/**
 	 * Remove any shared collections
 	 * @return \Messenger\Service\MessengerService

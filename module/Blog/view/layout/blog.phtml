@@ -1,9 +1,12 @@
 <div class="container" data-behavior="BS.Dropdown BS.DismissPopup">
-	<header data-behavior="BS.Dropdown BS.DismissPopup">
+	<header>
 		<div class="row">
-			<div class="span6">
+			<div class="span12">
 				<h1><?=$this->translate('application_name')?></h1>
-				<p class="lead"><?=$this->translate('blog_description')?></p>
+				<div class="row">
+					<div class="span6 lead"><?=$this->translate('blog_description')?></div>
+					<div class="span6 pull-right"><?=$this->userSection?></div>
+				</div>
 			</div>
 		</div>
 		<div class="navbar">
@@ -12,7 +15,7 @@
 					<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>><a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a></li>
 					<li<?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><a href="<?=$this->url('blog/news')?>"><?=$this->translate('news')?></a></li>
 				</ul>
-				<?=$this->header?>
+				<?=$this->navbar?>
 			    <form class="navbar-search pull-right">
 			    	<input type="text" class="search-query" placeholder="<?=$this->translate('search')?>">
 			    </form>

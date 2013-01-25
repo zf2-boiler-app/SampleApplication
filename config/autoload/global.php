@@ -12,7 +12,7 @@
  */
 return array(
 	'asset_bundle' => array(
-		'production' => false,
+		'production' => true,
 		'cachePath' => '@zfRootPath/public/assets/cache',
 		'assetsPath' => '@zfRootPath/public/assets',
 		'cacheUrl' => '@zfBaseUrl/assets/cache/',

@@ -1,7 +1,11 @@
-<?php if($this->avatarChanged === true){ ?>
+<?php if($this->user){ ?>
 <div class="alert alert-success">
 	<?=$this->translate('avatar_has_been_changed')?>
 </div>
+<script type="text/javascript">
+	if('undefined' != typeof oController)oController.setUserAvatar(<?=$this->escapeJson($this->userAvatar($this->user))?>);
+</script>
+
 <button class="btn btn-small btn-primary pull-right" type="button" data-dismiss="modal"><?=$this->translate('close_modal')?></button>
 <?php }
 else{
@@ -13,6 +17,9 @@ else{
 	));
 ?>
 <script type="text/javascript">
-	document.id('user_new_avatar').focus();
+	if(document.id){
+		var oNewUserAvatar = document.id('user_new_avatar');
+		if(oNewUserAvatar)oNewUserAvatar.focus();
+	}
 </script>
 <?php } ?>

@@ -1,11 +1,14 @@
-var UserControllerUser = {
+var UserControllerUserRegister = {
 	Extends: Controller,
 	
+	/**
+	 * @var int : setTimeout id
+	 */
 	timer : null,
 	
 	/**
 	 * @param HTMLElement eUserEmail
-	 * @return UserControllerUser
+	 * @return UserControllerUserRegister
 	 */
 	checkUserEmailAvailability : function(eUserEmail){
 		eUserEmail = document.id(eUserEmail);
@@ -31,36 +34,6 @@ var UserControllerUser = {
 			this.timer = null;
 		}.bind(this),250);
 		return this;
-	},
-	
-	/**
-	 * @param string eUserEmail
-	 * @return UserControllerUser
-	 */
-	sendConfirmationEmail : function(sUserEmail){
-		if('string' !== typeof sUserEmail)throw 'User email expects string';
-		new Modal.Popup({
-			'title':this.translate('resend_confirmation_email'),
-			'url':this.url('User/resend-confirmation-email'),
-			'data':{'email':sUserEmail},
-			'method':'post'
-		});		
-	},
-	
-	changeUserPassword : function(){
-		new Modal.Popup({
-			'title':this.translate('change_password'),
-			'url':this.url('User/change-password')
-		});
-		return this;
-	},
-	
-	changeUserEmail : function(){
-		new Modal.Popup({
-			'title':this.translate('change_email'),
-			'url':this.url('User/change-email')
-		});
-		return this;
-	},
+	}
 };
-UserControllerUser = new Class(UserControllerUser);
+UserControllerUserRegister = new Class(UserControllerUserRegister);

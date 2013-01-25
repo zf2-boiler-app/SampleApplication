@@ -5,6 +5,7 @@ return array(
 
 	//Controllers
 	'User\Controller\UserController' => __DIR__.'/src/User/Controller/UserController.php',
+	'User\Controller\UserAccountController' => __DIR__.'/src/User/Controller/UserAccountController.php',
 
 	//Entities
 	'User\Entity\UserEntity' => __DIR__.'/src/User/Entity/UserEntity.php',
@@ -25,6 +26,7 @@ return array(
 	'User\Factory\UserModelFactory' => __DIR__.'/src/User/Factory/UserModelFactory.php',
 	'User\Factory\UserProviderModelFactory' => __DIR__.'/src/User/Factory/UserProviderModelFactory.php',
 	'User\Factory\UserServiceFactory' => __DIR__.'/src/User/Factory/UserServiceFactory.php',
+	'User\Factory\UserAccountServiceFactory' => __DIR__.'/src/User/Factory/UserAccountServiceFactory.php',
 
 	//Forms
 	'User\Form\ChangeAvatarForm' => __DIR__.'/src/User/Form/ChangeAvatarForm.php',
@@ -46,6 +48,7 @@ return array(
 
 	//Services
 	'User\Service\UserService' => __DIR__.'/src/User/Service/UserService.php',
+	'User\Service\UserAccountService' => __DIR__.'/src/User/Service/UserAccountService.php',
 
 	//Validators
 	'User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/User/Validator/EmailAddressAvailabilityValidator.php',

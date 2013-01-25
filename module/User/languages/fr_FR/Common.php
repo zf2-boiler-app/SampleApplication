@@ -2,9 +2,11 @@
 return array(
 	'account' => 'Compte',
 	'account_has_been_deleted' => 'Votre compte a été définitivement supprimé',
-
 	'authentification_provider_unavailable' => 'Le service d\'authentification "%s" est indisponible.',
+	'avatar' => 'Avatar',
+	'avatar_has_been_changed' => 'Votre avatar a été modifié',
 
+	'change_avatar' => 'Modifier mon avatar',
 	'change_email' => 'Modifier mon adresse email',
 	'change_password' => 'Modifier mon mot de passe',
 	'confirm_delete_account' => 'Voulez vous réellement supprimer votre compte ?',
