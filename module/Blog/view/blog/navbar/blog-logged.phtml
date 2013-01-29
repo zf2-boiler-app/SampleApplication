@@ -1,0 +1,16 @@
+<ul class="nav">
+	<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>>
+		<a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a>
+	</li>
+	<li class="divider-vertical"></li>
+	<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>>
+		<a href="<?=$this->url('blog/news')?>" style="padding-right:3px;"><?=$this->translate('news')?></a>
+	</li>
+	<li class="dropdown">
+		<a data-toggle="dropdown" class="dropdown-toggle" href="#"><b class="caret"></b></a>
+		<ul class="dropdown-menu menu-dropdown">
+			<li><a href="<?=$this->url('blog/news/create')?>"><?=$this->translate('create_a_news')?></a></li>
+		</ul>
+	</li>
+	<li class="divider-vertical"></li>
+</ul>

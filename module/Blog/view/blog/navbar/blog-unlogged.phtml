@@ -1,0 +1,4 @@
+<ul class="nav">
+	<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>><a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a></li>
+	<li<?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><a href="<?=$this->url('blog/news')?>"><?=$this->translate('news')?></a></li>
+</ul>

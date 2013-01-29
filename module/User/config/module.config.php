@@ -177,14 +177,12 @@ return array(
 	),
 	'asset_bundle' => array(
     	'assets' => array(
-    		'user' => array(
-    			'User\Controller\User' => array(
-    				'login' => array('js' => array('js/User/Controller/UserLoginController.js')),
-    				'register' => array('js' => array('js/User/Controller/UserRegisterController.js')),
-    			),
-    			'User\Controller\UserAccount' => array(
-    				'js' => array('js/User/Controller/UserAccountController.js')
-    			)
+    		'User\Controller\User' => array(
+    			'login' => array('js' => array('js/User/Controller/UserLoginController.js')),
+    			'register' => array('js' => array('js/User/Controller/UserRegisterController.js')),
+    		),
+    		'User\Controller\UserAccount' => array(
+    			'js' => array('js/User/Controller/UserAccountController.js')
     		)
     	)
 	),

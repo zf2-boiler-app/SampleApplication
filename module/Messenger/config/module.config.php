@@ -3,7 +3,7 @@ return array(
 	'messenger' => array(
 		'system_user' => array(
 			'email' => '',
-			'name' => ''		
+			'name' => ''
 		),
 		'view_manager' => array(
 			'doctype' => 'HTML5',
@@ -21,11 +21,9 @@ return array(
 	),
 	'asset_bundle' => array(
 		'assets' => array(
-			'messenger' => array(
-				'email' => array(
-					'less' => array(
-						'less/email/reset.less'
-					)
+			'email' => array(
+				'less' => array(
+					'less/email/reset.less'
 				)
 			)
 		)
@@ -34,12 +32,12 @@ return array(
 		'factories' => array(
 			//Services
 			'MessengerService' => '\Messenger\Service\MessengerServiceFactory',
-				
+
 			//Transporters
 			'EmailTransporter' => function(){
 				return new \Messenger\Mail\Transport\Sendmail();
 			},
-			
+
 			//InlineStyle
 			'InlineStyleService' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \Messenger\Mail\InlineStyle\InlineStyleService(new \Messenger\Mail\InlineStyle\InlineStyleOptions(array(

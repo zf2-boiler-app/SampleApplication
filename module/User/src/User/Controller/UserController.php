@@ -59,13 +59,26 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 	}
 
 	public function logoutAction(){
-		if(!$this->getServiceLocator()->get('AuthService')->hasIdentity() || $this->getServiceLocator()->get('UserService')->logout())return $this->redirect()->toRoute('home');
+		if(!$this->getServiceLocator()->get('AuthService')->hasIdentity()
+		|| $this->getServiceLocator()->get('UserService')->logout())return (
+			//Try to define redirect url
+			empty($this->getServiceLocator()->get('Session')->redirect)
+			&& ($sHttpReferer = $this->getRequest()->getServer('HTTP_REFERER'))
+			&& is_array($aInfosUrl = parse_url($sHttpReferer))
+			&& $this->getRequest()->getServer('HTTP_HOST') === $aInfosUrl['host']
+		)?$this->redirect()->toUrl($sHttpReferer):$this->redirect()->toRoute('home');
 		else throw new \Exception('Error occured during logout process');
 	}
 
 	public function registerAction(){
 		//If user is already logged in, redirect him
-		if($this->getServiceLocator()->get('AuthService')->hasIdentity())return $this->redirect()->toUrl($sRedirectUrl);
+		if($this->getServiceLocator()->get('AuthService')->hasIdentity()){
+			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
+			?$this->url()->fromRoute('home')
+			:$this->getServiceLocator()->get('Session')->redirect;
+			unset($this->getServiceLocator()->get('Session')->redirect);
+			return $this->redirect()->toUrl($sRedirectUrl);
+		}
 
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('register');

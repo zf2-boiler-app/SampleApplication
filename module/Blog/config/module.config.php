@@ -21,6 +21,49 @@ return array(
 								'controller' => 'Blog\Controller\News',
 								'action' => 'index'
 							)
+						),
+						'may_terminate' => true,
+						'child_routes' => array(
+							'create' => array(
+								'type' => 'Zend\Mvc\Router\Http\Literal',
+								'options' => array(
+									'route' => '/create',
+									'defaults' => array(
+										'controller' => 'Blog\Controller\News',
+										'action' => 'create'
+									)
+								)
+							),
+							'read' => array(
+								'type' => 'Zend\Mvc\Router\Http\Segment',
+								'options' => array(
+									'route' => '/news',
+									'defaults' => array(
+										'controller' => 'Blog\Controller\News',
+										'action' => 'read/[news_id]'
+									)
+								)
+							),
+							'update' => array(
+								'type' => 'Zend\Mvc\Router\Http\Segment',
+								'options' => array(
+									'route' => '/news',
+									'defaults' => array(
+										'controller' => 'Blog\Controller\News',
+										'action' => 'read/[news_id]'
+									)
+								)
+							),
+							'delete' => array(
+								'type' => 'Zend\Mvc\Router\Http\Segment',
+								'options' => array(
+									'route' => '/news',
+									'defaults' => array(
+										'controller' => 'Blog\Controller\News',
+										'action' => 'delete/[news_id]'
+									)
+								)
+							)
 						)
 					)
 				)

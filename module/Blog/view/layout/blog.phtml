@@ -11,10 +11,6 @@
 		</div>
 		<div class="navbar">
 			<div class="navbar-inner">
-				<ul class="nav">
-					<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>><a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a></li>
-					<li<?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>><a href="<?=$this->url('blog/news')?>"><?=$this->translate('news')?></a></li>
-				</ul>
 				<?=$this->navbar?>
 			    <form class="navbar-search pull-right">
 			    	<input type="text" class="search-query" placeholder="<?=$this->translate('search')?>">
