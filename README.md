@@ -3,6 +3,8 @@ ZF2 Skeleton App
 
 Created by Neilime
 
+NOTE : This module is in heavy development, it's not usable yet.
+
 Introduction
 ------------
 

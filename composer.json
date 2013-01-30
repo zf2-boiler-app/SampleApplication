@@ -1,6 +1,6 @@
 {
     "name": "ZF2 Skeleton App",
-    "description": "ZF2 base project",
+    "description": "ZF2 base application",
     "minimum-stability": "dev",
     "authors": [
         {
@@ -42,7 +42,7 @@
         },
         {
 		    "type": "vcs",
-		    "url": "http://github.com/neilime/lessphp"
+		    "url": "https://neilime@bitbucket.org/neilime/dlutwbootstrap.git"
 		}
     ],
     "require": {
