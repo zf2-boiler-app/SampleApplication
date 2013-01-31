@@ -1,12 +1,12 @@
 {
     "name": "ZF2 Skeleton App",
     "description": "ZF2 base application",
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Neilime"
         }
     ],
+    "minimum-stability" : "dev",
     "repositories":[
     	{
             "type": "package",
@@ -41,9 +41,25 @@
             }
         },
         {
+            "type": "package",
+            "package": {
+                "version": "dev-stable/standard",
+                "name": "ckeditor/ckeditor-releases",
+                "source": {"url": "https://github.com/ckeditor/ckeditor-releases.git","type": "git","reference": "stable/standard"}
+            }
+        },
+        {
 		    "type": "vcs",
 		    "url": "https://neilime@bitbucket.org/neilime/dlutwbootstrap.git"
-		}
+		},
+		{
+	        "type": "vcs",
+	        "url": "http://github.com/Nodge/lessphp"
+	    },
+	    {
+	        "type": "vcs",
+	        "url": "http://github.com/neilime/CssMin"
+	    }
     ],
     "require": {
         "php": ">=5.3.3",
@@ -63,6 +79,7 @@
         "twitter/bootstrap": "dev-master",
         "fortawesome/font-awesome": "dev-master",
         "fabiomcosta/mootools-meio-mask": "dev-master",
-        "arian/iFrameFormRequest" : "dev-master"
+        "arian/iFrameFormRequest" : "dev-master",
+        "neilime/zf2-ckeditor-bundle" : "dev-master"
     }
 }
