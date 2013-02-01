@@ -2,7 +2,7 @@
 return array(
 	'404_error' => 'Une erreur 404 s\'est produite',
 
-	'application_name' => 'ZF2Base',
+	'application_name' => 'ZF2 App',
 	'application_description' => 'Projet de base pour construire une application ZF2',
 
 	'close_modal' => 'Fermer la fenêtre',
@@ -11,10 +11,6 @@ return array(
 	'error_occurred' => 'Une erreur s\'est produite',
 
 	'home' => 'Accueil',
-
-	'im_not_a_robot' => 'Je ne suis pas un robot',
-
-	'or' => 'ou',
 
 	'privacy' => 'Confidentialité',
 

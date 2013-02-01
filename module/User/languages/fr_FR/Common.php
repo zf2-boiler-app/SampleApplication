@@ -24,11 +24,15 @@ return array(
 	'email_or_password_wrong' => 'L\'adresse email et/ou le mot de passe semblent incorrects',
 
 	'forgot_your_password' => 'Mot de passe oublié',
+
+	'im_not_a_robot' => 'Je ne suis pas un robot',
+
 	'logout' => 'Déconnexion',
 
 	'new_password' => 'Nouveau mot de passe',
 	'new_user' => 'Nouveau sur ZF2Base',
 
+	'or' => 'ou',
 	'or_use_another_service' => 'Ou utiliser un autre service',
 
 	'password' => 'Mot de passe',

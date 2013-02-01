@@ -199,48 +199,30 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 	/**
 	 * Login user
-	 * @param string $sUserEmail
-	 * @param string $sUserPassword
-	 * @param string $sService
+	 * @param string $sAdapterName
 	 * @throws \Exception
 	 * @return string|boolean
 	 */
-	public function login($sUserEmail = null,$sUserPassword = null,$sService = \User\Authentication\AuthenticationService::AUTH_SERVICE_LOCAL){
-		if(!is_string($sService))throw new \Exception('Authentication service ('.gettype($sService).') is not a string');
+	public function login($sAdapterName){
+		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
 
-		$oAuthService = $this->getServiceLocator()->get('AuthService');
-		if(!($bIsLocalAuth = $sService === \User\Authentication\AuthenticationService::AUTH_SERVICE_LOCAL))$oAuthService
-		->setUserService($this);
-		elseif(!is_string($sUserEmail) || !is_string($sUserPassword))throw new \Exception('User\'s email ('.gettype($sUserEmail).') or user\'s ('.gettype($sUserPassword).') password are not strings');
-
-		switch($iResult = $oAuthService->login($sUserEmail,$sUserPassword,$sService)){
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_HYBRID_AUTH_UNAVAILABLE:
-				if($bIsLocalAuth)throw new \Exception('Invalid Authentication Service return code with local authentication service');
-				return sprintf($this->getServiceLocator()->get('translator')->translate('authentification_provider_unavailable'),$sService);
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_HYBRID_AUTH_CANCELED:
-				if($bIsLocalAuth)throw new \Exception('Invalid Authentication Service return code with local authentication service');
-				return sprintf($this->getServiceLocator()->get('translator')->translate('provider_authentification_canceled'),$sService);
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_HYBRID_AUTH_USER_NOT_CONNECTED:
-				if($bIsLocalAuth)throw new \Exception('Invalid Authentication Service return code with local authentication service');
-				return sprintf($this->getServiceLocator()->get('translator')->translate('user_not_connected_to_authentification_provider'),$sService);
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_UNREGISTERED_USER:
-				if($bIsLocalAuth)throw new \Exception('Invalid Authentication Service return code with local authentication service');
-				return sprintf($this->getServiceLocator()->get('translator')->translate('unregistered_user_please_sign_in'),$sService);
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG:
-				return $this->getServiceLocator()->get('translator')->translate('email_or_password_wrong');
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_USER_STATE_PENDING:
-				return $this->getServiceLocator()->get('translator')->translate('user_state_pending');
-
-			case \User\Authentication\AuthenticationService::AUTH_RESULT_VALID:
+		//Performs authentication attempt
+		switch($iResult = call_user_method_array(
+			'authenticate',
+			$this->getServiceLocator()->get('AuthService'),
+			array_slice(func_get_args(),1)
+		)){
+			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_VALID:
 				return true;
 
+			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG:
+				return $this->getServiceLocator()->get('translator')->translate('email_or_password_wrong');
+
+			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_USER_STATE_PENDING:
+				return $this->getServiceLocator()->get('translator')->translate('user_state_pending');
+			//Unknown error
 			default:
-				throw new \Exception('Unknown Authentication Service return code : '.$iResult);
+				return $this->getServiceLocator()->get('translator')->translate($iResult);
 		}
 	}
 
@@ -250,14 +232,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 * @return \User\Service\UserService
 	 */
 	public function logout(){
-		/* @var $oAuthService \User\Authentication\AuthenticationService */
-		$oAuthService = $this->getServiceLocator()->get('AuthService');
-		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
-		//Clear auth storage
-		$oAuthService->clearIdentity();
-
-		//Clear providers storage
-		$this->getServiceLocator()->get('HybridAuthAdapter')->logoutAllProviders();
+		$this->getServiceLocator()->get('UserAuthenticationService')->clearIdentity();
 		return $this;
 	}
 
@@ -293,11 +268,10 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 * @return \User\Entity\UserEntity
 	 */
 	public function getLoggedUser(){
-		$oAuthService = $this->getServiceLocator()->get('AuthService');
-		if(!$oAuthService->hasIdentity())throw new \Exception('There is no logged user');
+		$iUserId = $this->getServiceLocator()->get('UserAuthenticationService')->getIdentity();
 		//Prevent from session value error
 		try{
-			$oUser = $this->getServiceLocator()->get('UserModel')->getUser($oAuthService->getIdentity());
+			$oUser = $this->getServiceLocator()->get('UserModel')->getUser($iUserId);
 		}
 		catch(\Exception $oException){
 			$this->logout();
