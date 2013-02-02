@@ -128,6 +128,7 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 
 		/* @var $oRouter \Zend\Mvc\Router\RouteMatch */
 		$oRouter = $this->getCurrentEvent()->getRouteMatch();
+		$sModule = null;
 		if($oRouter instanceof \Zend\Mvc\Router\RouteMatch)$sModule = current(explode('\\',$oRouter->getParam('controller')));
 		if(!$sModule)$sModule = \Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP;
 

@@ -189,8 +189,8 @@ return array(
 	'authentication' => array(
 		'storage' => 'UserAuthenticationStorage',
 		'adapters' => array(
-			'LocalAuth' => 'UserAuthenticationDbTableAdapter',
-			'HybridAuth' => 'UserAuthenticationHybridAuthAdapter'
+			'LocalAuth' => 'AuthenticationDbTableAdapter',
+			'HybridAuth' => 'AuthenticationHybridAuthAdapter'
 		)
 	),
 	'hybrid_auth' =>  array(
@@ -232,10 +232,10 @@ return array(
     ),
 	'service_manager' => array(
 		'factories' => array(
+			'AuthenticationDbTableAdapter' => '\User\Factory\AuthenticationDbTableAdapterFactory',
+			'AuthenticationHybridAuthAdapter' => '\User\Factory\AuthenticationHybridAuthAdapterFactory',
 			'UserService' => '\User\Factory\UserServiceFactory',
 			'UserAccountService' => '\User\Factory\UserAccountServiceFactory',
-			'UserAuthenticationDbTableAdapter' => '\User\Factory\UserAuthenticationDbTableAdapterFactory',
-			'UserAuthenticationHybridAuthAdapter' => '\User\Factory\HybridUserAuthenticationDbTableAdapterFactory',
 			'UserAuthenticationStorage' => '\User\Factory\UserAuthenticationStorageFactory',
 			'UserAuthenticationService' => '\User\Factory\UserAuthenticationServiceFactory',
 			'UserModel' => '\User\Factory\UserModelFactory',

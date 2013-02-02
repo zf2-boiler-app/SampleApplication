@@ -1,8 +1,14 @@
 <?php
 namespace User\Authentication\Adapter;
-class AuthenticationHybridAuthAdapter extends \Hybrid_Auth implements \User\Authentication\Adapter\AuthenticationAdapterInterface{
+class AuthenticationHybridAuthAdapter implements \User\Authentication\Adapter\AuthenticationAdapterInterface{
 	const AUTH_RESULT_HYBRID_AUTH_USER_NOT_CONNECTED = '';
 	const AUTH_RESULT_HYBRID_AUTH_CANCELED = '';
+
+	/**
+	 * @var \Hybrid_Auth
+	 */
+	protected $hybridAuth;
+
 
 	/**
 	 * @var string
@@ -15,10 +21,36 @@ class AuthenticationHybridAuthAdapter extends \Hybrid_Auth implements \User\Auth
 	protected $resultRow;
 
 	/**
+	 * @param \Hybrid_Auth $oHybridAuth
+	 */
+	public function __construct(\Hybrid_Auth $oHybridAuth = null){
+		if($oHybridAuth)$this->setHybridAuth($oHybridAuth);
+	}
+
+	/**
+	 * @param \Hybrid_Auth $oHybridAuth
+	 * @return \User\Authentication\Adapter\AuthenticationHybridAuthAdapter
+	 */
+	public function setHybridAuth(\Hybrid_Auth $oHybridAuth){
+		$this->hybridAuth = $oHybridAuth;
+		return $this;
+	}
+
+	/**
+	 * @throws \Exception
+	 * @return \Hybrid_Auth
+	 */
+	public function getHybridAuth(){
+		if($this->hybridAuth instanceof \Hybrid_Auth)return $this->hybridAuth;
+		throw new \Exception('HybridAuth is undefined');
+	}
+
+
+	/**
 	 * @return \User\Authentication\Adapter\AuthenticationHybridAuthAdapter
 	 * @throws \Exception
 	 */
-	public function initialize($sCurrentService){
+	public function postAuthenticate($sCurrentService){
 		if(!is_string($sCurrentService))throw new \Exception('Service expects string, "'.gettype($sCurrentService).'" given');
 		$this->currentService = $sCurrentService;
 		return $this;
@@ -34,14 +66,14 @@ class AuthenticationHybridAuthAdapter extends \Hybrid_Auth implements \User\Auth
 
 		//Reset previous identity datas
 		$this->resultRow = null;
-		$this->logoutAllProviders();
+		$this->getHybridAuth()->logoutAllProviders();
 
 		try{
-			parent::authenticate($this->currentService);
+			$this->getHybridAuth()->authenticate($this->currentService);
 			$oUserProfile = $this->getUserProfile();
 		}
 		catch(\Exception $oException){
-			$this->logout();
+			$this->getHybridAuth()->logout();
 			$sMessage = null;
 			switch($oException->getCode()){
 				case 5 :

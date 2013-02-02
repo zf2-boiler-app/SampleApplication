@@ -146,8 +146,8 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 
 		//Performs adapter initialization
 		$oAdapter = $this->getAdapter($sAdapterName);
-		if(is_callable(array($oAdapter,'initialize')))call_user_func_array(
-			array($this->getAdapter($sAdapterName),'initialize'),
+		if(is_callable(array($oAdapter,'postAuthenticate')))call_user_func_array(
+			array($this->getAdapter($sAdapterName),'postAuthenticate'),
 			array_slice(func_get_args(),1)
 		);
 

@@ -1,6 +1,6 @@
 <?php
 namespace User\Factory;
-class HybridUserAuthenticationDbTableAdapterFactory implements \Zend\ServiceManager\FactoryInterface{
+class AuthenticationHybridAuthAdapterFactory implements \Zend\ServiceManager\FactoryInterface{
 	public function createService(\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
 		try{
 			$aConfiguration = $oServiceLocator->get('Config');
@@ -20,7 +20,7 @@ class HybridUserAuthenticationDbTableAdapterFactory implements \Zend\ServiceMana
 				elseif(isset($aConfiguration['providers'][$sProvider]['keys']['key']))$aConfiguration['providers'][$sProvider]['keys']['key'] = $aProviderConfig['id'];
 				$aConfiguration['providers'][$sProvider]['keys']['secret'] = $aProviderConfig['key'];
 			}
-			return new \User\Authentication\Adapter\AuthenticationHybridAuthAdapter($aConfiguration);
+			return new \User\Authentication\Adapter\AuthenticationHybridAuthAdapter(new \Hybrid_Auth($aConfiguration));
 		}
 		catch(\Exception $oException){
 			return $oException;

@@ -46,7 +46,8 @@ class Module{
 	    	});
 
 	    	//Set matchedRouteName var to layout
-	    	$oEvent->getViewModel()->setVariable('matchedRouteName', $oEvent->getRouteMatch()->getMatchedRouteName());
+	    	$oRouteMatch= $oEvent->getRouteMatch();
+	    	if($oRouteMatch instanceof \Zend\Mvc\Router\RouteMatch)$oEvent->getViewModel()->setVariable('matchedRouteName',$oRouteMatch->getMatchedRouteName());
     	}
     }
 

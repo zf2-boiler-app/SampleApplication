@@ -1,6 +1,6 @@
 <?php
 namespace User\Factory;
-class UserAuthenticationDbTableAdapterFactory implements \Zend\ServiceManager\FactoryInterface{
+class AuthenticationDbTableAdapterFactory implements \Zend\ServiceManager\FactoryInterface{
 	public function createService(\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
 		return new \User\Authentication\Adapter\AuthenticationDbTableAdapter(
 			$oServiceLocator->get('Zend\Db\Adapter\Adapter'),

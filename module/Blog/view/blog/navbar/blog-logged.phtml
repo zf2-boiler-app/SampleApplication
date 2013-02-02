@@ -3,11 +3,11 @@
 		<a href="<?=$this->url('blog')?>"><?=$this->translate('home')?></a>
 	</li>
 	<li class="divider-vertical"></li>
-	<li<?=$this->layout()->matchedRouteName === 'blog'?' class="active"':''?>>
-		<a href="<?=$this->url('blog/news')?>" style="padding-right:3px;"><?=$this->translate('news')?></a>
+	<li<?=$this->layout()->matchedRouteName === 'blog/news'?' class="active"':''?>>
+		<a href="<?=$this->url('blog/news')?>" style="padding-right:5px;"><?=$this->translate('news')?></a>
 	</li>
-	<li class="dropdown">
-		<a data-toggle="dropdown" class="dropdown-toggle" href="#"><b class="caret"></b></a>
+	<li class="<?=$this->layout()->matchedRouteName === 'blog/news'?'active ':''?>dropdown">
+		<a data-toggle="dropdown" class="dropdown-toggle" href="#" style="padding-left:5px;"><b class="caret"></b></a>
 		<ul class="dropdown-menu menu-dropdown">
 			<li><a href="<?=$this->url('blog/news/create')?>"><?=$this->translate('create_a_news')?></a></li>
 		</ul>

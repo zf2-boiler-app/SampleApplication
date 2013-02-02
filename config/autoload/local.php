@@ -12,6 +12,7 @@
  */
 return array(
     'social' => array(
+    	//https://code.google.com/apis/console/
     	\Application\View\Helper\SocialHelper::GOOGLE => array(
     		'id' => 'google_id',
     		'key' => 'google_key'
@@ -20,6 +21,7 @@ return array(
     		'id' => 'twitter_id',
     		'key' => 'twitter_key'
     	),
+    	//https://developers.facebook.com/apps
     	\Application\View\Helper\SocialHelper::FACEBOOK => array(
     		'id' => 'facebook_id',
     		'key' => 'facebook_key'
@@ -43,7 +45,7 @@ return array(
 		'factories' => array(
 			//Transporters
 			'EmailTransporter' => function(){
-				//Send email with Gmail SMTP (need openssl php extension) 
+				//Send email with Gmail SMTP (need openssl php extension)
 				$oTransporter = new \Messenger\Mail\Transport\Smtp(new \Zend\Mail\Transport\SmtpOptions(array(
 					'host' => 'smtp.gmail.com',
 					'connection_class'  => 'plain',

@@ -15,8 +15,8 @@ return array(
 	'User\Entity\UserProviderEntity' => __DIR__.'/src/User/Entity/UserProviderEntity.php',
 
 	//Factories
-	'User\Factory\UserAuthenticationDbTableAdapterFactory' => __DIR__.'/src/User/Factory/UserAuthenticationDbTableAdapterFactory.php',
-	'User\Factory\UserAuthenticationHybridAuthAdapter' => __DIR__.'/src/User/Factory/UserAuthenticationHybridAuthAdapter.php',
+	'User\Factory\AuthenticationDbTableAdapterFactory' => __DIR__.'/src/User/Factory/AuthenticationDbTableAdapterFactory.php',
+	'User\Factory\AuthenticationHybridAuthAdapterFactory' => __DIR__.'/src/User/Factory/AuthenticationHybridAuthAdapterFactory.php',
 	'User\Factory\UserAuthenticationServiceFactory' => __DIR__.'/src/User/Factory/UserAuthenticationServiceFactory.php',
 	'User\Factory\UserAuthenticationStorageFactory' => __DIR__.'/src/User/Factory/UserAuthenticationStorageFactory.php',
 	'User\Factory\ChangeAvatarFormFactory' => __DIR__.'/src/User/Factory/ChangeAvatarFormFactory.php',
