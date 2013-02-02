@@ -36,6 +36,32 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 	}
 
 	/**
+	 * Instantiate a UserAuthenticationService
+	 * @param array|Traversable $aConfiguration
+	 * @throws \Exception
+	 */
+	public static function factory($aConfiguration,\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
+		if($aConfiguration instanceof \Traversable)$aConfiguration = \Zend\Stdlib\ArrayUtils::iteratorToArray($aConfiguration);
+		elseif(!is_array($aConfiguration))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($aConfiguration)?get_class($aConfiguration):gettype($aConfiguration)).'"');
+		if(isset($aConfiguration['storage'])){
+			if(!($aConfiguration['storage'] instanceof \Zend\Authentication\Storage\StorageInterface)){
+				if(!is_string($aConfiguration['storage']))throw new\Exception(sprintf(
+					'Storage configuration expects \Zend\Authentication\Storage\StorageInterface or string, "%s" given',
+					is_object($aConfiguration['storage'])?get_class($aConfiguration['storage']):gettype($aConfiguration['storage'])
+				));
+				if($oServiceLocator->has($aConfiguration['storage']))$aConfiguration['storage'] = $oServiceLocator->get($aConfiguration['storage']);
+				elseif(class_exists($aConfiguration['storage']))$aConfiguration['storage'] = new $aConfiguration['storage']();
+				else throw new \Exception($aConfiguration['storage'].' is not an available service or an existing class');
+			}
+
+		}
+		else $aConfiguration['storage'] = null;
+
+		$oUserAuthenticationService = new static($aConfiguration['storage'],isset($aConfiguration['adapters'])?$aConfiguration['adapters']:array());
+		return $oUserAuthenticationService->setServiceLocator($oServiceLocator);
+	}
+
+	/**
 	 * @param \Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator
 	 * @return \User\Service\UserAccountService
 	 */
@@ -79,13 +105,10 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 	protected function setAdapter($sAdapterName, $oAdapter){
 		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
 		if($oAdapter instanceof \User\Authentication\Adapter\AuthenticationAdapterInterface)$this->adapters[$sAdapterName] = $oAdapter;
-		elseif(is_string($oAdapter)){
-			if(!$this->getServiceLocator()->has($oAdapter) && !class_exists($oAdapter))throw new \Exception($oAdapter.' is not an available service or an existing class');
-			$this->adapters[$sAdapterName] = $oAdapter;
-		}
+		elseif(is_string($oAdapter))$this->adapters[$sAdapterName] = $oAdapter;
 		else throw new \Exception(sprintf(
-				'Adapter expects \User\Authentication\Adapter\AuthenticationAdapterInterface or string, "%s" given',
-				is_object($oAdapter)?get_class($oAdapter):gettype($oAdapter)
+			'Adapter expects \User\Authentication\Adapter\AuthenticationAdapterInterface or string, "%s" given',
+			is_object($oAdapter)?get_class($oAdapter):gettype($oAdapter)
 		));
 		return $this;
 	}
@@ -99,9 +122,9 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
 		if(!isset($this->adapters[$sAdapterName]))throw new \Exception('Adapter "'.$sAdapterName.'" is undefined');
 		if(!($this->adapters[$sAdapterName] instanceof \User\Authentication\Adapter\AuthenticationAdapterInterface)){
-			$this->adapters[$sAdapterName] = $this->getServiceLocator()->has($oAdapter)
-				?$this->getServiceLocator()->get($this->adapters[$sAdapterName])
-				: new $this->adapters[$sAdapterName]();
+			if($this->getServiceLocator()->has($this->adapters[$sAdapterName]))$this->adapters[$sAdapterName] = $this->getServiceLocator()->get($this->adapters[$sAdapterName]);
+			elseif(class_exists($this->adapters[$sAdapterName]))$this->adapters[$sAdapterName] = new $this->adapters[$sAdapterName]();
+			else throw new \Exception($this->adapters[$sAdapterName].' is not an available service or an existing class');
 		}
 		return $this->adapters[$sAdapterName];
 	}
@@ -120,14 +143,18 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 	 */
 	public function authenticate($sAdapterName){
 		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
-		$oAuthResult = $this->getAuthenticationService()->authenticate(call_user_method_array(
-			'initialize',
-			$this->getAdapter($sAdapterName),
+
+		//Performs adapter initialization
+		$oAdapter = $this->getAdapter($sAdapterName);
+		if(is_callable(array($oAdapter,'initialize')))call_user_func_array(
+			array($this->getAdapter($sAdapterName),'initialize'),
 			array_slice(func_get_args(),1)
-		));
+		);
+
+		$oAuthResult = $this->getAuthenticationService()->authenticate($oAdapter);
 		if($oAuthResult->isValid()){
 			//Check user's state
-			$aUserStateInfos = $this->getAuthenticationService()->getAdapter()->getResultRowObject(array('user_id','user_state'));
+			$aUserStateInfos = $oAdapter->getResultRowObject(array('user_id','user_state'));
 			$iUserId = (int)$aUserStateInfos->user_id;
 			$sUserState = $aUserStateInfos->user_state;
 		}
@@ -137,6 +164,16 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 			case \Zend\Authentication\Result::FAILURE_CREDENTIAL_INVALID:
 				return self::AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG;
 			case \Zend\Authentication\Result::FAILURE_UNCATEGORIZED:
+			case \Zend\Authentication\Result::FAILURE:
+				if($aMessages = $oAuthResult->getMessages()){
+					$sReturn = '';
+					$oTranslator = $this->getServiceLocator('translator');
+					foreach($aMessages as $sMessage){
+						if($sReturn)$sReturn .= ', ';
+						$sReturn .= $oTranslator->translate($sMessage);
+					}
+					return $sReturn;
+				}
 			default:
 				throw new \Exception('Unknown result failure code : '.$oAuthResult->getCode());
 		}
@@ -146,10 +183,17 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 
 		if($sUserState === \User\Model\UserModel::USER_STATUS_ACTIVE){
 			//Store user id
-			$this->getStorage()->write($iUserId);
+			$this->getAuthenticationService()->getStorage()->write($iUserId);
 			return self::AUTH_RESULT_VALID;
 		}
 		else return self::AUTH_RESULT_USER_STATE_PENDING;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function hasIdentity(){
+		return $this->getAuthenticationService()->hasIdentity();
 	}
 
 	/**
@@ -157,7 +201,7 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 	 * @return mixed
 	 */
 	public function getIdentity(){
-		if($this->getAuthenticationService()->hasIdentity())return $this->getAuthenticationService()->getIdentity();
+		if($this->hasIdentity())return $this->getAuthenticationService()->getIdentity();
 		throw new \Exception('There is no stored identity');
 	}
 
@@ -166,7 +210,7 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 	 * @return \User\Authentication\UserAuthenticationService
 	 */
 	public function clearIdentity(){
-		if(!$this->getAuthenticationService()->hasIdentity())throw new \Exception('There is no stored identity');
+		if(!$this->hasIdentity())throw new \Exception('There is no stored identity');
 		//Clear auth storage
 		$this->getAuthenticationService()->clearIdentity();
 
@@ -174,6 +218,5 @@ class UserAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAw
 		$oAdapter = $this->getAuthenticationService()->getAdapter();
 		if(is_callable(array($oAdapter,'clearIdentity')))$oAdapter->clearIdentity();
 		return $this;
-
 	}
 }

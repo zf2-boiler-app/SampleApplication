@@ -72,7 +72,7 @@ return array(
 				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
 			},
 			'Session' =>  function(){
-				return new \Zend\Session\Container('zf2base');
+				return new \Zend\Session\Container('zf2app');
 			},
 			'FormHelper' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return new \Application\Form\View\Helper\FormHelper(
@@ -136,7 +136,7 @@ return array(
 						'children' => array(
 							'header' => function(\Zend\Mvc\MvcEvent $oEvent){
 								try{
-									if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
+									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
 		    							$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
 		    							return 'header/logged';
 	    							}

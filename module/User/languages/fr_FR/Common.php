@@ -30,7 +30,7 @@ return array(
 	'logout' => 'Déconnexion',
 
 	'new_password' => 'Nouveau mot de passe',
-	'new_user' => 'Nouveau sur ZF2Base',
+	'new_user' => 'Nouveau sur ZF2 App',
 
 	'or' => 'ou',
 	'or_use_another_service' => 'Ou utiliser un autre service',

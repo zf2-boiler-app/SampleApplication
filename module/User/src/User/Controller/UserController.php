@@ -3,7 +3,7 @@ namespace User\Controller;
 class UserController extends \Application\Mvc\Controller\AbstractActionController{
 	public function loginAction(){
 		//If user is already logged in, redirect him
-		if($this->getServiceLocator()->get('AuthService')->hasIdentity()){
+		if($this->getServiceLocator()->get('UserAuthenticationService')->hasIdentity()){
 			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
 				?$this->url()->fromRoute('home')
 				:$this->getServiceLocator()->get('Session')->redirect;
@@ -23,11 +23,12 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 		}
 		elseif((
 			$this->params('service') &&
-			($bReturn = $this->getServiceLocator()->get('UserService')->login(null,null,$this->params('service'))) === true
+			($bReturn = $this->getServiceLocator()->get('UserService')->login(\User\Service\UserService::HYBRID_AUTH_AUTHENTICATION,$this->params('service'))) === true
 		) ||
 		(
 			$this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
 			($bReturn = $this->getServiceLocator()->get('UserService')->login(
+				\User\Service\UserService::LOCAL_AUTHENTICATION,
 				$this->params()->fromPost('user_email'),
 				$this->params()->fromPost('user_password')
 			)) === true
@@ -59,7 +60,7 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 	}
 
 	public function logoutAction(){
-		if(!$this->getServiceLocator()->get('AuthService')->hasIdentity()
+		if(!$this->getServiceLocator()->get('UserAuthenticationService')->hasIdentity()
 		|| $this->getServiceLocator()->get('UserService')->logout())return (
 			//Try to define redirect url
 			empty($this->getServiceLocator()->get('Session')->redirect)
@@ -72,7 +73,7 @@ class UserController extends \Application\Mvc\Controller\AbstractActionControlle
 
 	public function registerAction(){
 		//If user is already logged in, redirect him
-		if($this->getServiceLocator()->get('AuthService')->hasIdentity()){
+		if($this->getServiceLocator()->get('UserAuthenticationService')->hasIdentity()){
 			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
 			?$this->url()->fromRoute('home')
 			:$this->getServiceLocator()->get('Session')->redirect;

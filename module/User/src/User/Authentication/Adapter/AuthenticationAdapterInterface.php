@@ -1,11 +1,11 @@
 <?php
 namespace User\Authentication\Adapter;
 interface AuthenticationAdapterInterface extends \Zend\Authentication\Adapter\AdapterInterface{
-
 	/**
-	 * Initialization adapter
-	 * @return \User\Authentication\Adapter\AuthenticationAdapterInterface
-	 * @throws \Exception If initialization cannot be performed
+	 * Returns the result row as a stdClass object
+	 * @param string|array $aReturnColumns
+	 * @param string|array $aOmitColumns
+	 * @return stdClass|boolean
 	 */
-	public function initialize();
+	public function getResultRowObject($aReturnColumns = null, $aOmitColumns = null);
 }

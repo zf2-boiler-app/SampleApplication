@@ -7,18 +7,18 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	protected $logId;
 
 	/**
-	 * @var \Zend\Authentication\AuthenticationService
+	 * @var \User\Authentication\UserAuthenticationService
 	 */
-	protected $authService;
+	protected $userAuthenticationService;
 
 	protected static $logs = array();
 
 	/**
-	 * @param \Zend\Authentication\AuthenticationService $oAuthService
+	 * @param \User\Authentication\UserAuthenticationService $oUserAuthenticationService
 	 * @return \Logger\Service\Adapter\DbLogAdapter
 	 */
-	public function setAuthService(\Zend\Authentication\AuthenticationService $oAuthService){
-		$this->authService = $oAuthService;
+	public function setUserAuthenticationService(\User\Authentication\UserAuthenticationService $oUserAuthenticationService){
+		$this->userAuthenticationService = $oUserAuthenticationService;
 		return $this;
 	}
 
@@ -36,9 +36,9 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	 */
 	protected function getUserId(){
 		return (
-			$this->authService instanceof \Zend\Authentication\AuthenticationService
-			&& $this->authService->hasIdentity()
-		)?$this->authService->getIdentity():null;
+			$this->userAuthenticationService instanceof \User\Authentication\UserAuthenticationService
+			&& $this->userAuthenticationService->hasIdentity()
+		)?$this->userAuthenticationService->getIdentity():null;
 	}
 
 	protected static function getEntityLogTable($sEntityTable){

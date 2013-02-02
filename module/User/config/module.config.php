@@ -186,6 +186,13 @@ return array(
     		)
     	)
 	),
+	'authentication' => array(
+		'storage' => 'UserAuthenticationStorage',
+		'adapters' => array(
+			'LocalAuth' => 'UserAuthenticationDbTableAdapter',
+			'HybridAuth' => 'UserAuthenticationHybridAuthAdapter'
+		)
+	),
 	'hybrid_auth' =>  array(
 		'base_url' => "User/hybridauth",
 
@@ -227,10 +234,10 @@ return array(
 		'factories' => array(
 			'UserService' => '\User\Factory\UserServiceFactory',
 			'UserAccountService' => '\User\Factory\UserAccountServiceFactory',
-			'AuthAdapter' => '\User\Factory\AuthAdapterFactory',
-			'AuthStorage' => '\User\Factory\AuthStorageFactory',
-			'HybridAuthAdapter' => '\User\Factory\HybridAuthAdapterFactory',
-			'AuthService' => '\User\Factory\AuthServiceFactory',
+			'UserAuthenticationDbTableAdapter' => '\User\Factory\UserAuthenticationDbTableAdapterFactory',
+			'UserAuthenticationHybridAuthAdapter' => '\User\Factory\HybridUserAuthenticationDbTableAdapterFactory',
+			'UserAuthenticationStorage' => '\User\Factory\UserAuthenticationStorageFactory',
+			'UserAuthenticationService' => '\User\Factory\UserAuthenticationServiceFactory',
 			'UserModel' => '\User\Factory\UserModelFactory',
 			'UserProviderModel' => '\User\Factory\UserProviderModelFactory',
 			'SessionManager' => '\User\Factory\SessionManagerFactory',

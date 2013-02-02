@@ -1,7 +1,10 @@
 <?php
 return array(
 	//Authentication
-	'User\Authentication\AuthenticationService' => __DIR__.'/src/User/Authentication/AuthenticationService.php',
+	'User\Authentication\UserAuthenticationService' => __DIR__.'/src/User/Authentication/UserAuthenticationService.php',
+	'User\Authentication\Adapter\AuthenticationAdapterInterface' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationAdapterInterface.php',
+	'User\Authentication\Adapter\AuthenticationDbTableAdapter' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationDbTableAdapter.php',
+	'User\Authentication\Adapter\AuthenticationHybridAuthAdapter' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationHybridAuthAdapter.php',
 
 	//Controllers
 	'User\Controller\UserController' => __DIR__.'/src/User/Controller/UserController.php',
@@ -12,10 +15,10 @@ return array(
 	'User\Entity\UserProviderEntity' => __DIR__.'/src/User/Entity/UserProviderEntity.php',
 
 	//Factories
-	'User\Factory\AuthAdapterFactory' => __DIR__.'/src/User/Factory/AuthAdapterFactory.php',
-	'User\Factory\AuthServiceFactory' => __DIR__.'/src/User/Factory/AuthServiceFactory.php',
-	'User\Factory\AuthStorageFactory' => __DIR__.'/src/User/Factory/AuthStorageFactory.php',
-	'User\Factory\HybridAuthAdapterFactory' => __DIR__.'/src/User/Factory/HybridAuthAdapterFactory.php',
+	'User\Factory\UserAuthenticationDbTableAdapterFactory' => __DIR__.'/src/User/Factory/UserAuthenticationDbTableAdapterFactory.php',
+	'User\Factory\UserAuthenticationHybridAuthAdapter' => __DIR__.'/src/User/Factory/UserAuthenticationHybridAuthAdapter.php',
+	'User\Factory\UserAuthenticationServiceFactory' => __DIR__.'/src/User/Factory/UserAuthenticationServiceFactory.php',
+	'User\Factory\UserAuthenticationStorageFactory' => __DIR__.'/src/User/Factory/UserAuthenticationStorageFactory.php',
 	'User\Factory\ChangeAvatarFormFactory' => __DIR__.'/src/User/Factory/ChangeAvatarFormFactory.php',
 	'User\Factory\ChangeEmailFormFactory' => __DIR__.'/src/User/Factory/ChangeEmailFormFactory.php',
 	'User\Factory\ChangePasswordFormFactory' => __DIR__.'/src/User/Factory/ChangePasswordFormFactory.php',

@@ -64,11 +64,11 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * Instantiate a messenger
 	 * @param array|Traversable $aConfiguration
 	 * @param \AssetsBundle\Service\Service $oAssetsBundleService
+	 * @param \Messenger\Mail\InlineStyle\InlineStyleService $oInlineStyle
 	 * @param \Zend\I18n\Translator\Translator $oTranslator
 	 * @param \Zend\Mvc\Router\RouteStackInterface $oRouter
-	 * @param \Messenger\Mail\InlineStyle $oInlineStyle
 	 * @throws \Exception
-	 * @return array|Traversable
+	 * @return \Messenger\Service\MessengerService
 	 */
 	public static function factory($aConfiguration,
 		\AssetsBundle\Service\Service $oAssetsBundleService,

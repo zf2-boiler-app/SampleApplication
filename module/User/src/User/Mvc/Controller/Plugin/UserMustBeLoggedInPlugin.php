@@ -5,7 +5,7 @@ class UserMustBeLoggedInPlugin extends \Zend\Mvc\Controller\Plugin\AbstractPlugi
     	/* @var $oController \Zend\Mvc\Controller\AbstractActionController */
     	$oController = $this->getController();
     	$oServiceLocator = $oController->getServiceLocator();
-    	if(!$oServiceLocator->get('AuthService')->hasIdentity()){
+    	if(!$oServiceLocator->get('UserAuthenticationService')->hasIdentity()){
 			$oController->flashMessenger()->addMessage($oServiceLocator->get('translator')->translate('user_must_be_logged_in_to_access_this_page'));
 			if($sRedirectUrl !== false)$oServiceLocator->get('Session')->redirect = $sRedirectUrl?:$oController->getRequest()->getUri()->normalize();
 			return $oController->redirect()->toRoute('User/login');

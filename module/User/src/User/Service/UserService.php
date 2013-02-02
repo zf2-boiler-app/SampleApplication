@@ -1,6 +1,8 @@
 <?php
 namespace User\Service;
 class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+	const LOCAL_AUTHENTICATION = 'LocalAuth';
+	const HYBRID_AUTH_AUTHENTICATION = 'HybridAuth';
 
 	/**
 	 * @var \Zend\ServiceManager\ServiceLocatorInterface
@@ -207,10 +209,9 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
 
 		//Performs authentication attempt
-		switch($iResult = call_user_method_array(
-			'authenticate',
-			$this->getServiceLocator()->get('AuthService'),
-			array_slice(func_get_args(),1)
+		switch($iResult = call_user_func_array(
+			array($this->getServiceLocator()->get('UserAuthenticationService'),'authenticate'),
+			func_get_args()
 		)){
 			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_VALID:
 				return true;
@@ -234,33 +235,6 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	public function logout(){
 		$this->getServiceLocator()->get('UserAuthenticationService')->clearIdentity();
 		return $this;
-	}
-
-	/**
-	 * Get user entity from provider id
-	 * @param \Hybrid_User_Profile $oUserProfile
-	 * @param string $sService
-	 * @throws \Exception
-	 * @return \User\Entity\UserEntity
-	 */
-	public function getUserFromProvider(\Hybrid_User_Profile $oUserProfile,$sService){
-		if(!is_string($sService))throw new \Exception('Authentication service ('.gettype($sService).') is not a string');
-		if(($oUser = $this->getServiceLocator()->get('UserProviderModel')->getUser($oUserProfile->identifier,$sService)) instanceof \User\Entity\UserEntity)return $oUser;
-
-		//Try to create user
-		$oUserModel = $this->getServiceLocator()->get('UserModel');
-		$oUser = $oUserModel->getUser($oUserModel->create(array(
-			'user_email' => $oUserProfile->email,
-			'user_state' => \User\Model\UserModel::USER_STATUS_ACTIVE
-		)));
-
-		//Link to user provider
-		$this->getServiceLocator()->get('UserProviderModel')->create(array(
-			'user_id' => $oUser->getUserId(),
-			'provider_id' => $oUserProfile->identifier,
-			'provider_name' => $sService
-		));
-		return $oUser;
 	}
 
 	/**
@@ -288,7 +262,7 @@ class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 */
 	public function isUserEmailAvailable($sEmail){
 		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email si not a string');
-		if($this->getServiceLocator()->get('AuthService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sEmail)return str_ireplace(
+		if($this->getServiceLocator()->get('UserAuthenticationService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sEmail)return str_ireplace(
 			'%value%',
 			$sEmail,
 			$this->getServiceLocator()->get('translator')->translate(

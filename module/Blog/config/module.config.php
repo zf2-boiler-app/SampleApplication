@@ -101,7 +101,7 @@ return array(
 						'children' => array(
 							'userSection' => function(\Zend\Mvc\MvcEvent $oEvent){
 								try{
-									if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
+									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
 		    							$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
 		    							return 'header/blog-logged';
 	    							}
@@ -111,7 +111,7 @@ return array(
 							},
 							'navbar' => function(\Zend\Mvc\MvcEvent $oEvent){
 								try{
-									if($oEvent->getApplication()->getServiceManager()->get('AuthService')->hasIdentity()){
+									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
 										$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
 										return 'navbar/blog-logged';
 									}
