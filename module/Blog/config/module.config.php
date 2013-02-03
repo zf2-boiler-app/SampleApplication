@@ -13,12 +13,12 @@ return array(
 				),
 				'may_terminate' => true,
 				'child_routes' => array(
-					'news' => array(
+					'post' => array(
 						'type' => 'Zend\Mvc\Router\Http\Literal',
 						'options' => array(
-							'route' => '/news',
+							'route' => '/post',
 							'defaults' => array(
-								'controller' => 'Blog\Controller\News',
+								'controller' => 'Blog\Controller\Post',
 								'action' => 'index'
 							)
 						),
@@ -29,7 +29,7 @@ return array(
 								'options' => array(
 									'route' => '/create',
 									'defaults' => array(
-										'controller' => 'Blog\Controller\News',
+										'controller' => 'Blog\Controller\Post',
 										'action' => 'create'
 									)
 								)
@@ -39,8 +39,8 @@ return array(
 								'options' => array(
 									'route' => '/news',
 									'defaults' => array(
-										'controller' => 'Blog\Controller\News',
-										'action' => 'read/[news_id]'
+										'controller' => 'Blog\Controller\Post',
+										'action' => 'read/[post_id]'
 									)
 								)
 							),
@@ -49,8 +49,8 @@ return array(
 								'options' => array(
 									'route' => '/news',
 									'defaults' => array(
-										'controller' => 'Blog\Controller\News',
-										'action' => 'read/[news_id]'
+										'controller' => 'Blog\Controller\Post',
+										'action' => 'read/[post_id]'
 									)
 								)
 							),
@@ -59,8 +59,8 @@ return array(
 								'options' => array(
 									'route' => '/news',
 									'defaults' => array(
-										'controller' => 'Blog\Controller\News',
-										'action' => 'delete/[news_id]'
+										'controller' => 'Blog\Controller\Post',
+										'action' => 'delete/[post_id]'
 									)
 								)
 							)
@@ -73,7 +73,7 @@ return array(
 	'controllers' => array(
 		'invokables' => array(
 			'Blog\Controller\Index' => 'Blog\Controller\IndexController',
-			'Blog\Controller\News' => 'Blog\Controller\NewsController'
+			'Blog\Controller\Post' => 'Blog\Controller\PostController'
 		),
 	),
 	'translator' => array(
@@ -89,6 +89,11 @@ return array(
 				'pattern'  => '%s/Validate.php',
         		'text_domain' => 'validator'
 			)
+		)
+	),
+	'service_manager' => array(
+		'factories' => array(
+			'PostForm' => '\Blog\Factory\PostFormFactory',
 		)
 	),
 	'templating' => array(

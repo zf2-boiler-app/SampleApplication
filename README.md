@@ -83,16 +83,26 @@ In app features
 ###### User :
 
 * Two step registration
-* Social registration
+* Multi registration adapters (Database & Social by default)
 * Password recovring
 * Account management
 
 ###### Blog :
 
 * Editable home page
-* News
-* Articles
-* Photo galleries
+* News :
+	- CRUD
+	- Administration
+	- Private / public
+* Articles :
+	- CRUD
+	- Administration
+	- Private / public
+* Photo galleries :
+	- CRUD
+	- Administration
+	- Private / public
+* Statistics
 
 ###### Commons
 

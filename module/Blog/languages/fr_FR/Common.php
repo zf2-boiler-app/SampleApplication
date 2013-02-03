@@ -3,11 +3,15 @@ return array(
 	'blog' => 'Blog',
 	'blog_description' => 'Le Blog',
 
-	'create_a_news' => 'Créer une News',
+	'category' => 'Catégorie',
+	'write_a_new_post' => 'Rédiger un nouveau billet',
+	'create' => 'Créer',
 
-	'news' => 'News',
+	'posts' => 'Billets',
 
 	'search' => 'Recherche',
 
-	'update_news' => 'Modification d\'une News'
+	'title' => 'Titre',
+
+	'update_post' => 'Modification d\'un billet'
 );
