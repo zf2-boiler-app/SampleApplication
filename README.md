@@ -90,6 +90,8 @@ In app features
 ###### Blog :
 
 * Editable home page
+* Feeds
+* Social sharing
 * News :
 	- CRUD
 	- Administration

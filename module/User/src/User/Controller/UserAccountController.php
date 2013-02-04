@@ -1,6 +1,6 @@
 <?php
 namespace User\Controller;
-class UserAccountController extends \Application\Mvc\Controller\AbstractActionController{
+class UserAccountController extends \Templating\Mvc\Controller\AbstractActionController{
 
 	public function accountAction(){
 		//Check user is logged in

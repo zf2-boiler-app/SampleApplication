@@ -1,5 +1,5 @@
 <?php
-namespace Application\Mvc\Controller;
+namespace Templating\Mvc\Controller;
 abstract class AbstractActionController extends \AssetsBundle\Mvc\Controller\AbstractActionController{
 	/**
 	 * @var array

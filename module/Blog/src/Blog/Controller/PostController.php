@@ -1,6 +1,6 @@
 <?php
 namespace Blog\Controller;
-class PostController extends \Application\Mvc\Controller\AbstractActionController{
+class PostController extends \Templating\Mvc\Controller\AbstractActionController{
 	public function indexAction(){
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('news');

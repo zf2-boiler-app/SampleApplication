@@ -1,6 +1,6 @@
 <?php
 namespace User\Controller;
-class UserController extends \Application\Mvc\Controller\AbstractActionController{
+class UserController extends \Templating\Mvc\Controller\AbstractActionController{
 	public function loginAction(){
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('UserAuthenticationService')->hasIdentity()){

@@ -70,6 +70,17 @@ return array(
 			)
 		)
 	),
+	'asset_bundle' => array(
+		'assets' => array(
+			'Blog\Controller\Index' => array(
+				'home' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js'))
+			),
+			'Blog\Controller\Post' => array(
+				//'create' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js')),
+				'edit' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js'))
+			)
+		)
+	),
 	'controllers' => array(
 		'invokables' => array(
 			'Blog\Controller\Index' => 'Blog\Controller\IndexController',
