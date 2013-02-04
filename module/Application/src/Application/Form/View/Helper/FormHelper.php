@@ -22,6 +22,11 @@ class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
 	protected $escapeEscapeJsonHelper;
 
 	/**
+	 * @var \Zend\View\Helper\EscapeJs
+	 */
+	protected $escapeJsHelper;
+
+	/**
 	 * @see \DluTwBootstrap\Form\View\Helper\FormTwb::render()
 	 * @param \Zend\Form\Form $oForm
 	 * @param string $sFormType
@@ -89,7 +94,7 @@ class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
 	    		}
 			}
 		';
-		return parent::render($oForm,$sFormType,$aDisplayOptions,$bRenderErrors).PHP_EOL.$this->getEscapeJsHelper()->__invoke($sAfter);
+		return parent::render($oForm,$sFormType,$aDisplayOptions,$bRenderErrors).PHP_EOL.'<script type="text/javascript">'.$sAfter.'</script>';
 	}
 
 	/**
