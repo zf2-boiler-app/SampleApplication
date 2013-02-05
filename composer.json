@@ -8,14 +8,6 @@
     ],
     "minimum-stability" : "dev",
     "repositories":[
-    	{
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "twitter/bootstrap",
-                "source": {"url": "https://github.com/twitter/bootstrap.git","type": "git","reference": "master"}
-            }
-        },
         {
             "type": "package",
             "package": {
@@ -47,11 +39,7 @@
                 "name": "ckeditor/ckeditor-releases",
                 "source": {"url": "https://github.com/ckeditor/ckeditor-releases.git","type": "git","reference": "stable/standard"}
             }
-        },
-        {
-		    "type": "vcs",
-		    "url": "https://neilime@bitbucket.org/neilime/dlutwbootstrap.git"
-		},
+        }
 		{
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"
@@ -68,10 +56,11 @@
         "ext-mbstring": "*",
         
         "zendframework/zendframework": "dev-master",
+        "doctrine/doctrine-orm-module": "dev-master",
         "zendframework/zftool": "dev-master",
         
         "neilime/zf2-assets-bundle": "dev-master",
-        "dlu/dlutwbootstrap": "dev-master",
+        "neilime/zf2-twb-bundle": "dev-master",
         "dino/dompdf-module": "dev-master",
         "hybridauth/hybridauth": "dev-master",
         "inlinestyle/inlinestyle": "dev-master",
