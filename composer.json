@@ -39,7 +39,7 @@
                 "name": "ckeditor/ckeditor-releases",
                 "source": {"url": "https://github.com/ckeditor/ckeditor-releases.git","type": "git","reference": "stable/standard"}
             }
-        }
+        },
 		{
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"

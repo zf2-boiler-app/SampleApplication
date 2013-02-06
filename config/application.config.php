@@ -6,7 +6,7 @@ return array(
     	'Database',
     	'Templating',
     	'AssetsBundle',
-    	'DluTwBootstrap',
+    	'TwbBundle',
     	'User',
     	'Logger',
     	'Messenger',
