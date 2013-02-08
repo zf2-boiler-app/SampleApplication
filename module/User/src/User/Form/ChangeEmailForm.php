@@ -19,7 +19,7 @@ class ChangeEmailForm extends \Application\Form\AbstractForm{
 			'name' => 'user_new_email',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required validate-email emailIsAvailable',
+				'class' => 'required validate-email emailIsAvailable input-xlarge',
 				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));',
 				'autofocus' => 'autofocus'
 			),
@@ -31,11 +31,10 @@ class ChangeEmailForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'change_email'
+				'value' => 'change_email',
+				'class' => 'btn-large btn-primary'
 			),
-			'options' => array(
-				'primary' => true
-			)
+			'options' => array('twb'=>array('formAction' => true))
 		))
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_new_email',

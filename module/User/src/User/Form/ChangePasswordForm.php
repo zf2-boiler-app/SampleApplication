@@ -52,11 +52,10 @@ class ChangePasswordForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'change_password'
+				'value' => 'change_password',
+				'class' => 'btn-large btn-primary'
 			),
-			'options' => array(
-				'primary' => true
-			)
+			'options' => array('twb'=>array('formAction' => true))
 		))
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_password',

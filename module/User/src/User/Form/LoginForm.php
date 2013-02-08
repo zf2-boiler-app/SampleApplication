@@ -1,6 +1,7 @@
 <?php
 namespace User\Form;
 class LoginForm extends \Application\Form\AbstractForm{
+
 	/**
 	 * Constructor
 	 * @param string $sName
@@ -16,9 +17,10 @@ class LoginForm extends \Application\Form\AbstractForm{
 			'attributes' => array(
 				'placeholder' => 'email',
 				'required' => true,
-				'class' => 'required validate-email',
+				'class' => 'required validate-email input-xlarge',
 				'autofocus' => 'autofocus'
-			)
+			),
+			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'envelope')))
 		))
 		->add(array(
 			'name' => 'user_password',
@@ -26,18 +28,18 @@ class LoginForm extends \Application\Form\AbstractForm{
 				'type'  => 'password',
 				'placeholder' => 'password',
 				'required' => true,
-				'class' => 'required'
-			)
+				'class' => 'required input-xlarge'
+			),
+			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'lock')))
 		))
 		->add(array(
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'sign_in'
+				'value' => 'sign_in',
+				'class' => 'btn-large btn-primary'
 			),
-			'options' => array(
-				'primary' => true
-			)
+			'options' => array('twb'=>array('formAction' => true))
 		))
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_email',

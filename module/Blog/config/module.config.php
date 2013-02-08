@@ -1,86 +1,16 @@
 <?php
 return array(
-	'router' => array(
-		'routes' => array(
-			'blog' => array(
-				'type' => 'Zend\Mvc\Router\Http\Literal',
-				'options' => array(
-					'route' => '/blog',
-					'defaults' => array(
-						'controller' => 'Blog\Controller\Index',
-						'action' => 'index'
-					)
-				),
-				'may_terminate' => true,
-				'child_routes' => array(
-					'post' => array(
-						'type' => 'Zend\Mvc\Router\Http\Literal',
-						'options' => array(
-							'route' => '/post',
-							'defaults' => array(
-								'controller' => 'Blog\Controller\Post',
-								'action' => 'index'
-							)
-						),
-						'may_terminate' => true,
-						'child_routes' => array(
-							'create' => array(
-								'type' => 'Zend\Mvc\Router\Http\Literal',
-								'options' => array(
-									'route' => '/create',
-									'defaults' => array(
-										'controller' => 'Blog\Controller\Post',
-										'action' => 'create'
-									)
-								)
-							),
-							'read' => array(
-								'type' => 'Zend\Mvc\Router\Http\Segment',
-								'options' => array(
-									'route' => '/news',
-									'defaults' => array(
-										'controller' => 'Blog\Controller\Post',
-										'action' => 'read/[post_id]'
-									)
-								)
-							),
-							'update' => array(
-								'type' => 'Zend\Mvc\Router\Http\Segment',
-								'options' => array(
-									'route' => '/news',
-									'defaults' => array(
-										'controller' => 'Blog\Controller\Post',
-										'action' => 'read/[post_id]'
-									)
-								)
-							),
-							'delete' => array(
-								'type' => 'Zend\Mvc\Router\Http\Segment',
-								'options' => array(
-									'route' => '/news',
-									'defaults' => array(
-										'controller' => 'Blog\Controller\Post',
-										'action' => 'delete/[post_id]'
-									)
-								)
-							)
-						)
-					)
-				)
+	'router' => include 'module.config.routes.php',
+	'doctrine' => array(
+		'driver' => array(
+			'blog_forum_driver' => array(
+				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+				'cache' => 'array',
+				'paths' => dirname(__DIR__) . '/src/Blog/Entity'
 			)
 		)
 	),
-	'asset_bundle' => array(
-		'assets' => array(
-			'Blog\Controller\Index' => array(
-				'home' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js'))
-			),
-			'Blog\Controller\Post' => array(
-				//'create' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js')),
-				'edit' => array('js' => array('@zfRootPath/vendor/ckeditor/ckeditor-releases/ckeditor.js'))
-			)
-		)
-	),
+
 	'controllers' => array(
 		'invokables' => array(
 			'Blog\Controller\Index' => 'Blog\Controller\IndexController',

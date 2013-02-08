@@ -29,11 +29,10 @@ class ChangeAvatarForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'change_avatar'
+				'value' => 'change_avatar',
+				'class' => 'btn-large btn-primary'
 			),
-			'options' => array(
-				'primary' => true
-			)
+			'options' => array('twb'=>array('formAction' => true))
 		))
 		->setInputFilter($oInputFilter->add(array(
 			'name' => 'user_new_avatar',

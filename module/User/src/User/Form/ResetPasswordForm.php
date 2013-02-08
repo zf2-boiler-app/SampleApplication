@@ -26,10 +26,8 @@ class ResetPasswordForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'reset_password'
-			),
-			'options' => array(
-				'primary' => true
+				'value' => 'reset_password',
+				'class' => 'btn-large btn-primary'
 			)
 		))
 		->setInputFilter($oInputFilter->add(array(

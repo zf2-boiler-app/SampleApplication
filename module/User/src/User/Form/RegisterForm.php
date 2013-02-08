@@ -79,11 +79,10 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 			'type'  => 'submit',
-				'value' => 'register'
+				'value' => 'register',
+				'class' => 'btn-large btn-primary'
 			),
-			'options' => array(
-				'primary' => true
-			)
+			'options' => array('twb'=>array('formAction' => true))
 		))
 		->setInputFilter($oInputFilter->add(array(
 				'name' => 'user_email',

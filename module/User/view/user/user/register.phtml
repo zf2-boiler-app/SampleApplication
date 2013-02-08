@@ -5,9 +5,7 @@
 </div>
 <?php } else{
 	if(!empty($this->error))echo '<div class="alert alert-error">'.$this->error.'</div>';
-	echo $this->form($this->form,null,array('elements' => array(
-		'submit' => array('class' => 'btn-large')
-	)));
+	echo $this->form($this->form);
 ?>
 <fieldset>
 	<legend><?=$this->translate('or_use_another_service')?></legend>
