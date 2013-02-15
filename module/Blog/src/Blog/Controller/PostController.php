@@ -14,13 +14,12 @@ class PostController extends \Templating\Mvc\Controller\AbstractActionController
 		//Assign form
 		$this->view->form = $this->getServiceLocator()->get('PostForm');
 		if(
-				$this->getRequest()->isPost()
-				&& $this->view->form->setData($this->params()->fromPost())->isValid()
-				&& $iPostId = $this->getServiceLocator()->get('BlogPostService')->createPost(
-						$this->params()->fromPost('post_tile'),
-						$this->params()->fromPost('post_category'),
-						$this->params()->fromPost('post_content')
-				)
+			$this->getRequest()->isPost()
+			&& $this->view->form->setData($this->params()->fromPost())->isValid()
+			&& $iPostId = $this->getServiceLocator()->get('PostService')->createPost(
+				$this->params()->fromPost('post_title'),
+				$this->params()->fromPost('post_content')
+			)
 		)$this->redirect()->toRoute('blog/post/read',array('post_id' => $iPostId));
 
 		return $this->view;

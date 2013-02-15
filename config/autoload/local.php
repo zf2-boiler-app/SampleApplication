@@ -35,6 +35,19 @@ return array(
 		'password' => '',
 		'dsn' => 'mysql:dbname=zf2base;host=localhost'
 	),
+	'doctrine' => array(
+		'connection' => array(
+			'orm_default' => array(
+				'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+				'params' => array(
+					'host'     => 'localhost',
+					'user'     => 'root',
+					'password' => '',
+					'dbname'   => 'zf2base'
+				)
+			)
+		)
+	),
 	'messenger' => array(
 		'system_user' => array(
 			'email' => 'email@mail.com',

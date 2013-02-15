@@ -15,6 +15,6 @@ return array(
 		'production' => true,
 		'cachePath' => '@zfRootPath/public/assets/cache',
 		'assetsPath' => '@zfRootPath/public/assets',
-		'cacheUrl' => '@zfBaseUrl/assets/cache/',
+		'cacheUrl' => '@zfBaseUrl/assets/cache/'
 	)
 );

@@ -1,31 +1,10 @@
 <?php
 namespace User\Service;
-class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+class UserService{
+	use \Zend\ServiceManager\ServiceLocatorAwareTrait;
+
 	const LOCAL_AUTHENTICATION = 'LocalAuth';
 	const HYBRID_AUTH_AUTHENTICATION = 'HybridAuth';
-
-	/**
-	 * @var \Zend\ServiceManager\ServiceLocatorInterface
-	 */
-	private $serviceLocator;
-
-	/**
-	 * @param \Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator
-	 * @return \User\Service\UserService
-	 */
-	public function setServiceLocator(\Zend\ServiceManager\ServiceLocatorInterface $oServiceLocator){
-		$this->serviceLocator = $oServiceLocator;
-		return $this;
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return \Zend\ServiceManager\ServiceManager
-	 */
-	public function getServiceLocator(){
-		if($this->serviceLocator instanceof \Zend\ServiceManager\ServiceLocatorInterface)return $this->serviceLocator;
-		throw new \Exception('Service Locator is undefined');
-	}
 
 	/**
 	 * @param string $sUserEmail

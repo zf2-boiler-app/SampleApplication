@@ -1,11 +1,9 @@
 <h3><?=$this->layout()->title?></h3>
-<?php if($this->isValid === true){ ?>
-<div class="alert alert-success">
-	<?=$this->translate('registration_completed_now_confirm_email')?>
-</div>
-<?php } else{
-	if(!empty($this->error))echo '<div class="alert alert-error">'.$this->error.'</div>';
-	echo $this->form($this->form);
+<?php
+	if($this->isValid === true)echo $this->alert('registration_completed_now_confirm_email','alert-alert-success',false);
+	else{
+		if(!empty($this->error))echo $this->alert($this->error,'alert-error',false);
+		echo $this->form($this->form);
 ?>
 <fieldset>
 	<legend><?=$this->translate('or_use_another_service')?></legend>

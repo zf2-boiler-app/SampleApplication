@@ -19,15 +19,7 @@ return array(
 			\Messenger\Service\MessengerService::MEDIA_EMAIL => 'EmailTransporter'
 		)
 	),
-	'asset_bundle' => array(
-		'assets' => array(
-			'email' => array(
-				'less' => array(
-					'less/email/reset.less'
-				)
-			)
-		)
-	),
+	'asset_bundle' => include 'module.config.assets.php',
 	'service_manager' => array(
 		'factories' => array(
 			//Services

@@ -1,7 +1,7 @@
 <?php
 return array(
 	'router' => include 'module.config.routes.php',
-
+	'asset_bundle' => include 'module.config.assets.php',
 	'paths' => array(
     	'avatarsPath' => getcwd().'/data/avatars'
     ),
@@ -25,17 +25,6 @@ return array(
         		'text_domain' => 'validator'
 			)
 		)
-	),
-	'asset_bundle' => array(
-    	'assets' => array(
-    		'User\Controller\User' => array(
-    			'login' => array('js' => array('js/User/Controller/UserLoginController.js')),
-    			'register' => array('js' => array('js/User/Controller/UserRegisterController.js')),
-    		),
-    		'User\Controller\UserAccount' => array(
-    			'js' => array('js/User/Controller/UserAccountController.js')
-    		)
-    	)
 	),
 	'authentication' => array(
 		'storage' => 'UserAuthenticationStorage',

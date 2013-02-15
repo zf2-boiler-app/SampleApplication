@@ -1,21 +1,11 @@
 <?php
 return array(
 	'router' => include 'module.config.routes.php',
-	'doctrine' => array(
-		'driver' => array(
-			'blog_forum_driver' => array(
-				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-				'cache' => 'array',
-				'paths' => dirname(__DIR__) . '/src/Blog/Entity'
-			)
-		)
-	),
-
 	'controllers' => array(
 		'invokables' => array(
 			'Blog\Controller\Index' => 'Blog\Controller\IndexController',
 			'Blog\Controller\Post' => 'Blog\Controller\PostController'
-		),
+		)
 	),
 	'translator' => array(
 		'translation_file_patterns' => array(
@@ -32,9 +22,31 @@ return array(
 			)
 		)
 	),
+	// Doctrine config
+	'doctrine' => array(
+		'driver' => array(
+			__NAMESPACE__ . '_driver' => array(
+				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+				'cache' => 'array',
+				'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity')
+			),
+			'orm_default' => array(
+				'drivers' => array(
+					__NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
+				)
+			)
+		)
+	),
 	'service_manager' => array(
 		'factories' => array(
-			'PostForm' => '\Blog\Factory\PostFormFactory',
+			'PostForm' => 'Blog\Factory\PostFormFactory',
+		),
+		'invokables' => array(
+			'PostService' => 'Blog\Service\PostService',
+			'PostRepository' => 'Blog\Repository\PostRepository',
+		),
+		'abstract_factories' => array(
+			'Blog\Factory\MapperAbstractFactory'
 		)
 	),
 	'templating' => array(

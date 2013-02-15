@@ -41,11 +41,8 @@ class UserController extends \Templating\Mvc\Controller\AbstractActionController
 		}
 
 		if(isset($bReturn)){
-			if(is_string($bReturn)){
-				$this->view->error = $bReturn;
-				$this->view->isPending = $bReturn === $this->getServiceLocator()->get('translator')->translate('user_state_pending');
-			}
-			else throw new \Exception('Authenticate process return invalid : '.gettype($bReturn));
+			if(is_string($bReturn))$this->view->error = $bReturn;
+			else throw new \Exception('Authenticate process failed return type expects string, "'.gettype($bReturn).'" given');
 		}
 
 		//Try to define redirect url

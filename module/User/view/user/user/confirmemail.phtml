@@ -1,9 +1,6 @@
 <h3><?=$this->layout()->title?></h3>
-<?php if(!empty($this->error)){?>
-<div class="alert alert-block"><?=$this->error?></div>
-<?php } else { ?>
-<div class="alert alert-success">
-	<?=$this->translate('registration_validated_now_connect')?>
-	<a class="btn" href="<?=$this->url('User/login')?>"><?=$this->translate('sign_in')?></a>
-</div>
-<?php } ?>
+<?=empty($this->error)?$this->alert(
+	$this->translate('registration_validated_now_connect').PHP_EOL.'<a class="btn" href="'.$this->url('User/login').'">'.$this->translate('sign_in').'</a>',
+	'alert-success',
+	false
+):$this->alert($this->error,'alert-error',false)?>

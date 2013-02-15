@@ -1,68 +1,7 @@
 <?php
 return array(
-	'router' => array(
-		'routes' => array(
-			'home' => array(
-				'type' => 'Zend\Mvc\Router\Http\Literal',
-				'options' => array(
-					'route'    => '/',
-					'defaults' => array(
-						'controller' => 'Application\Controller\Index',
-						'action'     => 'index'
-					)
-				)
-			),
-			'terms' => array(
-				'type' => 'Zend\Mvc\Router\Http\Literal',
-				'options' => array(
-					'route'    => '/terms',
-					'defaults' => array(
-						'controller' => 'Application\Controller\Index',
-						'action' => 'terms'
-					)
-				)
-			),
-			'privacy' => array(
-				'type' => 'Zend\Mvc\Router\Http\Literal',
-				'options' => array(
-					'route'    => '/privacy',
-					'defaults' => array(
-						'controller' => 'Application\Controller\Index',
-						'action' => 'privacy'
-					)
-				)
-			)
-		)
-	),
-	'asset_bundle' => array(
-		'assets' => array(
-			'less' => array(
-				'less/global.less',
-				'less/bootstrap-custom.less',
-				'@zfRootPath/vendor/fortawesome/font-awesome/less/font-awesome.less',
-				'@zfRootPath/vendor/twitter/bootstrap/less/bootstrap.less'
-			),
-			'js' => array(
-				'js/mootools/mootools-core-1.4.5.js',
-				'js/mootools/mootools-more-1.4.0.1.js',
-				'js/mootools/mootools-bootstrap.js',
-				'js/mootools',
-				'js/modernizr.min.js',
-				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source/Meio.Mask.js',
-				'@zfRootPath/vendor/fabiomcosta/mootools-meio-mask/Source',
-				'js/MeioMask/behavior.js',
-				'@zfRootPath/vendor/arian/iFrameFormRequest/Source/iFrameFormRequest.js',
-				'js/controller.js',
-				'js/Modal',
-				'js/Validator/common.js'
-			),
-			'media' => array(
-				'@zfRootPath/vendor/fortawesome/font-awesome/font',
-				'images',
-				'@zfRootPath/vendor/twitter/bootstrap/img'
-			)
-		)
-	),
+	'router' => include 'module.config.routes.php',
+	'asset_bundle' => include 'module.config.assets.php',
 	'service_manager' => array(
 		'factories' => array(
 			'translator' => 'Application\Translator\TranslatorServiceFactory',

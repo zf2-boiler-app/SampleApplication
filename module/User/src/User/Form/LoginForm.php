@@ -20,7 +20,7 @@ class LoginForm extends \Application\Form\AbstractForm{
 				'class' => 'required validate-email input-xlarge',
 				'autofocus' => 'autofocus'
 			),
-			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'envelope')))
+			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'icon-envelope')))
 		))
 		->add(array(
 			'name' => 'user_password',
@@ -30,7 +30,7 @@ class LoginForm extends \Application\Form\AbstractForm{
 				'required' => true,
 				'class' => 'required input-xlarge'
 			),
-			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'lock')))
+			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'icon-lock')))
 		))
 		->add(array(
 			'name' => 'submit',

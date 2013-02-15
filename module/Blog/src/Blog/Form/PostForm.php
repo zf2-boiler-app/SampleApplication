@@ -9,13 +9,16 @@ class PostForm extends \Application\Form\AbstractForm{
 	 */
 	public function __construct($sName = null,$aOptions = null){
 		parent::__construct('post',$aOptions);
-		$oInputFilter = new \Zend\InputFilter\InputFilter();
 		$this->setAttribute('method', 'post')
+		->add(array(
+			'name' => 'post_id',
+			'type' => 'hidden'
+		))
 		->add(array(
 			'name' => 'post_title',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required',
+				'class' => 'required input-block-level',
 				'autofocus' => 'autofocus'
 			),
 			'options' => array(
@@ -23,35 +26,11 @@ class PostForm extends \Application\Form\AbstractForm{
 			)
 		))
 		->add(array(
-			'name' => 'post_category',
-			'type' => 'select',
-			'attributes' => array(
-				'required' => true,
-				'class' => 'required'
-			),
-			'options' => array(
-				'label' => 'category',
-				'value_options' => array($aOptions['post_categories'])
-			)
-		))
-		->add(array(
-			'name' => 'post_date',
-			'type' => 'Zend\Form\Element\DateTimeLocal',
-			'attributes' => array(
-				'required' => true,
-				'class' => 'required'
-			),
-			'options' => array(
-				'label' => 'date_of_publication',
-				'value' => time()
-			)
-		))
-		->add(array(
 			'name' => 'post_content',
-			'type' => 'CKEditorBundle\Form\Element\CKEditor',
+			'type' => 'textarea',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required'
+				'class' => 'required input-block-level'
 			),
 			'options' => array(
 				'label' => 'content'
@@ -61,15 +40,10 @@ class PostForm extends \Application\Form\AbstractForm{
 			'name' => 'submit',
 			'attributes' => array(
 				'type'  => 'submit',
-				'value' => 'create'
+				'value' => 'create',
+				'class' => 'btn-primary btn-large'
 			),
-			'options' => array(
-				'primary' => true
-			)
-		))
-		->setInputFilter($oInputFilter->add(array(
-			'name' => 'post_category',
-			'required' => true
-		)));
+			'options' => array('twb'=>array('formAction' => true))
+		))->setInputFilter(new \Blog\InputFilter\PostInputFilter());
 	}
 }

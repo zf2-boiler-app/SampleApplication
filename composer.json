@@ -63,12 +63,12 @@
         "neilime/zf2-twb-bundle": "dev-master",
         "dino/dompdf-module": "dev-master",
         "hybridauth/hybridauth": "dev-master",
+        "neilime/zf2-ckeditor-bundle" : "dev-master",
         "inlinestyle/inlinestyle": "dev-master",
         
         "twitter/bootstrap": "dev-master",
         "fortawesome/font-awesome": "dev-master",
         "fabiomcosta/mootools-meio-mask": "dev-master",
-        "arian/iFrameFormRequest" : "dev-master",
-        "neilime/zf2-ckeditor-bundle" : "dev-master"
+        "arian/iFrameFormRequest" : "dev-master"
     }
 }
