@@ -25,14 +25,14 @@ return array(
 	// Doctrine config
 	'doctrine' => array(
 		'driver' => array(
-			__NAMESPACE__ . '_driver' => array(
+			'blog_driver' => array(
 				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
 				'cache' => 'array',
-				'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity')
+				'paths' => array(__DIR__ . '/../src/Blog/Entity')
 			),
 			'orm_default' => array(
 				'drivers' => array(
-					__NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
+					'Blog\Entity' => 'blog_driver'
 				)
 			)
 		)

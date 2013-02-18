@@ -1,5 +1,8 @@
 <?php
 return array(
+	//Entity
+	'Database\Entity\AbstractEntity' => __DIR__.'/src/Database/Entity/AbstractEntity.php',
+
 	//RowGateway
 	'Database\Db\RowGateway\AbstractRowGateway' => __DIR__.'/src/Database/Db/RowGateway/AbstractRowGateway.php',
 

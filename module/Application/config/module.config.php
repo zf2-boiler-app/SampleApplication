@@ -2,26 +2,6 @@
 return array(
 	'router' => include 'module.config.routes.php',
 	'asset_bundle' => include 'module.config.assets.php',
-	'service_manager' => array(
-		'factories' => array(
-			'translator' => 'Application\Translator\TranslatorServiceFactory',
-			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				$aConfiguration = $oServiceManager->get('config');
-				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
-				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
-			},
-			'Session' =>  function(){
-				return new \Zend\Session\Container('zf2app');
-			},
-			'FormHelper' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return new \Application\Form\View\Helper\FormHelper(
-					new \DluTwBootstrap\GenUtil(),
-					new \DluTwBootstrap\Form\FormUtil(),
-					$oServiceManager->get('Request')
-				);
-			}
-		)
-	),
 	'translator' => array(
 		'locale' => 'fr_FR',
 		//'cache' => array('adapter'=> 'Zend\Cache\Storage\Adapter\Memcached'),
@@ -90,6 +70,19 @@ return array(
 			)
 		)
 	),
+	'service_manager' => array(
+		'factories' => array(
+			'translator' => 'Application\Translator\TranslatorServiceFactory',
+			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
+				$aConfiguration = $oServiceManager->get('config');
+				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
+				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
+			},
+			'Session' =>  function(){
+				return new \Zend\Session\Container('zf2app');
+			}
+		)
+	),
 	'view_manager' => array(
 		'display_not_found_reason' => true,
 		'display_exceptions' => true,
@@ -112,12 +105,10 @@ return array(
 		'factories' => array(
 			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				return $oServiceManager->getServiceLocator()->get('social');
-			},
-			'form' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				return $oServiceManager->getServiceLocator()->get('FormHelper');
 			}
 		),
 		'invokables' => array(
+			'form' => 'Application\Form\View\Helper\FormHelper',
 			'escapeJson' => 'Application\View\Helper\EscapeJsonHelper',
 			'jsController' => 'Application\View\Helper\JsControllerHelper',
 		)

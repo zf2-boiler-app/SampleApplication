@@ -1,20 +1,12 @@
 <?php
 namespace Application\Form\View\Helper;
-class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
+class FormHelper extends \TwbBundle\Form\View\Helper\TwbBundleForm implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
+	use \Zend\ServiceManager\ServiceLocatorAwareTrait;
+
 	/**
 	 * @var \Zend\Http\Request
 	 */
 	protected $request;
-
-	/**
-	 * Constructor
-	 * @param \DluTwBootstrap\GenUtil $oGenUtil
-	 * @param \DluTwBootstrap\Form\FormUtil $oFormUtil
-	 */
-	public function __construct(\DluTwBootstrap\GenUtil $oGenUtil, \DluTwBootstrap\Form\FormUtil $oFormUtil, \Zend\Http\Request $oRequest){
-		parent::__construct($oGenUtil, $oFormUtil);
-		$this->request = $oRequest;
-	}
 
 	/**
 	 * @var \Application\View\Helper\EscapeJsonHelper
@@ -27,28 +19,58 @@ class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
 	protected $escapeJsHelper;
 
 	/**
-	 * @see \DluTwBootstrap\Form\View\Helper\FormTwb::render()
-	 * @param \Zend\Form\Form $oForm
-	 * @param string $sFormType
-	 * @param array $aDisplayOptions
-	 * @param bool $bRenderErrors
-	 * @return string
+	 * @return \Zend\Http\Request
 	 */
-	public function render(\Zend\Form\FormInterface $oForm, $sFormType = null, array $aDisplayOptions = array(), $bRenderErrors = true){
-		return empty($aDisplayOptions['ajax'])
-			?parent::render($oForm,$sFormType,$aDisplayOptions,$bRenderErrors)
-			:$this->renderForAjax($oForm,$sFormType,$aDisplayOptions,$bRenderErrors);
+	protected function getRequest(){
+		if(!$this->request){
+			$oRequest = $this->getServiceLocator()->getServiceLocator()->get('Request');
+			if($oRequest)$this->setRequest($oRequest);
+			else throw new \Exception('Request is undefined');
+		}
+		return $this->request;
+	}
+
+	/**
+	 * @param \Zend\Http\Request $oRequest
+	 * @return \Application\Form\View\Helper\FormHelper
+	 */
+	public function setRequest(\Zend\Http\Request $oRequest){
+		$this->request = $oRequest;
+		return $this;
+	}
+
+	/**
+	 * Invoke as function
+	 * @see \Zend\Form\View\Helper\Form::__invoke()
+	 * @param null|\Zend\Form\FormInterface $oForm
+     * @param string $sFormLayout : default 'horizontal'
+	 * @return \TwbBundle\Form\View\Helper|string
+	 */
+	public function __invoke(\Zend\Form\FormInterface $oForm = null, $sFormLayout = \TwbBundle\Form\View\Helper\TwbBundleForm::LAYOUT_HORIZONTAL,$bAjax = false){
+		if($oForm)return $this->render($oForm,$sFormLayout,$bAjax);
+		return $this;
+	}
+
+	/**
+     * Render a form from the provided $oForm,
+     * @see \Zend\Form\View\Helper\Form::render()
+     * @param \Zend\Form\FormInterface $oForm
+     * @param string $sFormLayout : default 'horizontal'
+     * @param boolean $bAjax : default false
+     * @return string
+     */
+    public function render(\Zend\Form\FormInterface $oForm, $sFormLayout = \TwbBundle\Form\View\Helper\TwbBundleForm::LAYOUT_HORIZONTAL,$bAjax = false){
+		return $bAjax?$this->renderForAjax($oForm,$sFormLayout):parent::render($oForm,$sFormLayout);
 	}
 
 	/**
 	 * Render form with ajax submit
-	 * @param \Zend\Form\Form $oForm
-	 * @param string $sFormType
-	 * @param array $aDisplayOptions
-	 * @param boolean $bRenderErrors
+	 * @see \Zend\Form\View\Helper\Form::render()
+	 * @param \Zend\Form\FormInterface $oForm
+	 * @param string $sFormLayout : default 'horizontal'
 	 * @return string
 	 */
-	protected function renderForAjax(\Zend\Form\FormInterface $oForm, $sFormType = null, array $aDisplayOptions = array(), $bRenderErrors = true){
+	public function renderForAjax(\Zend\Form\FormInterface $oForm, $sFormLayout = \TwbBundle\Form\View\Helper\TwbBundleForm::LAYOUT_HORIZONTAL,$bAjax = false){
 		$sAfter = '
 			if(document.id){
 				try{
@@ -94,7 +116,7 @@ class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
 	    		}
 			}
 		';
-		return parent::render($oForm,$sFormType,$aDisplayOptions,$bRenderErrors).PHP_EOL.'<script type="text/javascript">'.$sAfter.'</script>';
+		return parent::render($oForm,$sFormLayout).PHP_EOL.'<script type="text/javascript">'.$sAfter.'</script>';
 	}
 
 	/**
@@ -117,12 +139,5 @@ class FormHelper extends \DluTwBootstrap\Form\View\Helper\FormTwb{
 		if(method_exists($this->view, 'plugin'))$this->escapeJsHelper = $this->view->plugin('escapejs');
 		if(!$this->escapeJsHelper instanceof \Zend\View\Helper\EscapeJs)$this->escapeJsHelper = new  \Zend\View\Helper\EscapeJs();
 		return $this->escapeJsHelper;
-	}
-
-	/**
-	 * @return \Zend\Http\Request
-	 */
-	protected function getRequest(){
-		return $this->request;
 	}
 }

@@ -3,10 +3,10 @@ namespace Blog\Repository;
 class PostRepository extends \Doctrine\ORM\EntityRepository implements \Blog\Mapper\PostMapperInterface{
 
 	/**
-	 * @param \Blog\Entity\Post $oPost
-	 * @return \Blog\Entity\Post
+	 * @param \Blog\Entity\PostEntity $oPost
+	 * @return \Blog\Entity\PostEntity
 	 */
-    public function create(\Blog\Entity\Post $oPost){
+    public function create(\Blog\Entity\PostEntity $oPost){
         $this->_em->persist($oPost);
         $this->_em->flush();
         return $oPost;
@@ -14,19 +14,18 @@ class PostRepository extends \Doctrine\ORM\EntityRepository implements \Blog\Map
 
     /**
      * Update the post
-     * @param  Post $post
-     * @return Post
+     * @param \Blog\Entity\PostEntity $post
+     * @return \Blog\Entity\PostEntity
      */
-    public function update(\Blog\Entity\Post $oPost){
+    public function update(\Blog\Entity\PostEntity $oPost){
     	$this->_em->flush();
         return $post;
     }
 
     /**
-     * @param  Post $post
-     * @return void
+     * @param \Blog\Entity\PostEntity $post
      */
-    public function remove(\Blog\Entity\Post $oPost){
+    public function remove(\Blog\Entity\PostEntity $oPost){
         $this->_em->remove($post);
         $this->_em->flush($post);
     }

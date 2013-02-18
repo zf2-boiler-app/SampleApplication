@@ -28,7 +28,7 @@ class MapperAbstractFactory implements \Zend\ServiceManager\AbstractFactoryInter
         	return $oEntityManager->getRepository('Blog\\Entity\\'.preg_replace('/MapperInterface$/i','Entity',end($aRequestParts)));
         }
         catch(\Exception $oException){
-        	/* TODO Remove Error log */error_log(print_r($oException->__toString(),true));
+        	error_log(print_r($oException->__toString(),true));
         }
     }
 }

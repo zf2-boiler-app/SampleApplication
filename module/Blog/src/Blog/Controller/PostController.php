@@ -3,8 +3,8 @@ namespace Blog\Controller;
 class PostController extends \Templating\Mvc\Controller\AbstractActionController{
 	public function indexAction(){
 		//Define title
-		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('news');
-		return $this->view;
+		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('posts');
+		return $this->view->setVariable('posts',$this->getServiceLocator()->get('PostService')->getPosts($this->params('page')));
 	}
 
 	public function createAction(){

@@ -11,6 +11,21 @@ return array(
         	'User\Controller\UserAccount' => 'User\Controller\UserAccountController',
         ),
     ),
+	// Doctrine config
+	'doctrine' => array(
+		'driver' => array(
+			'user_driver' => array(
+				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+				'cache' => 'array',
+				'paths' => array(__DIR__ . '/../src/User/Entity')
+			),
+			'orm_default' => array(
+				'drivers' => array(
+					'User\Entity' => 'user_driver'
+				)
+			)
+		)
+	),
 	'translator' => array(
 		'translation_file_patterns' => array(
 			array(

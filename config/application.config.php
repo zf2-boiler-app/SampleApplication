@@ -4,16 +4,16 @@ return array(
     	'ZFTool',
     	'DoctrineModule',
     	'DoctrineORMModule',
+    	'TwbBundle',
+    	'AssetsBundle',
+    	'CKEditorBundle',
         'Application',
     	'Database',
     	'Templating',
-    	'AssetsBundle',
-    	'TwbBundle',
     	'User',
     	'Logger',
     	'Messenger',
-    	'Blog',
-    	'CKEditorBundle'
+    	'Blog'
     ),
     'module_listener_options' => array(
         'config_glob_paths' => array( 'config/autoload/{,*.}{global,local,private}.php'),

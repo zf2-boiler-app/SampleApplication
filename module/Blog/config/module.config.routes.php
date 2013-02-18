@@ -23,6 +23,17 @@ return array(
 					),
 					'may_terminate' => true,
 					'child_routes' => array(
+						'all' => array(
+							'type' => 'Zend\Mvc\Router\Http\Segment',
+							'options' => array(
+								'route' => '/all/:page',
+								'defaults' => array(
+									'controller' => 'Blog\Controller\Post',
+									'action' => 'index',
+									'page' => 1,
+								)
+							)
+						),
 						'create' => array(
 							'type' => 'Zend\Mvc\Router\Http\Literal',
 							'options' => array(
@@ -36,30 +47,30 @@ return array(
 						'read' => array(
 							'type' => 'Zend\Mvc\Router\Http\Segment',
 							'options' => array(
-								'route' => '/news',
+								'route' => '/read/:post_id[/:post_title]',
 								'defaults' => array(
 									'controller' => 'Blog\Controller\Post',
-									'action' => 'read/[post_id]'
+									'action' => 'read'
 								)
 							)
 						),
 						'update' => array(
 							'type' => 'Zend\Mvc\Router\Http\Segment',
 							'options' => array(
-								'route' => '/news',
+								'route' => '/update/:post_id',
 								'defaults' => array(
 									'controller' => 'Blog\Controller\Post',
-									'action' => 'read/[post_id]'
+									'action' => 'update'
 								)
 							)
 						),
 						'delete' => array(
 							'type' => 'Zend\Mvc\Router\Http\Segment',
 							'options' => array(
-								'route' => '/news',
+								'route' => '/delete/:post_id',
 								'defaults' => array(
 									'controller' => 'Blog\Controller\Post',
-									'action' => 'delete/[post_id]'
+									'action' => 'delete'
 								)
 							)
 						)

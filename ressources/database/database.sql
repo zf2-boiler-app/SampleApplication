@@ -130,6 +130,40 @@ CREATE  TABLE IF NOT EXISTS `zf2base`.`users_providers_logs` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
+
+-- -----------------------------------------------------
+-- Table `zf2base`.`posts`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `zf2base`.`posts` (
+  `post_id` INT NOT NULL AUTO_INCREMENT ,
+  `post_title` VARCHAR(45) NOT NULL ,
+  `post_content` TEXT NOT NULL ,
+  `entity_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `entity_update` TIMESTAMP NULL DEFAULT NULL ,
+  PRIMARY KEY (`post_id`) )
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `zf2base`.`posts_logs`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `zf2base`.`posts_logs` (
+  `post_id` INT NOT NULL AUTO_INCREMENT ,
+  `post_title` VARCHAR(45) NOT NULL ,
+  `post_content` TEXT NOT NULL ,
+  `entity_create` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  `entity_update` TIMESTAMP NULL DEFAULT NULL ,
+  `entity_delete` TIMESTAMP NULL DEFAULT NULL ,
+  `entity_log_id` INT(11) NULL DEFAULT NULL ,
+  PRIMARY KEY (`post_id`) ,
+  INDEX `fk_posts_logs_logs1_idx` (`entity_log_id` ASC) ,
+  CONSTRAINT `logs_posts_log_id`
+    FOREIGN KEY (`entity_log_id` )
+    REFERENCES `zf2base`.`logs` (`log_id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
 USE `zf2base` ;
 USE `zf2base`;
 
@@ -179,6 +213,32 @@ CREATE TRIGGER `delete_user_provider_trigger` AFTER DELETE ON users_providers FO
 BEGIN
 INSERT INTO users_providers_logs(user_id,provider_id,provider_name,entity_create,entity_update,entity_deleted)
 VALUES (OLD.user_id, OLD.provider_id, OLD.provider_name, OLD.entity_create, OLD.entity_update,NOW());
+END
+$$
+
+
+DELIMITER ;
+
+DELIMITER $$
+USE `zf2base`$$
+
+
+CREATE TRIGGER `insert_post_trigger` AFTER INSERT ON posts FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+BEGIN
+INSERT INTO posts_logs(post_id,post_title,post_content,entity_create,entity_update)
+VALUES (NEW.post_id, NEW.post_title, NEW.post_content, NEW.entity_create, NEW.entity_update);
+END
+$$
+
+USE `zf2base`$$
+
+
+CREATE TRIGGER `delete_post_trigger` AFTER DELETE ON posts FOR EACH ROW
+-- Edit trigger body code below this line. Do not edit lines above this one
+BEGIN
+INSERT INTO posts_logs(post_id,post_title,post_content,entity_create,entity_update,entity_delete)
+VALUES (OLD.post_id, OLD.post_title, OLD.post_content, OLD.entity_create, OLD.entity_update,NOW());
 END
 $$
 

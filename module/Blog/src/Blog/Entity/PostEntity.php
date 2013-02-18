@@ -1,41 +1,58 @@
 <?php
 namespace Blog\Entity;
 /**
- * @ORM\Entity(repositoryClass="Blog\Repository\PostRepository")
- * @ORM\Table(name="posts")
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="\Blog\Repository\PostRepository")
+ * @\Doctrine\ORM\Mapping\Table(name="posts")
  */
-class PostEntity{
-
+class PostEntity extends \Database\Entity\AbstractEntity{
     /**
      * @var int
-     * @ORM\post_id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @\Doctrine\ORM\Mapping\Id
+     * @\Doctrine\ORM\Mapping\Column(type="integer")
+     * @\Doctrine\ORM\Mapping\GeneratedValue(strategy="AUTO")
      */
     protected $post_id;
 
     /**
+     * @var \User\Entity\UserEntity
+     * @\Doctrine\ORM\Mapping\ManyToOne(targetEntity="User\Entity\UserEntity")
+     * @\Doctrine\ORM\Mapping\JoinColumn(referencedColumnName="user_id")
+     */
+    protected $post_author;
+
+    /**
      * @var string
-     * @ORM\Column(type="text")
+     * @\Doctrine\ORM\Mapping\Column(type="text")
      */
     protected $post_title;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @\Doctrine\ORM\Mapping\Column(type="text")
      */
     protected $post_content;
-
-    /**
-     * Constructor
-     */
-    public function __construct(){}
 
     /**
      * @return int
      */
     public function getPostId(){
         return $this->post_id;
+    }
+
+    /**
+     * @param \User\Entity\UserEntity $oAuthor
+     * @return \Blog\Entity\PostEntity
+     */
+    public function setPostAuthor(\User\Entity\UserEntity $oAuthor){
+    	$this->post_author = $oAuthor;
+    	return $this;
+    }
+
+    /**
+     * @return \User\Entity\UserEntity
+     */
+    public function getPostAuthor(){
+		return $this->post_author;
     }
 
     /**
@@ -54,6 +71,14 @@ class PostEntity{
     public function getPostTitle(){
     	return $this->post_title;
     }
+
+ 	/**
+     * @return string
+     */
+    public function getPostTitleForUrl(){
+    	return join('-',array_filter(explode(' ',$this->post_title)));
+    }
+
     /**
      * @param string $sContent
      * @return \Blog\Entity\PostEntity
@@ -69,5 +94,15 @@ class PostEntity{
      */
     public function getPostContent(){
         return $this->post_content;
+    }
+
+    /**
+     * Retrieve first $iStrLenght chars of post content
+     * @return string
+     */
+    public function getPostContentPart($iStrLenght = 300){
+    	$sPostContent = html_entity_decode(strip_tags(preg_replace('/<br[^>]>/','&nbsp;',$this->post_content)));
+    	if(mb_strlen($sPostContent) > $iStrLenght)$sPostContent = mb_substr($sPostContent, 0,$iStrLenght).'...';
+    	return $sPostContent;
     }
 }
