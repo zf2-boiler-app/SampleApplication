@@ -3,99 +3,15 @@ return array(
 	'routes' => array(
 		'User' => array(
 			'type' => 'Zend\Mvc\Router\Http\Literal',
-			'options' => array('route' => '/user'),
+			'options' => array(
+				'route' => '/user',
+				'defaults' => array(
+					'controller' => 'User\Controller\User',
+					'action' => 'index'
+				)
+			),
 			'may_terminate' => true,
 			'child_routes' => array(
-				'login' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
-					'options' => array(
-						'route' => '/login[/:service][/:redirect]',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action'  => 'login'
-						)
-					)
-				),
-				'hybridauth' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/hybridauth',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'hybridauth'
-						)
-					)
-				),
-				'logout' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/logout',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'logout'
-						)
-					)
-				),
-				'register' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
-					'options' => array(
-						'route' => '/register[/:service]',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action'  => 'register'
-						)
-					)
-				),
-				'checkuseremailavailability' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/checkuseremailavailability',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'checkuseremailavailability'
-						)
-					)
-				),
-				'confirm-email' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
-					'options' => array(
-						'route' => '/confirm-email/:registration_key',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'confirmemail'
-						)
-					)
-				),
-				'forgotten-password' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/forgotten-password',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'forgottenpassword'
-						)
-					)
-				),
-				'reset-password' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
-					'options' => array(
-						'route' => '/reset-password/:reset_key',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'resetpassword'
-						)
-					)
-				),
-				'resend-confirmation-email' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/resend-confirmation-email',
-						'defaults' => array(
-							'controller' => 'User\Controller\User',
-							'action' => 'resendconfirmationemail'
-						)
-					)
-				),
 				'account' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(

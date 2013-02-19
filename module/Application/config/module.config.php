@@ -54,14 +54,7 @@ return array(
 						'template' => 'layout/default',
 						'children' => array(
 							'header' => function(\Zend\Mvc\MvcEvent $oEvent){
-								try{
-									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
-		    							$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
-		    							return 'header/logged';
-	    							}
-								}
-								catch(\Exception $oException){}
-	    						return 'header/unlogged';
+								return $oEvent->getViewModel()->loggedUser?'header/logged':'header/unlogged';
 							},
 							'footer' => 'footer/footer'
 						)
@@ -72,6 +65,7 @@ return array(
 	),
 	'service_manager' => array(
 		'factories' => array(
+			'SessionManager' => 'Application\Factory\SessionManagerFactory',
 			'translator' => 'Application\Translator\TranslatorServiceFactory',
 			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				$aConfiguration = $oServiceManager->get('config');

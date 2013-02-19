@@ -1,10 +1,7 @@
 <?php
 namespace User\Service;
-class UserService{
+class UserService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	use \Zend\ServiceManager\ServiceLocatorAwareTrait;
-
-	const LOCAL_AUTHENTICATION = 'LocalAuth';
-	const HYBRID_AUTH_AUTHENTICATION = 'HybridAuth';
 
 	/**
 	 * @param string $sUserEmail
@@ -176,62 +173,6 @@ class UserService{
 			);
 		});
 		return $this;
-	}
-
-	/**
-	 * Login user
-	 * @param string $sAdapterName
-	 * @throws \Exception
-	 * @return string|boolean
-	 */
-	public function login($sAdapterName){
-		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
-
-		//Performs authentication attempt
-		switch($iResult = call_user_func_array(
-			array($this->getServiceLocator()->get('UserAuthenticationService'),'authenticate'),
-			func_get_args()
-		)){
-			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_VALID:
-				return true;
-
-			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG:
-				return $this->getServiceLocator()->get('translator')->translate('email_or_password_wrong');
-
-			case \User\Authentication\UserAuthenticationService::AUTH_RESULT_USER_STATE_PENDING:
-				return $this->getServiceLocator()->get('translator')->translate('user_state_pending');
-			//Unknown error
-			default:
-				return $this->getServiceLocator()->get('translator')->translate($iResult);
-		}
-	}
-
-	/**
-	 * Log out current logged user
-	 * @throws \Exception
-	 * @return \User\Service\UserService
-	 */
-	public function logout(){
-		$this->getServiceLocator()->get('UserAuthenticationService')->clearIdentity();
-		return $this;
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return \User\Entity\UserEntity
-	 */
-	public function getLoggedUser(){
-		$iUserId = $this->getServiceLocator()->get('UserAuthenticationService')->getIdentity();
-		//Prevent from session value error
-		try{
-			$oUser = $this->getServiceLocator()->get('UserModel')->getUser($iUserId);
-		}
-		catch(\Exception $oException){
-			$this->logout();
-			throw new \Exception('An error occurred when retrieving logged user');
-		}
-		if(!$oUser->isUserActive())throw new \Exception('User is not active');
-		return $oUser;
 	}
 
 	/**

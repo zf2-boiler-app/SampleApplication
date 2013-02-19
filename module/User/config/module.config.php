@@ -8,8 +8,8 @@ return array(
 	'controllers' => array(
         'invokables' => array(
             'User\Controller\User' => 'User\Controller\UserController',
-        	'User\Controller\UserAccount' => 'User\Controller\UserAccountController',
-        ),
+        	'User\Controller\UserAccount' => 'User\Controller\UserAccountController'
+        )
     ),
 	// Doctrine config
 	'doctrine' => array(
@@ -41,37 +41,6 @@ return array(
 			)
 		)
 	),
-	'authentication' => array(
-		'storage' => 'UserAuthenticationStorage',
-		'adapters' => array(
-			'LocalAuth' => 'AuthenticationDbTableAdapter',
-			'HybridAuth' => 'AuthenticationHybridAuthAdapter'
-		)
-	),
-	'hybrid_auth' =>  array(
-		'base_url' => "User/hybridauth",
-
-		'providers' => array(
-			//Set Redirect URIs = "http://xxxxx/user/hybridauth?hauth.done=Google" in google APIs console
-			'Google' => array(
-				'enabled' => true,
-				'keys' => array('id' => '','secret' => ''),
-				'scope' => 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-				'access_type' => 'online',
-				'approval_prompt' => 'force'
-			),
-			'Facebook' => array(
-				'enabled' => true,
-				'keys' => array( 'id' => '', 'secret' => ''),
-				'scope' => array( 'email, user_about_me, offline_access')
-			),
-			'Twitter' => array(
-				'enabled' => true,
-				'keys' => array('key' => '', 'secret' => '')
-			)
-		),
-		'debug_mode' => false
-	),
 	'messenger' => array(
 		'view_manager' => array(
 			'template_map' => array(
@@ -87,21 +56,13 @@ return array(
     ),
 	'service_manager' => array(
 		'factories' => array(
-			'AuthenticationDbTableAdapter' => '\User\Factory\AuthenticationDbTableAdapterFactory',
-			'AuthenticationHybridAuthAdapter' => '\User\Factory\AuthenticationHybridAuthAdapterFactory',
 			'UserService' => '\User\Factory\UserServiceFactory',
 			'UserAccountService' => '\User\Factory\UserAccountServiceFactory',
-			'UserAuthenticationStorage' => '\User\Factory\UserAuthenticationStorageFactory',
-			'UserAuthenticationService' => '\User\Factory\UserAuthenticationServiceFactory',
 			'UserModel' => '\User\Factory\UserModelFactory',
 			'UserProviderModel' => '\User\Factory\UserProviderModelFactory',
-			'SessionManager' => '\User\Factory\SessionManagerFactory',
 			'ChangeAvatarForm' => '\User\Factory\ChangeAvatarFormFactory',
 			'ChangeEmailForm' => '\User\Factory\ChangeEmailFormFactory',
 			'ChangePasswordForm' => '\User\Factory\ChangePasswordFormFactory',
-			'LoginForm' => '\User\Factory\LoginFormFactory',
-			'RegisterForm' => '\User\Factory\RegisterFormFactory',
-			'ResetPasswordForm' => '\User\Factory\ResetPasswordFormFactory',
 		)
 	),
 	'controller_plugins' => array(
@@ -113,7 +74,7 @@ return array(
 		'factories' => array(
 			'userAvatar' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				$aConfiguration = $oServiceManager->getServiceLocator()->get('Config');
-				if(!isset($aConfiguration['paths']['avatarsPath']))throw new \Exception('Avatars path configuration is undefined');
+				if(!isset($aConfiguration['paths']['avatarsPath']))throw new \LogicException('Avatars path configuration is undefined');
 				$oUserAvavatarHelper = new \User\View\Helper\UserAvatarHelper();
 				return $oUserAvavatarHelper->setAvatarsPath($aConfiguration['paths']['avatarsPath']);
 			}

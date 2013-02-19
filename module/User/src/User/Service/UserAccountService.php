@@ -31,7 +31,7 @@ class UserAccountService implements \Zend\ServiceManager\ServiceLocatorAwareInte
 	 */
 	public function deleteLoggedUser(){
 		//Log out and Delete user
-		$this->getServiceLocator()->get('UserService')->logout()->getLoggedUser()->delete();
+		$this->getServiceLocator()->get('AccessControlService')->logout()->getLoggedUser()->delete();
 		return $this;
 	}
 
@@ -66,11 +66,11 @@ class UserAccountService implements \Zend\ServiceManager\ServiceLocatorAwareInte
 		if(empty($aConfiguration['paths']['avatarsPath'])
 		|| !is_dir($aConfiguration['paths']['avatarsPath']))throw new \Exception('Avatars path is not a valid directory path : '.$aConfiguration['paths']['avatarsPath']);
 
-		$oUser = $this->getServiceLocator()->get('UserService')->getLoggedUser();
-		$sAvatarPath = $aConfiguration['paths']['avatarsPath'].DIRECTORY_SEPARATOR.$oUser->getUserId().'-avatar.png';
-
 		//Save avatar
-		if(!imagepng($oNewImage,$sAvatarPath))throw new \Exception('An error occurred when saving user avatar');
+		if(!imagepng(
+			$oNewImage,
+			$aConfiguration['paths']['avatarsPath'].DIRECTORY_SEPARATOR.$this->getServiceLocator()->get('AccessControlService')->getLoggedUser()->getUserId().'-avatar.png'
+		))throw new \Exception('An error occurred when saving user avatar');
 		return $this;
 	}
 
@@ -83,7 +83,7 @@ class UserAccountService implements \Zend\ServiceManager\ServiceLocatorAwareInte
 		if(empty($sPassword) || !is_string($sPassword))throw new \Exception('Password ('.gettype($sPassword).') is not a string or is empty');
 		$oUserModel = $this->getServiceLocator()->get('UserModel');
 
-		$oUser = $this->getServiceLocator()->get('UserService')->getLoggedUser();
+		$oUser = $this->getServiceLocator()->get('AccessControlService')->getLoggedUser();
 
 		//Reset password
 		$oUserModel->changeUserPassword($oUser,md5($sPassword));

@@ -7,7 +7,7 @@ class UserAccountController extends \Templating\Mvc\Controller\AbstractActionCon
 		if(($bReturn = $this->userMustBeLoggedIn()) !== true)return $bReturn;
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('account');
-		return $this->view->setVariable('user', $this->getServiceLocator()->get('UserService')->getLoggedUser());
+		return $this->view;
 	}
 
 	public function deleteaccountAction(){
@@ -32,7 +32,7 @@ class UserAccountController extends \Templating\Mvc\Controller\AbstractActionCon
 			$this->getRequest()->isPost()
 			&& $this->view->form->setData($this->params()->fromFiles())->isValid()
 			&& $this->getServiceLocator()->get('UserAccountService')->changeUserLoggedAvatar($this->params()->fromFiles('user_new_avatar'))
-		)$this->view->user = $this->getServiceLocator()->get('UserService')->getLoggedUser();
+		)$this->view->avatarUpdated = true;
 		return $this->view;
 	}
 

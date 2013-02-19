@@ -42,11 +42,7 @@ return array(
 			'PostForm' => 'Blog\Factory\PostFormFactory',
 		),
 		'invokables' => array(
-			'PostService' => 'Blog\Service\PostService',
-			'PostRepository' => 'Blog\Repository\PostRepository',
-		),
-		'abstract_factories' => array(
-			'Blog\Factory\MapperAbstractFactory'
+			'PostService' => 'Blog\Service\PostService'
 		)
 	),
 	'templating' => array(
@@ -58,24 +54,10 @@ return array(
 						'template' => 'layout/blog',
 						'children' => array(
 							'userSection' => function(\Zend\Mvc\MvcEvent $oEvent){
-								try{
-									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
-		    							$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
-		    							return 'header/blog-logged';
-	    							}
-								}
-								catch(\Exception $oException){}
-	    						return 'header/blog-unlogged';
+								return $oEvent->getViewModel()->loggedUser?'header/blog-logged':'header/blog-unlogged';
 							},
 							'navbar' => function(\Zend\Mvc\MvcEvent $oEvent){
-								try{
-									if($oEvent->getApplication()->getServiceManager()->get('UserAuthenticationService')->hasIdentity()){
-										$oEvent->getViewModel()->loggedUser = $oEvent->getApplication()->getServiceManager()->get('UserService')->getLoggedUser();
-										return 'navbar/blog-logged';
-									}
-								}
-								catch(\Exception $oException){}
-								return 'navbar/blog-unlogged';
+								return $oEvent->getViewModel()->loggedUser?'navbar/blog-logged':'navbar/blog-unlogged';
 							},
 							'footer' => 'footer/footer'
 						)

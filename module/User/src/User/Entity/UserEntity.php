@@ -1,47 +1,105 @@
 <?php
 namespace User\Entity;
-class UserEntity extends \Database\Db\RowGateway\AbstractRowGateway{
+/**
+ * @\Doctrine\ORM\Mapping\Entity(repositoryClass="\User\Repository\UserRepository")
+ * @\Doctrine\ORM\Mapping\Table(name="users")
+ */
+class UserEntity extends \Database\Entity\AbstractEntity{
+
+	/**
+	 * @var int
+	 * @\Doctrine\ORM\Mapping\Id
+	 * @\Doctrine\ORM\Mapping\Column(type="integer")
+	 * @\Doctrine\ORM\Mapping\GeneratedValue(strategy="AUTO")
+	 */
+	protected $user_id;
+
+	/**
+	 * @var string
+	 * @\Doctrine\ORM\Mapping\Column(type="email",unique=true)
+	 */
+	protected $user_email;
+
+	/**
+	 * @var string
+	 * @\Doctrine\ORM\Mapping\Column(type="md5hash")
+	 */
+	protected $user_password;
+
+	/**
+	 * @var string
+	 * @\Doctrine\ORM\Mapping\Column(type="string",length=13)
+	 */
+	protected $user_registration_key;
+
+	/**
+	 * @var string
+	 * @\Doctrine\ORM\Mapping\Column(type="userstateenum")
+	 */
+	protected $user_state;
+
+	/**
+	 * @return int
+	 */
+	public function getUserId(){
+		return $this->user_id;
+	}
 
 	/**
 	 * @param string $sEmail
-	 * @throws \Exception
 	 * @return \User\Entity\UserEntity
 	 */
 	public function setUserEmail($sEmail){
-		if(!is_string($sEmail) || !filter_var($sEmail,FILTER_VALIDATE_EMAIL))throw new \Exception('Email expects valid email adress');
-		return $this->offsetSet('user_email', $sEmail);
+		$this->user_email = $sEmail;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUserEmail(){
+		return $this->user_email;
 	}
 
 	/**
 	 * @param string $sPassword
-	 * @throws \Exception
 	 * @return \User\Entity\UserEntity
 	 */
 	public function setUserPassword($sPassword){
-		if(!is_string($sPassword) || !preg_match('/^[a-f0-9]{32}$/', $sPassword))throw new \Exception('Password expects md5 hash');
-		return $this->offsetSet('user_password', $sPassword);
+		$this->user_password = $sPassword;
+		return $this;
 	}
-
 
 	/**
 	 * @param string $sUserRegistrationKey
-	 * @throws \Exception
-	 * @return\User\Entity\UserEntity
+	 * @return \User\Entity\UserEntity
 	 */
 	public function setUserRegistrationKey($sUserRegistrationKey){
-		if(!is_string($sUserRegistrationKey)
-		|| strlen($sUserRegistrationKey) !== 13)throw new \Exception('User registration key "'.$sUserRegistrationKey.'" is not valid');
-		return $this->offsetSet('user_registration_key', $sUserRegistrationKey);
+		$this->user_registration_key = $sUserRegistrationKey;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUserRegistrationKey(){
+		return $this->user_registration_key;
 	}
 
 	/**
 	 * @param string $sUserState
-	 * @throws \Exception
 	 * @return \User\Entity\UserEntity
 	 */
 	public function setUserState($sUserState){
-		if(!\User\Model\UserModel::userStateExists($sUserState))throw new \Exception('User state "'.$sUserState.'" is not valid');
-		return $this->offsetSet('user_state', $sUserState);
+		$this->user_state = $sUserState;
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getUserState(){
+		return $this->user_state;
 	}
 
 	/**

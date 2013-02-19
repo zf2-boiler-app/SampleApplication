@@ -10,6 +10,7 @@ return array(
         'Application',
     	'Database',
     	'Templating',
+    	'AccessControl',
     	'User',
     	'Logger',
     	'Messenger',

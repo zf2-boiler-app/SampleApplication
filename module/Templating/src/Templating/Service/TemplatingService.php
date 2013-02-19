@@ -17,6 +17,11 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	protected $currentEvent;
 
 	/**
+	 * @var \Zend\View\Resolver\ResolverInterface
+	 */
+	protected $templateResolver;
+
+	/**
 	 * Constructor
 	 */
 	private function __construct(){
@@ -26,12 +31,12 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	/**
 	 * Instantiate a Templating service
 	 * @param array|Traversable $oOptions
-	 * @throws \Exception
+	 * @throws \InvalidArgumentException
 	 * @return \Templating\Service\TemplatingService
 	 */
 	public static function factory($oOptions){
 		if($oOptions instanceof \Traversable)$oOptions = \Zend\Stdlib\ArrayUtils::iteratorToArray($oOptions);
-		elseif(!is_array($oOptions))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($oOptions)?get_class($oOptions):gettype($oOptions)).'"');
+		elseif(!is_array($oOptions))throw new \InvalidArgumentException(__METHOD__.' expects an array or Traversable object; received "'.(is_object($oOptions)?get_class($oOptions):gettype($oOptions)).'"');
 		$oTemplatingService = new static();
 		return $oTemplatingService->setConfiguration(new \Templating\Service\TemplatingConfiguration($oOptions));
 	}
@@ -46,12 +51,12 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \LogicException
 	 * @return \Templating\Service\TemplatingConfiguration
 	 */
 	public function getConfiguration(){
 		if($this->configuration instanceof \Templating\Service\TemplatingConfiguration)return $this->configuration;
-		throw new \Exception('Configuration is undefined');
+		throw new \LogicException('Configuration is undefined');
 	}
 
 	/**
@@ -89,6 +94,8 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 */
 	protected function setCurrentEvent(\Zend\Mvc\MvcEvent $oEvent){
 		$this->currentEvent = $oEvent;
+		//Set template resolver
+		$this->setTemplateResolver($oEvent->getApplication()->getServiceManager()->get('ViewRenderer')->resolver());
 		return $this;
 	}
 
@@ -101,12 +108,30 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \LogicException
 	 * @return \Zend\Mvc\MvcEvent
 	 */
 	protected function getCurrentEvent(){
 		if($this->currentEvent instanceof \Zend\Mvc\MvcEvent)return $this->currentEvent;
-		throw new \Exception('Current event is undefined');
+		throw new \LogicException('Current event is undefined');
+	}
+
+	/**
+	 * @param \Zend\View\Resolver\ResolverInterface $oTemplateResolver
+	 * @return \Templating\Service\TemplatingService
+	 */
+	protected function setTemplateResolver(\Zend\View\Resolver\ResolverInterface $oTemplateResolver){
+		$this->templateResolver = $oTemplateResolver;
+		return $this;
+	}
+
+	/**
+	 * @throws \LogicException
+	 * @return \Zend\View\Resolver\ResolverInterface
+	 */
+	protected function getTemplateResolver(){
+		if($this->templateResolver instanceof \Zend\View\Resolver\ResolverInterface)return $this->templateResolver;
+		throw new \LogicException('Template Resolver is undefined');
 	}
 
 	/**
@@ -132,18 +157,23 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 		if($oRouter instanceof \Zend\Mvc\Router\RouteMatch)$sModule = current(explode('\\',$oRouter->getParam('controller')));
 		if(!$sModule)$sModule = \Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP;
 
-		//Retrieve template for module
-		$oTemplate = $this->getConfiguration()->hasTemplateMapForModule($sModule)
-			?$this->getConfiguration()->getTemplateMapForModule($sModule)
-			:$this->getConfiguration()->getTemplateMapForModule(\Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP);
+		try{
+			//Retrieve template for module
+			$oTemplate = $this->getConfiguration()->hasTemplateMapForModule($sModule)
+				?$this->getConfiguration()->getTemplateMapForModule($sModule)
+				:$this->getConfiguration()->getTemplateMapForModule(\Templating\Service\TemplatingConfiguration::DEFAULT_TEMPLATE_MAP);
 
-		//Set layout template and add its children
-		$sTemplate = $oTemplate->getConfiguration()->getTemplate();
-		if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
-		$this->setChildrenToView(
-			$oEvent->getViewModel()->setTemplate($sTemplate),
-			$oTemplate->getChildren()
-		);
+			//Set layout template and add its children
+			$sTemplate = $oTemplate->getConfiguration()->getTemplate();
+			if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
+			$this->setChildrenToView(
+				$oEvent->getViewModel()->setTemplate($sTemplate),
+				$oTemplate->getChildren()
+			);
+		}
+		catch(\Exception $oException){
+			throw new \RuntimeException('Error occured during building layout template process');
+		}
 		//Reset current event
 		return $this->unsetCurrentEvent();
 	}
@@ -154,9 +184,13 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	protected function setChildrenToView(\Zend\View\Model\ViewModel $oParentView, array $aChildren){
+		$oTemplateResolver = $this->getTemplateResolver();
 		foreach($aChildren as $sChildrenName => $oChildrenTemplate){
 			$sTemplate = $oChildrenTemplate->getConfiguration()->getTemplate();
 			if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
+
+			//Check if template exists
+			if(!$oTemplateResolver->resolve($sTemplate))throw new \UnexpectedValueException('Template name "'.$sTemplate.'" could not be resolved');
 			$oParentView->addChild(
 				$this->setChildrenToView(
 					new \Zend\View\Model\ViewModel(),

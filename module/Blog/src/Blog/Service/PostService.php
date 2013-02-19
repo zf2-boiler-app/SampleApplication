@@ -5,7 +5,7 @@ class PostService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 
 	public function getPosts($iCurrentPage = 1){
 		$oDoctrinePaginator = new \DoctrineORMModule\Paginator\Adapter\DoctrinePaginator(
-			new \Doctrine\ORM\Tools\Pagination\Paginator($this->getServiceLocator()->get('Blog\Mapper\PostMapperInterface')->createQueryBuilder('posts'))
+			new \Doctrine\ORM\Tools\Pagination\Paginator($this->getServiceLocator()->get('Blog\Repository\PostRepository')->createQueryBuilder('posts'))
 		);
 		$oPaginator = new \Zend\Paginator\Paginator($oDoctrinePaginator);
 		$oPaginator->setDefaultItemCountPerPage(10);
@@ -20,10 +20,10 @@ class PostService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	 */
 	public function createPost($sPostTitle,$sPostContent){
 		$oPost = new \Blog\Entity\PostEntity();
-		$this->getServiceLocator()->get('Blog\Mapper\PostMapperInterface')->create($oPost
+		$this->getServiceLocator()->get('Blog\Repository\PostRepository')->create($oPost
 			->setPostTitle($sPostTitle)
 			->setPostContent($sPostContent)
-			->setPostAuthor($this->getServiceLocator()->get('UserService')->getLoggedUser())
+			->setPostAuthor($this->getServiceLocator()->get('AccessControlService')->getLoggedUser())
 		);
 		return $this;
 	}

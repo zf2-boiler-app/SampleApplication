@@ -2,13 +2,13 @@
 <div class="row-fluid" style="margin-bottom:10px;">
 	<div class="span2">
 		<a href="#" onclick="oController.changeUserAvatar();return false;">
-			<img id="user-avatar" src="data:image/png;base64,<?=$this->userAvatar($this->user)?>" class="img-rounded img-polaroid"  data-behavior="BS.Twipsy" title="<?=$this->translate('change_avatar')?>"/>
+			<img id="user-avatar" src="data:image/png;base64,<?=$this->userAvatar($this->layout()->loggedUser)?>" class="img-rounded img-polaroid"  data-behavior="BS.Twipsy" title="<?=$this->translate('change_avatar')?>"/>
 		</a>
 	</div>
 	<div class="span10">
 		<dl class="dl-horizontal">
 			<dt><?=$this->translate('email')?> :</dt>
-			<dd><?=$this->user->getUserEmail()?> | <a href="#" onclick="oController.changeUserEmail();return false;"><?=$this->translate('change_email')?></a></dd>
+			<dd><?=$this->layout()->loggedUser->getUserEmail()?> | <a href="#" onclick="oController.changeUserEmail();return false;"><?=$this->translate('change_email')?></a></dd>
 			<dt><?=$this->translate('password')?> :</dt>
 			<dd><a href="#" onclick="oController.changeUserPassword();return false;"><?=$this->translate('change_password')?></a></dd>
 		</dl>

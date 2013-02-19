@@ -8,7 +8,6 @@ return array(
 	'Blog\Entity\PostEntity' => __DIR__.'/src/Blog/Entity/PostEntity.php',
 
 	//Factories
-	'Blog\Factory\MapperAbstractFactory' => __DIR__.'/src/Blog/Factory/MapperAbstractFactory.php',
 	'Blog\Factory\PostFormFactory' => __DIR__.'/src/Blog/Factory/PostFormFactory.php',
 
 	//Forms
@@ -16,9 +15,6 @@ return array(
 
 	//InputFilters
 	'Blog\InputFilter\PostInputFilter' => __DIR__.'/src/Blog/InputFilter/PostInputFilter.php',
-
-	//Mapper
-	'Blog\Mapper\PostMapperInterface' => __DIR__.'/src/Blog/Mapper/PostMapperInterface.php',
 
 	//Repositories
 	'Blog\Repository\PostRepository' => __DIR__.'/src/Blog/Repository/PostRepository.php',

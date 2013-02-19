@@ -1,31 +1,19 @@
 <?php
 return array(
-	//Authentication
-	'User\Authentication\UserAuthenticationService' => __DIR__.'/src/User/Authentication/UserAuthenticationService.php',
-	'User\Authentication\Adapter\AuthenticationAdapterInterface' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationAdapterInterface.php',
-	'User\Authentication\Adapter\AuthenticationDbTableAdapter' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationDbTableAdapter.php',
-	'User\Authentication\Adapter\AuthenticationHybridAuthAdapter' => __DIR__.'/src/User/Authentication/Adapter/AuthenticationHybridAuthAdapter.php',
-
 	//Controllers
 	'User\Controller\UserController' => __DIR__.'/src/User/Controller/UserController.php',
 	'User\Controller\UserAccountController' => __DIR__.'/src/User/Controller/UserAccountController.php',
 
 	//Entities
 	'User\Entity\UserEntity' => __DIR__.'/src/User/Entity/UserEntity.php',
-	'User\Entity\UserProviderEntity' => __DIR__.'/src/User/Entity/UserProviderEntity.php',
 
 	//Factories
-	'User\Factory\AuthenticationDbTableAdapterFactory' => __DIR__.'/src/User/Factory/AuthenticationDbTableAdapterFactory.php',
-	'User\Factory\AuthenticationHybridAuthAdapterFactory' => __DIR__.'/src/User/Factory/AuthenticationHybridAuthAdapterFactory.php',
-	'User\Factory\UserAuthenticationServiceFactory' => __DIR__.'/src/User/Factory/UserAuthenticationServiceFactory.php',
-	'User\Factory\UserAuthenticationStorageFactory' => __DIR__.'/src/User/Factory/UserAuthenticationStorageFactory.php',
 	'User\Factory\ChangeAvatarFormFactory' => __DIR__.'/src/User/Factory/ChangeAvatarFormFactory.php',
 	'User\Factory\ChangeEmailFormFactory' => __DIR__.'/src/User/Factory/ChangeEmailFormFactory.php',
 	'User\Factory\ChangePasswordFormFactory' => __DIR__.'/src/User/Factory/ChangePasswordFormFactory.php',
 	'User\Factory\LoginFormFactory' => __DIR__.'/src/User/Factory/LoginFormFactory.php',
 	'User\Factory\RegisterFormFactory' => __DIR__.'/src/User/Factory/RegisterFormFactory.php',
 	'User\Factory\ResetPasswordFormFactory' => __DIR__.'/src/User/Factory/ResetPasswordFormFactory.php',
-	'User\Factory\SessionManagerFactory' => __DIR__.'/src/User/Factory/SessionManagerFactory.php',
 	'User\Factory\UserModelFactory' => __DIR__.'/src/User/Factory/UserModelFactory.php',
 	'User\Factory\UserProviderModelFactory' => __DIR__.'/src/User/Factory/UserProviderModelFactory.php',
 	'User\Factory\UserServiceFactory' => __DIR__.'/src/User/Factory/UserServiceFactory.php',
@@ -49,9 +37,15 @@ return array(
 	//Module
 	'User\Module' => __DIR__.'/Module.php',
 
+	//Repositories
+	'User\Repository\UserRepository' => __DIR__.'/src/User/Repository/UserRepository.php',
+
 	//Services
 	'User\Service\UserService' => __DIR__.'/src/User/Service/UserService.php',
 	'User\Service\UserAccountService' => __DIR__.'/src/User/Service/UserAccountService.php',
+
+	//Types
+	'User\Doctrine\DBAL\Types\UserStateEnumType' =>  __DIR__.'/src/User/Doctrine/DBAL/Types/UserStateEnumType.php',
 
 	//Validators
 	'User\Validator\EmailAddressAvailabilityValidator' => __DIR__.'/src/User/Validator/EmailAddressAvailabilityValidator.php',
