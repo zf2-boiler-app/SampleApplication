@@ -23,13 +23,40 @@ class RegistrationController extends \Templating\Mvc\Controller\AbstractActionCo
 		$this->view->form = $this->getServiceLocator()->get('RegisterForm');
 
 		if($this->getRequest()->isPost()
-			&& $this->view->form->setData($this->params()->fromPost())->isValid()
-			&& $this->getServiceLocator()->get('AccessControlService')->register(
-				$this->params()->fromPost('user_email'),
-				$this->params()->fromPost('user_password')
-			)
+			&& $this->view->form->setData($aRegisterData = $this->params()->fromPost())->isValid()
+			&& $this->getServiceLocator()->get('RegistrationService')->register($aRegisterData)
 		)$this->view->isValid = true;
 		return $this->view;
+	}
+
+	/**
+	 * Process ajax request to check email identity availability
+	 * @throws \LogicException
+	 * @return \Zend\View\Model\JsonModel
+	 */
+	public function checkEmailIdentityAvailabilityAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
+		if(!($sEmail = $this->params()->fromPost('email')))throw new \LogicException('Email param is missing');
+
+		return $this->view->setVariable(
+			'available',
+			$this->getServiceLocator()->get('AccessControlService')->isEmailIdentityAvailable($sEmail)
+		);
+	}
+
+	/**
+	 * Process ajax request to check username identity availability
+	 * @throws \LogicException
+	 * @return \Zend\View\Model\JsonModel
+	 */
+	public function checkUsernameIdentityAvailabilityAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
+		if(!($sUserName = $this->params()->fromPost('username')))throw new \LogicException('Username param is missing');
+
+		return $this->view->setVariable(
+			'available',
+			$this->getServiceLocator()->get('AccessControlService')->isUsernameIdentityAvailable($sUserName)
+		);
 	}
 
 	/**
@@ -57,20 +84,5 @@ class RegistrationController extends \Templating\Mvc\Controller\AbstractActionCo
 		if(!($sEmail = $this->params()->fromPost('email')))throw new \LogicException('Email param is missing');
 		$this->getServiceLocator()->get('AccessControlService')->resendConfirmationEmail($sEmail);
 		return $this->view;
-	}
-
-	/**
-	 * Process ajax request to check user's email availability
-	 * @throws \LogicException
-	 * @return \Zend\View\Model\JsonModel
-	 */
-	public function checkuseremailavailabilityAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
-		if(!($sEmail = $this->params()->fromPost('email')))throw new \LogicException('Email param is missing');
-
-		return $this->view->setVariable(
-			'available',
-			$this->getServiceLocator()->get('AccessControlService')->isUserEmailAvailable($sEmail)
-		);
 	}
 }

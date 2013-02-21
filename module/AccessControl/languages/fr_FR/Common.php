@@ -45,6 +45,7 @@ return array(
 	'user_must_be_logged_in_to_access_this_page' => 'Vous devez être connecté pour accèder à cette page',
 	'user_not_connected_to_authentification_provider' => 'Vous n\'êtes pas connecté à %s',
 	'user_state_pending' => 'Le compte est en attente de confirmation',
+	'username' => 'Identifiant',
 
 	'welcome_to' => 'Bienvenue sur'
 );

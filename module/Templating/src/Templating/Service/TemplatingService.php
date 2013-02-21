@@ -17,11 +17,6 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	protected $currentEvent;
 
 	/**
-	 * @var \Zend\View\Resolver\ResolverInterface
-	 */
-	protected $templateResolver;
-
-	/**
 	 * Constructor
 	 */
 	private function __construct(){
@@ -94,8 +89,6 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 */
 	protected function setCurrentEvent(\Zend\Mvc\MvcEvent $oEvent){
 		$this->currentEvent = $oEvent;
-		//Set template resolver
-		$this->setTemplateResolver($oEvent->getApplication()->getServiceManager()->get('ViewRenderer')->resolver());
 		return $this;
 	}
 
@@ -114,24 +107,6 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	protected function getCurrentEvent(){
 		if($this->currentEvent instanceof \Zend\Mvc\MvcEvent)return $this->currentEvent;
 		throw new \LogicException('Current event is undefined');
-	}
-
-	/**
-	 * @param \Zend\View\Resolver\ResolverInterface $oTemplateResolver
-	 * @return \Templating\Service\TemplatingService
-	 */
-	protected function setTemplateResolver(\Zend\View\Resolver\ResolverInterface $oTemplateResolver){
-		$this->templateResolver = $oTemplateResolver;
-		return $this;
-	}
-
-	/**
-	 * @throws \LogicException
-	 * @return \Zend\View\Resolver\ResolverInterface
-	 */
-	protected function getTemplateResolver(){
-		if($this->templateResolver instanceof \Zend\View\Resolver\ResolverInterface)return $this->templateResolver;
-		throw new \LogicException('Template Resolver is undefined');
 	}
 
 	/**
@@ -172,7 +147,7 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 			);
 		}
 		catch(\Exception $oException){
-			throw new \RuntimeException('Error occured during building layout template process');
+			throw new \RuntimeException('Error occured during building layout template process',$oException->getCode(),$oException);
 		}
 		//Reset current event
 		return $this->unsetCurrentEvent();
@@ -184,13 +159,10 @@ class TemplatingService implements \Zend\EventManager\SharedEventManagerAwareInt
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	protected function setChildrenToView(\Zend\View\Model\ViewModel $oParentView, array $aChildren){
-		$oTemplateResolver = $this->getTemplateResolver();
 		foreach($aChildren as $sChildrenName => $oChildrenTemplate){
 			$sTemplate = $oChildrenTemplate->getConfiguration()->getTemplate();
 			if(is_callable($sTemplate))$sTemplate = $sTemplate($this->getCurrentEvent());
 
-			//Check if template exists
-			if(!$oTemplateResolver->resolve($sTemplate))throw new \UnexpectedValueException('Template name "'.$sTemplate.'" could not be resolved');
 			$oParentView->addChild(
 				$this->setChildrenToView(
 					new \Zend\View\Model\ViewModel(),

@@ -1,39 +1,75 @@
-var UserControllerUserRegister = {
+var AccessControlControllerRegistrationRegister = {
 	Extends: Controller,
 	
 	/**
 	 * @var int : setTimeout id
 	 */
-	timer : null,
+	emailTimer : null,
 	
 	/**
-	 * @param HTMLElement eUserEmail
-	 * @return UserControllerUserRegister
+	 * @var int : setTimeout id
 	 */
-	checkUserEmailAvailability : function(eUserEmail){
-		eUserEmail = document.id(eUserEmail);
-		if(eUserEmail == null)throw 'User email input is undefined';
+	nameTimer : null,
+	
+	/**
+	 * @param HTMLElement eEmailIdentity
+	 * @return AccessControlControllerRegistrationRegister
+	 */
+	checkEmailIdentityAvailability : function(eEmailIdentity){
+		eEmailIdentity = document.id(eEmailIdentity);
+		if(eEmailIdentity == null)throw 'Email identity input is undefined';
 		//Remove timer
-		this.timer = null;
-		var oValidator = eUserEmail.getParent('form').get('validator'), sEmail = eUserEmail.get('value');
-		if(!sEmail.length || !oValidator.test('validate-email',eUserEmail))return this;
+		this.emailTimer = null;
+		var oValidator = eEmailIdentity.getParent('form').get('validator'), sEmail = eEmailIdentity.get('value');
+		if(!sEmail.length || !oValidator.test('validate-email',eEmailIdentity))return this;
 		
-		this.timer = setTimeout(function(){
+		this.emailTimer = setTimeout(function(){
 			//Set input is loading
-			eUserEmail.setLoading();
+			eEmailIdentity.setLoading();
 			new Request.JSON({
-				'url':this.url('User/checkuseremailavailability'),
+				'url':this.url('AccessControl/CheckEmailIdentityAvailability'),
 				'data':{'email':sEmail},
 				'onSuccess':function(oResponse){
 					var bAvailable = oResponse.available === true;
 					//Display email availability checked
-					if(!bAvailable)eUserEmail.removeClass('validation-passed');
-					eUserEmail.store('email-available',oResponse.available).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
+					if(!bAvailable)eEmailIdentity.removeClass('validation-passed');
+					eEmailIdentity.store('email-available',oResponse.available).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
 				}.bind(this)
 			}).send();
-			this.timer = null;
+			this.emailTimer = null;
+		}.bind(this),250);
+		return this;
+	},
+	
+	
+	/**
+	 * @param HTMLElement eUsernameIdentity
+	 * @return AccessControlControllerRegistrationRegister
+	 */
+	checkUsernameIdentityAvailability : function(eUsernameIdentity){
+		eUsernameIdentity = document.id(eUsernameIdentity);
+		if(eUsernameIdentity == null)throw 'Username identity input is undefined';
+		//Remove timer
+		this.nameTimer = null;
+		var oValidator = eUsernameIdentity.getParent('form').get('validator'), sUserName = eUsernameIdentity.get('value');
+		if(!sUserName.length || !oValidator.test('validate-nospace',eUsernameIdentity))return this;
+		
+		this.nameTimer = setTimeout(function(){
+			//Set input is loading
+			eUsernameIdentity.setLoading();
+			new Request.JSON({
+				'url':this.url('AccessControl/CheckUsernameIdentityAvailability'),
+				'data':{'username':sUserName},
+				'onSuccess':function(oResponse){
+					var bAvailable = oResponse.available === true;
+					//Display username availability checked
+					if(!bAvailable)eUsernameIdentity.removeClass('validation-passed');
+					eUsernameIdentity.store('username-available',oResponse.available).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
+				}.bind(this)
+			}).send();
+			this.nameTimer = null;
 		}.bind(this),250);
 		return this;
 	}
 };
-UserControllerUserRegister = new Class(UserControllerUserRegister);
+AccessControlControllerRegistrationRegister = new Class(AccessControlControllerRegistrationRegister);

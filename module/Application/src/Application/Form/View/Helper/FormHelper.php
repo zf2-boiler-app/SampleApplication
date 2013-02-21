@@ -77,6 +77,7 @@ class FormHelper extends \TwbBundle\Form\View\Helper\TwbBundleForm implements \Z
 		';
 		if(!$oForm->getAttribute('action'))$oForm->setAttribute('action',$this->getRequest()->getUri()->normalize());
 		if(!$oForm->getAttribute('id'))$oForm->setAttribute('id',$oForm->getName());
+
 		if($oForm->getAttribute('enctype') === 'multipart/form-data')$sAfter .= '
 					var eForm = document.id('.$this->getEscapeJsonHelper()->__invoke($oForm->getAttribute('id')).');
 					eForm.iFrameFormRequest({

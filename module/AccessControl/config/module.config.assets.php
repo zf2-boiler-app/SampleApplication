@@ -2,7 +2,10 @@
 return array(
     'assets' => array(
     	'AccessControl\Controller\Registration' => array(
-    		'register' => array('js' => array(__DIR__ . '/../assets/js/Controller/RegistrationRegisterController.js')),
+    		'register' => array('js' => array(
+    			__DIR__ . '/../assets/js/Validator/auth-access-identities.js',
+    			__DIR__ . '/../assets/js/Controller/RegistrationRegisterController.js'
+    		)),
     	),
     	'AccessControl\Controller\Authentication' => array(
     		'authenticate' => array('js' => array(__DIR__ . '/../assets/js/Controller/AuthenticationAuthenticateController.js')),

@@ -16,27 +16,15 @@ class UserEntity extends \Database\Entity\AbstractEntity{
 
 	/**
 	 * @var string
-	 * @\Doctrine\ORM\Mapping\Column(type="email",unique=true)
+	 * @\Doctrine\ORM\Mapping\Column(type="string",unique=true,length=255)
 	 */
-	protected $user_email;
+	protected $user_display_name;
 
 	/**
-	 * @var string
-	 * @\Doctrine\ORM\Mapping\Column(type="md5hash")
+	 * @var \AccessControl\Entity\AuthAccessEntity
+     * @\Doctrine\ORM\Mapping\OneToOne(targetEntity="AccessControl\Entity\AuthAccessEntity", mappedBy="auth_access_user")
 	 */
-	protected $user_password;
-
-	/**
-	 * @var string
-	 * @\Doctrine\ORM\Mapping\Column(type="string",length=13)
-	 */
-	protected $user_registration_key;
-
-	/**
-	 * @var string
-	 * @\Doctrine\ORM\Mapping\Column(type="userstateenum")
-	 */
-	protected $user_state;
+	protected $user_auth_access;
 
 	/**
 	 * @return int
@@ -46,66 +34,34 @@ class UserEntity extends \Database\Entity\AbstractEntity{
 	}
 
 	/**
-	 * @param string $sEmail
+	 * @param string $sDisplayName
 	 * @return \User\Entity\UserEntity
 	 */
-	public function setUserEmail($sEmail){
-		$this->user_email = $sEmail;
+	public function setUserDisplayName($sDisplayName){
+		$this->user_display_name = $sDisplayName;
 		return $this;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getUserEmail(){
-		return $this->user_email;
+	public function getUserDisplayName(){
+		return $this->user_display_name;
 	}
 
 	/**
-	 * @param string $sPassword
+	 * @param \AccessControl\Entity\AuthAccessEntity $oUserAuthAccess
 	 * @return \User\Entity\UserEntity
 	 */
-	public function setUserPassword($sPassword){
-		$this->user_password = $sPassword;
+	public function setUserAuthAccess(\AccessControl\Entity\AuthAccessEntity $oUserAuthAccess){
+		$this->user_auth_access = $oUserAuthAccess;
 		return $this;
 	}
 
 	/**
-	 * @param string $sUserRegistrationKey
-	 * @return \User\Entity\UserEntity
+	 * @return \AccessControl\Entity\AuthAccessEntity
 	 */
-	public function setUserRegistrationKey($sUserRegistrationKey){
-		$this->user_registration_key = $sUserRegistrationKey;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getUserRegistrationKey(){
-		return $this->user_registration_key;
-	}
-
-	/**
-	 * @param string $sUserState
-	 * @return \User\Entity\UserEntity
-	 */
-	public function setUserState($sUserState){
-		$this->user_state = $sUserState;
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getUserState(){
-		return $this->user_state;
-	}
-
-	/**
-	 * @return boolean
-	 */
-	public function isUserActive(){
-		return $this->getUserState() === \User\Model\UserModel::USER_STATUS_ACTIVE;
+	public function getUserAuthAccess(){
+		return $this->user_auth_access;
 	}
 }

@@ -16,7 +16,7 @@ class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareIn
 
 		//Prevent from session value error
 		try{
-			$oUser = $this->getServiceLocator()->get('User\Repository\User\Repository')->find($iUserId);
+			$oUser = $this->getServiceLocator()->get('User\Repository\UserRepository')->find($iUserId);
 		}
 		catch(\Exception $oException){
 			$this->logout();
@@ -28,39 +28,51 @@ class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareIn
 
 
 	/**
-	 * Login user
-	 * @param string $sAdapterName
+	 * @param string $sEmailIdentity
 	 * @throws \InvalidArgumentException
-	 * @return string|boolean
+	 * @return boolean|string
 	 */
-	public function login($sAdapterName){
-		if(!is_string($sAdapterName))throw new \InvalidArgumentException('Adapter\'s name expects string, "'.gettype($sAdapterName).'" given');
+	public function isEmailIdentityAvailable($sEmailIdentity){
+		if(empty($sEmailIdentity) || !is_string($sEmailIdentity))throw new \InvalidArgumentException('Email expects string, "'.(empty($sEmailIdentity)?'':gettype($sEmailIdentity)).'" given');
 
-		//Performs authentication attempt
-		switch($iResult = call_user_func_array(
-			array($this->getServiceLocator()->get('AccessControlAuthenticationService'),'authenticate'),
-			func_get_args()
-		)){
-			case \AccessControl\Authentication\AccessControlAuthenticationService::AUTH_RESULT_VALID:
-				return true;
+		//If request is from logged user
+		if($this->getServiceLocator()->get('AccessControlAuthenticationService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sEmailIdentity)return str_ireplace(
+				'%value%',$sEmailIdentity,
+				$this->getServiceLocator()->get('translator')->translate('The email address "%value%" is the same as currently used','validator')
+		);
 
-			case \AccessControl\Authentication\AccessControlAuthenticationService::AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG:
-				return $this->getServiceLocator()->get('translator')->translate('email_or_password_wrong');
-
-			case \AccessControl\Authentication\AccessControlAuthenticationService::AUTH_RESULT_USER_STATE_PENDING:
-				return $this->getServiceLocator()->get('translator')->translate('user_state_pending');
-			//Unknown error
-			default:
-				return $this->getServiceLocator()->get('translator')->translate($iResult);
-		}
+		return $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->isIdentityEmailAvailable($sEmailIdentity)?true:str_ireplace(
+				'%value%',$sEmailIdentity,
+				$this->getServiceLocator()->get('translator')->translate('The email adress "%value%" is unavailable','validator')
+		);
 	}
 
 	/**
-	 * Log out current logged user
-	 * @return \AccessControl\Service\AccessControlService
+	 * @param string $sUsernameIdentity
+	 * @throws \InvalidArgumentException
+	 * @return boolean|string
 	 */
-	public function logout(){
-		$this->getServiceLocator()->get('AccessControlAuthenticationService')->clearIdentity();
-		return $this;
+	public function isUsernameIdentityAvailable($sUsernameIdentity){
+		if(empty($sUsernameIdentity) || !is_string($sUsernameIdentity))throw new \InvalidArgumentException('Username identity expects string, "'.(empty($sUsernameIdentity)?'':gettype($sUsernameIdentity)).'" given');
+
+		//If request is from logged user
+		if($this->getServiceLocator()->get('AccessControlAuthenticationService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sUsernameIdentity)return str_ireplace(
+				'%value%',$sUsernameIdentity,
+				$this->getServiceLocator()->get('translator')->translate('The username "%value%" is the same as currently used','validator')
+		);
+
+		return $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->isIdentityUserNameAvailable($sUsernameIdentity)?true:str_ireplace(
+				'%value%',$sUsernameIdentity,
+				$this->getServiceLocator()->get('translator')->translate('The username "%value%" is unavailable','validator')
+		);
+	}
+
+	/**
+	 * Generate a random public crypted key
+	 * @return string
+	 */
+	public function generateAuthAccessPublicKey(){
+		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
+		return $oBCrypt->create(str_shuffle(uniqid(str_shuffle(uniqid()))));
 	}
 }

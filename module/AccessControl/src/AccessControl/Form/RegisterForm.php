@@ -17,23 +17,38 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'wordlen' => 6
 		));
 
+		$oHtmlAttrEscaper = new \Zend\View\Helper\EscapeHtmlAttr();
+
 		$this->add(array(
-			'name' => 'user_email',
+			'name' => 'auth_access_email_identity',
 			'attributes' => array(
 				'required' => true,
 				'class' => 'required validate-email emailIsAvailable',
-				'onchange' => 'oController.checkUserEmailAvailability(document.id(this));',
+				'onchange' => 'oController.checkEmailIdentityAvailability(document.id(this));',
 				'autocomplete' => 'off',
 				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'email'
 			)
+		))->add(array(
+			'name' => 'auth_access_username_identity',
+			'attributes' => array(
+				'required' => true,
+				'class' => 'required validate-nospace maxLength:255 usernameIsAvailable',
+				'onchange' => 'oController.checkUsernameIdentityAvailability(document.id(this));',
+				'autocomplete' => 'off',
+				'autofocus' => 'autofocus'
+			),
+			'options' => array(
+				'label' => 'username'
+			)
 		))
 		->add(array(
-			'name' => 'user_password',
+			'name' => 'auth_access_credential',
 			'attributes' => array(
-				'type'  => 'password',
+				'id' => 'auth_access_credential',
+				'type' => 'password',
 				'required' => true,
 				'class' => 'required maxLength:32',
 				'autocomplete' => 'off'
@@ -43,10 +58,10 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			)
 		))
 		->add(array(
-			'name' => 'user_confirm_password',
+			'name' => 'auth_access_credential_confirm',
 			'attributes' => array(
-				'type'  => 'password',
-				'class' => 'required validate-match matchInput:\'user_password\' matchName:\''.$this->translate('password').'\'',
+				'type' => 'password',
+				'class' => 'required validate-match matchInput:\'auth_access_credential\' matchName:\''.$oHtmlAttrEscaper('"'.$this->getTranslator()->translate('password').'"').'\'',
 				'required' => true,
 				'autocomplete' => 'off'
 			),
@@ -56,10 +71,10 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		))
 		->add(array(
 			'name' => 'user_captcha',
-			'type'  => 'Zend\Form\Element\Captcha',
+			'type' => 'Zend\Form\Element\Captcha',
 			'attributes' => array(
 				'required' => true,
-				'placeholder' => sprintf($this->translate('enter_the_x_characters'),$oCaptchaImage->getWordlen()),
+				'placeholder' => sprintf($this->getTranslator()->translate('enter_the_x_characters'),$oCaptchaImage->getWordlen()),
 				'autocomplete' => 'off'
 			),
 			'options' => array(
@@ -71,11 +86,14 @@ class RegisterForm extends \Application\Form\AbstractForm{
 		->add(array(
 			'name' => 'submit',
 			'attributes' => array(
-			'type'  => 'submit',
+			'type' => 'submit',
 				'value' => 'register',
 				'class' => 'btn-large btn-primary'
 			),
-			'options' => array('twb' => array('formAction' => true))
+			'options' => array(
+            	'ignore' => true,
+				'twb' => array('formAction' => true)
+			)
 		));
 		return parent::prepare();
 	}

@@ -6,7 +6,7 @@ return array(
 			'options' => array('route' => '/access-control'),
 			'may_terminate' => true,
 			'child_routes' => array(
-				'register' => array(
+				'Register' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
 						'route' => '/register[/:service]',
@@ -16,27 +16,37 @@ return array(
 						)
 					)
 				),
-				'checkuseremailavailability' => array(
+				'CheckEmailIdentityAvailability' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
-						'route' => '/checkuseremailavailability',
+						'route' => '/check-email-identity-availability',
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Registration',
-							'action' => 'checkuseremailavailability'
+							'action' => 'checkEmailIdentityAvailability'
 						)
 					)
 				),
-				'confirm-email' => array(
+				'CheckUsernameIdentityAvailability' => array(
+					'type' => 'Zend\Mvc\Router\Http\Literal',
+					'options' => array(
+						'route' => '/check-username-identity-availability',
+						'defaults' => array(
+							'controller' => 'AccessControl\Controller\Registration',
+							'action' => 'checkusernameidentityavailability'
+						)
+					)
+				),
+				'ConfirmEmail' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
-						'route' => '/confirm-email/:registration_key',
+						'route' => '/confirm-email/:email_identity/:public_key',
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Registration',
 							'action' => 'confirmemail'
 						)
 					)
 				),
-				'resend-confirmation-email' => array(
+				'ResendConfirmationEmail' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
 						'route' => '/resend-confirmation-email',
@@ -46,7 +56,7 @@ return array(
 						)
 					)
 				),
-				'authenticate' => array(
+				'Authenticate' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
 						'route' => '/authenticate[/:service][/:redirect]',
@@ -56,7 +66,7 @@ return array(
 						)
 					)
 				),
-				'hybridauth' => array(
+				'HybridAuth' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
 						'route' => '/hybridauth',
@@ -66,7 +76,7 @@ return array(
 						)
 					)
 				),
-				'forgotten-password' => array(
+				'ForgottenPassword' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
 						'route' => '/forgotten-password',
@@ -76,7 +86,7 @@ return array(
 						)
 					)
 				),
-				'reset-password' => array(
+				'ResetPassword' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
 						'route' => '/reset-password/:reset_key',
@@ -86,7 +96,7 @@ return array(
 						)
 					)
 				),
-				'logout' => array(
+				'Logout' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
 						'route' => '/logout',

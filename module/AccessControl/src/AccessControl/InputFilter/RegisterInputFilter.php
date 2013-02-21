@@ -1,26 +1,52 @@
 <?php
 namespace AccessControl\InputFilter;
 class RegisterInputFilter extends \Zend\InputFilter\InputFilter{
-    /**
-     * Constructor
-     */
-    public function __construct(){
+	/**
+	 * Constructor
+	 * @param \AccessControl\Repository\AuthAccessRepository $oAuthAccessRepository
+	 * @param \Zend\I18n\Translator\Translator $oTranslator
+	 */
+    public function __construct(\AccessControl\Repository\AuthAccessRepository $oAuthAccessRepository,\Zend\I18n\Translator\Translator $oTranslator){
     	$this->add(array(
-			'name' => 'user_email',
+			'name' => 'auth_access_email_identity',
 			'required' => true,
 			'filters' => array(array('name' => 'StringTrim')),
 			'validators' => array(
 				array('name'=> 'EmailAddress'),
-				array('name'=> 'AccessControl\Validator\EmailAddressAvailabilityValidator')
+				array(
+					'name'=> 'AccessControl\Validator\IdentityAvailabilityValidator',
+					'options' => array(
+						'identityName' => $oTranslator->translate('the_email'),
+						'checkAvailabilityCallback' => array($oAuthAccessRepository, 'isIdentityEmailAvailable')
+					)
+				)
+			)
+		))
+		->add(array(
+			'name' => 'auth_access_username_identity',
+			'required' => true,
+			'filters' => array(array('name' => 'StringTrim')),
+			'validators' => array(
+				array('name'=> 'Application\Validator\NoSpaces'),
+				array(
+					'name'=> 'stringLength',
+					'options' => array('max' => 255)
+				),
+				array(
+					'name'=> 'AccessControl\Validator\IdentityAvailabilityValidator',
+					'options' => array(
+						'identityName' => $oTranslator->translate('the_username'),
+						'checkAvailabilityCallback' => array($oAuthAccessRepository, 'isIdentityUsernameAvailable')
+					)
+				)
 			)
 		))->add(array(
-			'name' => 'user_password',
-			'required' => true,
-			'validators' => array(array('name'=> 'StringLength','options' => array('max'=>32)))
+			'name' => 'auth_access_credential',
+			'required' => true
 		))->add(array(
-			'name' => 'user_confirm_password',
+			'name' => 'auth_access_credential_confirm',
 			'required' => true,
-			'validators' => array(array('name'=> 'Identical','options' => array('token'=>'user_password')))
+			'validators' => array(array('name'=> 'Identical','options' => array('token'=>'auth_access_credential')))
 		));
     }
 }

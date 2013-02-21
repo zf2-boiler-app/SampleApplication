@@ -3,26 +3,26 @@ namespace AccessControl\Authentication\Adapter;
 class AuthenticationDoctrineAdapter extends \Zend\Authentication\Adapter\AbstractAdapter implements \AccessControl\Authentication\Adapter\AuthenticationAdapterInterface{
 
 	/**
-	 * @var \User\Repository\UserRepository
+	 * @var \AccessControl\Repository\AuthAccessRepository
 	 */
-	protected $userRepository;
+	protected $authAccessRepository;
 
 	/**
-	 * @param \User\Repository\UserRepository $oRepository
+	 * @param \AccessControl\Repository\AuthAccessRepository $oRepository
 	 * @return \AccessControl\Authentication\Adapter\AuthenticationDoctrineAdapter
 	 */
-	public function setUserRepository(\User\Repository\UserRepository $oRepository){
-		$this->userRepository = $oRepository;
+	public function setAuthAccessRepository(\AccessControl\Repository\AuthAccessRepository $oRepository){
+		$this->authAccessRepository = $oRepository;
 		return $this;
 	}
 
 	/**
 	 * @throws \LogicException
-	 * @return \User\Repository\UserRepository
+	 * @return \AccessControl\Repository\AuthAccessRepository
 	 */
-	public function getUserRepository(){
-		if(!($this->userRepository instanceof \User\Repository\UserRepository))throw new \LogicException('User repository is undefined');
-		return $this->userRepository;
+	public function getAuthAccessRepository(){
+		if(!($this->authAccessRepository instanceof \AccessControl\Repository\AuthAccessRepository))throw new \LogicException('AuthAccess repository is undefined');
+		return $this->authAccessRepository;
 	}
 
 	/**
@@ -47,17 +47,23 @@ class AuthenticationDoctrineAdapter extends \Zend\Authentication\Adapter\Abstrac
 		//Reset previous identity datas
 		$this->resultRow = null;
 
-		//Try retrieving existing user for the giving identity (email)
-		if($oUser = $this->getUserRepository()->findOneBy(array(
-			'user_email' => $this->getIdentity(),
-			'user_password' => $this->getCredential()
-		))){
-			$this->resultRow = array(
-				'user_id' => $oUser->getUserId(),
-				'user_state' => $oUser->getUserState()
-			);
-			return new \Zend\Authentication\Result(\Zend\Authentication\Result::SUCCESS,$this->resultRow['user_id']);
+		$aAvailableIdentities = $this->getAuthAcessRepository()->getAvailableIdentities();
+		$oUser = null;
+
+		//Try retrieving existing user for the giving identities
+		while(!$oUser && $aAvailableIdentities){
+			$sIdentityName = array_pop($aAvailableIdentities);
+			if($oAuthAcess = $this->getAuthAcessRepository()->findOneBy(array(
+				$sIdentityName => $this->getIdentity(),
+				'auth_access_credential' => $this->getCredential()
+			)))$oUser = $oAuthAcess->getUser();
 		}
-		return new \Zend\Authentication\Result(\Zend\Authentication\Result::FAILURE_CREDENTIAL_INVALID);
+		if(!$oUser)return new \Zend\Authentication\Result(\Zend\Authentication\Result::FAILURE_CREDENTIAL_INVALID);
+
+		$this->resultRow = array(
+			'user_id' => $oUser->getUserId(),
+			'user_state' => $oAuthAcess->getAuthAcessState()
+		);
+		return new \Zend\Authentication\Result(\Zend\Authentication\Result::SUCCESS,$this->resultRow['user_id']);
 	}
 }

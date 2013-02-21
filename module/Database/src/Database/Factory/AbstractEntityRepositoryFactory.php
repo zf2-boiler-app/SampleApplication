@@ -1,6 +1,6 @@
 <?php
 namespace Database\Factory;
-class AbstractRepositoryFactory implements \Zend\ServiceManager\AbstractFactoryInterface{
+class AbstractEntityRepositoryFactory implements \Zend\ServiceManager\AbstractFactoryInterface{
 
 	/**
 	 * Determine if we can create a service with name
@@ -24,10 +24,14 @@ class AbstractRepositoryFactory implements \Zend\ServiceManager\AbstractFactoryI
 		/* @var $oEntityManager \Doctrine\ORM\EntityManager */
 		$oEntityManager = $oServiceLocator->get('Doctrine\ORM\EntityManager');
 		try{
-			return $oEntityManager->getRepository(preg_replace('/^(.*)Repository(.*)Repository$/i','$1Entity$2Entity',$sRequestedName));
+			if(!class_exists($sEntityClass = preg_replace('/^(.*)Repository(.*)Repository$/i','$1Entity$2Entity',$sRequestedName)))throw new \InvalidArgumentException(sprintf(
+				'Repository "%s" entity class "%s" does not exist',
+				$sRequestedName,$sEntityClass
+			));
+			return $oEntityManager->getRepository($sEntityClass);
 		}
 		catch(\Exception $oException){
-			error_log(print_r($oException->__toString(),true));
+			throw new \BadMethodCallException('Error occured while retrieving Repository for "'.$sRequestedName.'"',$oException->getCode(),$oException);
 		}
 	}
 }

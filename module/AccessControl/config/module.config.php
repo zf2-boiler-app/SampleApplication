@@ -2,32 +2,14 @@
 return array(
 	'router' => include 'module.config.routes.php',
 	'asset_bundle' => include 'module.config.assets.php',
-	'doctrine' => array(
-		'driver' => array(
-			'accesscontrol_driver' => array(
-				'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
-				'cache' => 'array',
-				'paths' => array(__DIR__ . '/../src/AccessControl/Entity')
-			),
-			'orm_default' => array(
-				'drivers' => array(
-					'AccessControl\Entity' => 'accesscontrol_driver'
-				)
-			)
-		)
-	),
-	'translator' => array(
-		'translation_file_patterns' => array(
-			array(
-				'type' => 'phparray',
-				'base_dir' => __DIR__ . '/../languages',
-				'pattern'  => '%s/Common.php'
-			),
-			array(
-				'type' => 'phparray',
-				'base_dir' => __DIR__ . '/../languages',
-				'pattern'  => '%s/Validate.php',
-				'text_domain' => 'validator'
+	'doctrine' => include 'module.config.doctrine.php',
+	'translator' => include 'module.config.translations.php',
+	'messenger' => array(
+		'view_manager' => array(
+			'template_map' => array(
+				'email/registration/confirm-email' => __DIR__ . '/../view/email/registration/confirm-email.phtml',
+				'email/authentication/confirm-reset-password' => __DIR__ . '/../view/email/authentication/confirm-reset-password.phtml',
+				'email/authentication/password-reset' => __DIR__ . '/../view/email/authentication/password-reset.phtml'
 			)
 		)
 	),
@@ -69,6 +51,10 @@ return array(
 		)
 	),
 	'service_manager' => array(
+		'invokables' => array(
+			'AccessControlService' => 'AccessControl\Service\AccessControlService',
+			'RegistrationService' => 'AccessControl\Service\RegistrationService'
+		),
 		'factories' => array(
 			'AccessControlAuthenticationService' => 'AccessControl\Factory\AccessControlAuthenticationServiceFactory',
 			'AuthenticationStorage' => 'AccessControl\Factory\AuthenticationStorageFactory',
@@ -79,5 +65,5 @@ return array(
 	),
 	'view_manager' => array(
 		'template_path_stack' => array('AccessControl' => __DIR__ . '/../view')
-	),
+	)
 );

@@ -1,6 +1,6 @@
 <?php
 namespace Database\Repository;
-interface AbstractRepository extends \Doctrine\Common\Persistence\ObjectRepository{
+abstract class AbstractEntityRepository extends \Doctrine\ORM\EntityRepository{
     /**
      * @param \Database\Entity\AbstractEntity $oEntity
      * @return \Database\Entity\AbstractEntity

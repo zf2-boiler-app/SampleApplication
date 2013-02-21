@@ -1,7 +1,10 @@
 <?php
 namespace Messenger\Service;
-class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInterface{
+class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInterface, \Zend\I18n\Translator\TranslatorAwareInterface{
+	use \Zend\I18n\Translator\TranslatorAwareTrait;
+
 	const MEDIA_EMAIL = 'email';
+
 	/**
 	 * @var array
 	 */
@@ -16,11 +19,6 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @var \Messenger\Mail\InlineStyle\InlineStyleService
 	 */
 	private $inlineStyle;
-
-	/**
-	 * @var \Zend\I18n\Translator\Translator
-	 */
-	private $translator;
 
 	/**
 	 * @var \Zend\Mvc\Router\RouteStackInterface
@@ -44,13 +42,15 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 
 	/**
 	 * Constructor
+	 * @param array $aConfiguration
+	 * @throws \InvalidArgumentException
 	 */
 	private function __construct(array $aConfiguration){
 		if(
 			!isset($aConfiguration['system_user']['email'],$aConfiguration['system_user']['name'],$aConfiguration['transporters'])
 			|| ($aConfiguration['system_user']['email'] = filter_var($aConfiguration['system_user']['email'],FILTER_VALIDATE_EMAIL)) === false
 			|| !is_array($aConfiguration['transporters'])
-		)throw new \Exception('Messenger Service configuration is not valid');
+		)throw new \InvalidArgumentException('Messenger Service configuration is not valid');
 
 		//Set transporters
 		foreach($aConfiguration['transporters'] as $sMedia => $oTransporter){
@@ -67,7 +67,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @param \Messenger\Mail\InlineStyle\InlineStyleService $oInlineStyle
 	 * @param \Zend\I18n\Translator\Translator $oTranslator
 	 * @param \Zend\Mvc\Router\RouteStackInterface $oRouter
-	 * @throws \Exception
+	 * @throws \InvalidArgumentException
 	 * @return \Messenger\Service\MessengerService
 	 */
 	public static function factory($aConfiguration,
@@ -77,7 +77,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 		\Zend\Mvc\Router\RouteStackInterface $oRouter
 	){
 		if($aConfiguration instanceof \Traversable)$aConfiguration = \Zend\Stdlib\ArrayUtils::iteratorToArray($aConfiguration);
-		elseif(!is_array($aConfiguration))throw new \Exception(__METHOD__.' expects an array or Traversable object; received "'.(is_object($aConfiguration)?get_class($aConfiguration):gettype($aConfiguration)).'"');
+		elseif(!is_array($aConfiguration))throw new \InvalidArgumentException(__METHOD__.' expects an array or Traversable object; received "'.(is_object($aConfiguration)?get_class($aConfiguration):gettype($aConfiguration)).'"');
 		$oMessengerService = new static($aConfiguration);
 		return $oMessengerService
 		->setAssetsBundleService($oAssetsBundleService)
@@ -89,13 +89,14 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	/**
 	 * @param \Messenger\Message $oMessage
 	 * @param string|array $aMedias
-	 * @throws \Exception
+	 * @throws \InvalidArgumentException
+	 * @throws \DomainException
 	 * @return \Messenger\Service\MessengerService
 	 */
 	public function sendMessage(\Messenger\Message $oMessage,$aMedias){
-		if(empty($aMedias))throw new \Exception('A media must be specified');
+		if(empty($aMedias))throw new \InvalidArgumentException('A media must be specified');
 		elseif(is_string($aMedias))$aMedias = array($aMedias);
-		elseif(!is_array($aMedias))throw new \Exception('$aMedias expects an array or a string');
+		elseif(!is_array($aMedias))throw new \InvalidArgumentException('$aMedias expects an array or a string');
 		foreach(array_unique($aMedias) as $sMedia){
 			switch($sMedia){
 				case self::MEDIA_EMAIL:
@@ -124,7 +125,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 					});
 					break;
 				default:
-					throw new \Exception('Media "'.$sMedia.'" is not a valid media');
+					throw new \DomainException('Media "'.$sMedia.'" is not a valid media');
 			}
 		}
 		return $this;
@@ -133,7 +134,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	/**
 	 * @param \Messenger\Message $oMessage
 	 * @param string $sMedia
-	 * @throws \Exception
+	 * @throws \UnexpectedValueException
+	 * @throws \DomainException
 	 * @return \Messenger\Mail\Message
 	 */
 	protected function formatMessageForMedia(\Messenger\Message $oMessage,$sMedia){
@@ -142,15 +144,17 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				$oFormatMessage = new \Messenger\Mail\Message();
 				$oFormatMessage->setEncoding('UTF-8');
 
-
 				//From Sender
 				$oFrom = $oMessage->getFrom();
 				if($oFrom === \Messenger\Message::SYSTEM_USER)$oFormatMessage->setFrom(
 					$this->configuration['system_user']['email'],
 					$this->configuration['system_user']['name']
 				);
-				elseif($oFrom instanceof \User\Entity\UserEntity)$oFormatMessage->setFrom($oFrom->getUserEmail());
-				else throw new \Exception('From sender expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
+				elseif($oFrom instanceof \User\Entity\UserEntity)$oFormatMessage->setFrom($oFrom->getUserAuthAccess()->getAuthAccessEmailIdentity());
+				else throw new \UnexpectedValueException(sprintf(
+					'From sender expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity, "%s" given',
+					is_scalar($oFrom)?$oFrom:(is_object($oFrom)?get_class($oFrom):gettype($oFrom))
+				));
 
 				//To Recipiants
 				foreach($oMessage->getTo() as $oTo){
@@ -158,8 +162,8 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 						$this->configuration['system_user']['email'],
 						$this->configuration['system_user']['name']
 					);
-					elseif($oTo instanceof \User\Entity\UserEntity)$oFormatMessage->addTo($oTo->getUserEmail());
-					else throw new \Exception('To Recipiant expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
+					elseif($oTo instanceof \User\Entity\UserEntity)$oFormatMessage->addTo($oTo->getUserAuthAccess()->getAuthAccessEmailIdentity());
+					else throw new \UnexpectedValueException('To Recipiant expects \Messenger\Message::SYSTEM_USER or \User\Entity\UserEntity');
 				}
 
 				//Subject
@@ -169,7 +173,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				$oFormatMessage->setBody($oMessage->getBody());
 				break;
 			default:
-				throw new \Exception('Media "'.$sMedia.'" is not a valid media');
+				throw new \DomainException('Media "'.$sMedia.'" is not a valid media');
 		}
 		return $oFormatMessage;
 	}
@@ -178,11 +182,11 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * Render single view
 	 * @param \Zend\View\Model\ViewModel $oView
 	 * @param \Closure $oCallback
-	 * @throws \Exception
+	 * @throws \BadFunctionCallException
 	 * @return \Messenger\Service\MediasService
 	 */
 	public function renderView(\Zend\View\Model\ViewModel $oView,\Closure $oCallback){
-		if(!is_callable($oCallback))throw new \Exception('$oCallback is not a valid callback : '.(is_object($oCallback)?get_class($oCallback):print_r($oCallback,true)));
+		if(!is_callable($oCallback))throw new \BadFunctionCallException('$oCallback is not a callable');
 
 		$oRenderer = $this->getRenderer('default');
 		$oRenderer->plugin('view_model')->setRoot($oView);
@@ -213,12 +217,14 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	/**
 	 * Retrieve media renderer
 	 * @param string $sMedia
-	 * @throws \Exception
+	 * @throws \LogicException
+	 * @throws \DomainException
 	 * @return \Zend\View\Renderer\RendererInterface
 	 */
 	private function getRenderer($sMedia){
 		if(isset($this->renderers[$sMedia]) && $this->renderers[$sMedia] instanceof \Zend\View\Renderer\RendererInterface)return $this->renderers[$sMedia];
-		if(!isset($this->configuration['view_manager']['template_map']) || !is_array($this->configuration['view_manager']['template_map']))throw new \Exception('Messenger Service configuration is not valid : '.print_r($this->configuration['view_manager'],true));
+		if(!isset($this->configuration['view_manager']['template_map'])
+		|| !is_array($this->configuration['view_manager']['template_map']))throw new \LogicException('Messenger Service configuration is not valid : '.print_r($this->configuration['view_manager'],true));
 		switch($sMedia){
 			//Renderer for single view
 			case 'default':
@@ -237,7 +243,7 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 				$this->renderers[$sMedia]->layout()->addChild($oVueFooter->setTemplate('email/footer'),'footer');
 				break;
 			default:
-				throw new \Exception('Media "'.$sMedia.'" is not a valid media');
+				throw new \DomainException('Media "'.$sMedia.'" is not a valid media');
 		}
 		//Add mandatory helpers
 		$oTranslateHelper = new \Zend\I18n\View\Helper\Translate();
@@ -264,12 +270,12 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \LogicException
 	 * @return \AssetsBundle\Service\Service
 	 */
 	private function getAssetsBundleService(){
 		if($this->assetsBundleService instanceof \AssetsBundle\Service\Service)return $this->assetsBundleService;
-		throw new \Exception('AssetsBundle Service is undefined');
+		throw new \LogicException('AssetsBundle Service is undefined');
 	}
 
 	/**
@@ -282,12 +288,12 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \LogicException
 	 * @return \Messenger\Mail\InlineStyle\InlineStyleService
 	 */
 	private function getInlineStyle(){
 		if($this->inlineStyle instanceof \Messenger\Mail\InlineStyle\InlineStyleService)return $this->inlineStyle;
-		throw new \Exception('InlineStyle is undefined');
+		throw new \LogicException('InlineStyle is undefined');
 	}
 
 	/**
@@ -297,7 +303,10 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	 * @return \Messenger\Service\MessengerService
 	 */
 	private function setTransporter(\Zend\Mail\Transport\TransportInterface $oTransporter,$sMedia){
-		if(empty($sMedia) || !is_string($sMedia))throw new \Exception('Media expects string not empty');
+		if(empty($sMedia) || !is_string($sMedia))throw new \InvalidArgumentException(sprintf(
+			'Media expects string not empty, "%s" given',
+			is_scalar($sMedia)?$sMedia:gettype($sMedia)
+		));
 		$this->transporters[$sMedia] = $oTransporter;
 		return $this;
 	}
@@ -305,31 +314,16 @@ class MessengerService implements \Zend\EventManager\SharedEventManagerAwareInte
 	/**
 	 * Retrieve media transporter
 	 * @param string $sMedia
-	 * @throws \Exception
+	 * @throws \LogicException
 	 * @return \Zend\Mail\Transport\TransportInterface
 	 */
 	private function getTransporter($sMedia){
-		if(empty($sMedia) || !is_string($sMedia))throw new \Exception('Media expects string not empty');
+		if(empty($sMedia) || !is_string($sMedia))throw new \InvalidArgumentException(sprintf(
+			'Media expects string not empty, "%s" given',
+			is_scalar($sMedia)?$sMedia:gettype($sMedia)
+		));
 		if(isset($this->transporters[$sMedia]) && $this->transporters[$sMedia] instanceof \Zend\Mail\Transport\TransportInterface)return $this->transporters[$sMedia];
-		else throw new \Exception('Transporter si not defined for media "'.$sMedia.'"');
-	}
-
-	/**
-	 * @param \Zend\I18n\Translator\Translator $oTranslator
-	 * @return \Messenger\Service\MessengerService
-	 */
-	public function setTranslator(\Zend\I18n\Translator\Translator $oTranslator){
-		$this->translator = $oTranslator;
-		return $this;
-	}
-
-	/**
-	 * @throws \Exception
-	 * @return \Zend\I18n\Translator\Translator
-	 */
-	private function getTranslator(){
-		if($this->translator instanceof \Zend\I18n\Translator\Translator)return $this->translator;
-		throw new \Exception('Translator is undefined');
+		else throw new \LogicException('Transporter si not defined for media "'.$sMedia.'"');
 	}
 
 	/**

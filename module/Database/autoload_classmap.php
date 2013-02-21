@@ -4,10 +4,10 @@ return array(
 	'Database\Entity\AbstractEntity' => __DIR__.'/src/Database/Entity/AbstractEntity.php',
 
 	//Factories
-	'Database\Factory\AbstractRepositoryFactory' => __DIR__.'/src/Database/Factory/AbstractRepositoryFactory.php',
+	'Database\Factory\AbstractEntityRepositoryFactory' => __DIR__.'/src/Database/Factory/AbstractEntityRepositoryFactory.php',
 
 	//Repositories
-	'Database\Repository\AbstractRepository' => __DIR__.'/src/Database/Repository/AbstractRepository.php',
+	'Database\Repository\AbstractEntityRepository' => __DIR__.'/src/Database/Repository/AbstractEntityRepository.php',
 
 	//RowGateway
 	'Database\Db\RowGateway\AbstractRowGateway' => __DIR__.'/src/Database/Db/RowGateway/AbstractRowGateway.php',
