@@ -50,7 +50,7 @@ class RegisterForm extends \Application\Form\AbstractForm{
 				'id' => 'auth_access_credential',
 				'type' => 'password',
 				'required' => true,
-				'class' => 'required maxLength:32',
+				'class' => 'required maxLength:32 Form.PasswordStrength',
 				'autocomplete' => 'off'
 			),
 			'options' => array(

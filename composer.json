@@ -1,6 +1,6 @@
 {
-    "name": "ZF2 Skeleton App",
-    "description": "ZF2 base application",
+    "name": "neilime/zf2-skeleton-app",
+    "description": "ZF2 skeleton application",
     "authors": [
         {
             "name": "Neilime"
@@ -40,7 +40,15 @@
                 "source": {"url": "https://github.com/ckeditor/ckeditor-releases.git","type": "git","reference": "stable/standard"}
             }
         },
-		{
+        {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "nak5ive/Form.PasswordStrength",
+                "source": {"url": "https://github.com/nak5ive/Form.PasswordStrength.git","type": "git","reference": "master"}
+            }
+        },		
+        {
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"
 	    },
@@ -69,6 +77,7 @@
         "twitter/bootstrap": "dev-master",
         "fortawesome/font-awesome": "dev-master",
         "fabiomcosta/mootools-meio-mask": "dev-master",
-        "arian/iFrameFormRequest" : "dev-master"
+        "arian/iFrameFormRequest": "dev-master",
+       	"nak5ive/Form.PasswordStrength": "dev-master"
     }
 }
