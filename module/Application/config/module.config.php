@@ -103,6 +103,7 @@ return array(
 		),
 		'invokables' => array(
 			'form' => 'Application\Form\View\Helper\FormHelper',
+			'formElementErrors' => 'Application\Form\View\Helper\FormElementErrors',
 			'escapeJson' => 'Application\View\Helper\EscapeJsonHelper',
 			'jsController' => 'Application\View\Helper\JsControllerHelper',
 		)

@@ -33,7 +33,11 @@ var AccessControlControllerRegistrationRegister = {
 					var bAvailable = oResponse.available === true;
 					//Display email availability checked
 					if(!bAvailable)eEmailIdentity.removeClass('validation-passed');
+					
+					var bEmailAvailable = eEmailIdentity.retrieve('email-available',null);
+					//if(bEmailAvailable === null && bAvailable)
 					eEmailIdentity.store('email-available',oResponse.available).setLoading('icon-'+(bAvailable?'ok':'ban-circle')).fireEvent('change');
+					
 				}.bind(this)
 			}).send();
 			this.emailTimer = null;

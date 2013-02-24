@@ -23,8 +23,9 @@ class RegisterForm extends \Application\Form\AbstractForm{
 			'name' => 'auth_access_email_identity',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required validate-email emailIsAvailable',
-				'onchange' => 'oController.checkEmailIdentityAvailability(document.id(this));',
+				'class' => 'required validate-email',
+				/*'class' => 'required validate-email emailIsAvailable',
+				'onchange' => 'oController.checkEmailIdentityAvailability(document.id(this));',*/
 				'autocomplete' => 'off',
 				'autofocus' => 'autofocus'
 			),
@@ -38,7 +39,6 @@ class RegisterForm extends \Application\Form\AbstractForm{
 				'class' => 'required validate-nospace maxLength:255 usernameIsAvailable',
 				'onchange' => 'oController.checkUsernameIdentityAvailability(document.id(this));',
 				'autocomplete' => 'off',
-				'autofocus' => 'autofocus'
 			),
 			'options' => array(
 				'label' => 'username'
@@ -50,8 +50,9 @@ class RegisterForm extends \Application\Form\AbstractForm{
 				'id' => 'auth_access_credential',
 				'type' => 'password',
 				'required' => true,
-				'class' => 'required maxLength:32 Form.PasswordStrength',
-				'autocomplete' => 'off'
+				'class' => 'required maxLength:32',
+				'autocomplete' => 'off',
+				'data-behavior' => ' Form.PasswordStrength'
 			),
 			'options' => array(
 				'label' => 'password'

@@ -11,6 +11,12 @@ return array(
 			'base_dir' => __DIR__ . '/../languages',
 			'pattern'  => '%s/Validate.php',
 			'text_domain' => 'validator'
+		),
+		array(
+			'type' => 'phparray',
+			'base_dir' => __DIR__ . '/../languages',
+			'pattern'  => '%s/Form.PasswordStrength.php',
+			'text_domain' => 'validator'
 		)
 	)
 );

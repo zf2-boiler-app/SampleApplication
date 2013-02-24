@@ -15,7 +15,7 @@ class IdentityAvailabilityValidator extends \Zend\Validator\AbstractValidator{
     );
 
     protected $messageVariables = array(
-    	'identityName' => null,
+    	'identityName' => array('options' => 'identityName')
     );
 
     /**
@@ -23,6 +23,7 @@ class IdentityAvailabilityValidator extends \Zend\Validator\AbstractValidator{
      * @var array
      */
     protected $options = array(
+    	'identityName' => null,
     	'currentIdentity' => null,
     	'checkAvailabilityCallback' => null
     );
@@ -37,7 +38,7 @@ class IdentityAvailabilityValidator extends \Zend\Validator\AbstractValidator{
     		'Identity\'s name expects string, "%s" given',
     		gettype($sIdentityName)
     	));
-    	$this->messageVariables['identityName'] = $sIdentityName;
+    	$this->options['identityName'] = $sIdentityName;
     	return $this;
     }
 
@@ -45,7 +46,7 @@ class IdentityAvailabilityValidator extends \Zend\Validator\AbstractValidator{
      * @return string|null
      */
     public function getIdentityName(){
-    	return $this->messageVariables['identityName'];
+    	return $this->options['identityName'];
     }
 
     /**

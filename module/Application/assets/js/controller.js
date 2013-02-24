@@ -17,7 +17,7 @@ var Controller = {
 
 		//Init behaviors
 		window.behavior = new Behavior().apply(document.body);
-		window.delegator = new Delegator({getBehavior:function(){return window.behavior;}}).attach(document.body);
+		window.delegator = new Delegator({'getBehavior':function(){return window.behavior;}}).attach(document.body);
 
 		//Init locale
 		if('string' === typeof this.options.locale && this.options.locale.length && Locale != null && 'function' === typeof Locale.use)Locale.use(this.options.locale);

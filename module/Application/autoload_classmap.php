@@ -6,6 +6,7 @@ return array(
     'Application\Factory\SessionManagerFactory'       => __DIR__ . '/src/Application/Factory/SessionManagerFactory.php',
     'Application\Form\AbstractForm'                   => __DIR__ . '/src/Application/Form/AbstractForm.php',
     'Application\Form\View\Helper\FormHelper'         => __DIR__ . '/src/Application/Form/View/Helper/FormHelper.php',
+	'Application\Form\View\Helper\FormElementErrors'  => __DIR__ . '/src/Application/Form/View/Helper/FormElementErrors.php',
     'Application\Translator\Translator'               => __DIR__ . '/src/Application/Translator/Translator.php',
     'Application\Translator\TranslatorServiceFactory' => __DIR__ . '/src/Application/Translator/TranslatorServiceFactory.php',
     'Application\Validator\NoSpaces'                  => __DIR__ . '/src/Application/Validator/NoSpaces.php',

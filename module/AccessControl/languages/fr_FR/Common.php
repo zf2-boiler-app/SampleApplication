@@ -39,6 +39,8 @@ return array(
 	'sign_in' => 'Connexion',
 	'sign_up' => 'Inscrivez-vous',
 
+	'the_email' => 'L\'adresse email',
+	'the_username' => 'L\'identifiant',
 	'this_is_your_login_information' => 'Voici vos informations de connexion',
 
 	'unregistered_user_please_sign_in' => 'Votre compte %s doit être enregistré sur ZF2Base, merci de vous inscrire.',
