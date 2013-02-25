@@ -61,13 +61,13 @@ class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareIn
 
 		//If request is from logged user
 		if($this->getServiceLocator()->get('AccessControlAuthenticationService')->hasIdentity() && $this->getLoggedUser()->getUserEmail() === $sUsernameIdentity)return str_ireplace(
-			array('%identityName%','%value%'),array($oTranslator->translate('the_username'),$sEmailIdentity),
-			$oTranslator->translate('The username "%value%" is the same as currently used','validator')
+			array('%identityName%','%value%'),array($oTranslator->translate('the_username'),$sUsernameIdentity),
+			$oTranslator->translate('The %identityName% "%value%" is the same as currently used','validator')
 		);
 
 		return $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->isIdentityUserNameAvailable($sUsernameIdentity)?true:str_ireplace(
-			array('%identityName%','%value%'),array($oTranslator->translate('the_username'),$sEmailIdentity),
-			$oTranslator->translate('The username "%value%" is unavailable','validator')
+			array('%identityName%','%value%'),array($oTranslator->translate('the_username'),$sUsernameIdentity),
+			$oTranslator->translate('The %identityName% "%value%" is unavailable','validator')
 		);
 	}
 
