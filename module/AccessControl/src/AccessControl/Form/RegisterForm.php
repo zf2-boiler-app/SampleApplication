@@ -21,11 +21,11 @@ class RegisterForm extends \Application\Form\AbstractForm{
 
 		$this->add(array(
 			'name' => 'auth_access_email_identity',
+			'type' => 'email',
 			'attributes' => array(
 				'required' => true,
-				'class' => 'required validate-email',
-				/*'class' => 'required validate-email emailIsAvailable',
-				'onchange' => 'oController.checkEmailIdentityAvailability(document.id(this));',*/
+				'class' => 'required validate-email emailIsAvailable',
+				'onchange' => 'oController.checkEmailIdentityAvailability(document.id(this));',
 				'autocomplete' => 'off',
 				'autofocus' => 'autofocus'
 			),

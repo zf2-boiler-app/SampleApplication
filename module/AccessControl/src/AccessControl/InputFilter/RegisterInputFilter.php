@@ -12,14 +12,14 @@ class RegisterInputFilter extends \Zend\InputFilter\InputFilter{
 			'required' => true,
 			'filters' => array(array('name' => 'StringTrim')),
 			'validators' => array(
-				array('name'=> 'EmailAddress'),
+				array('name'=> 'EmailAddress','break_chain_on_failure' => true),
 				array(
 					'name'=> 'AccessControl\Validator\IdentityAvailabilityValidator',
 					'options' => array(
 						'identityName' => $oTranslator->translate('the_email'),
 						'checkAvailabilityCallback' => array($oAuthAccessRepository, 'isIdentityEmailAvailable')
 					)
-				)
+				),
 			)
 		))
 		->add(array(
@@ -27,10 +27,11 @@ class RegisterInputFilter extends \Zend\InputFilter\InputFilter{
 			'required' => true,
 			'filters' => array(array('name' => 'StringTrim')),
 			'validators' => array(
-				array('name'=> 'Application\Validator\NoSpaces'),
+				array('name'=> 'Application\Validator\NoSpaces','break_chain_on_failure' => true),
 				array(
 					'name'=> 'stringLength',
-					'options' => array('max' => 255)
+					'options' => array('max' => 255),
+					'break_chain_on_failure' => true
 				),
 				array(
 					'name'=> 'AccessControl\Validator\IdentityAvailabilityValidator',
