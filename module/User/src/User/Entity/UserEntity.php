@@ -62,6 +62,9 @@ class UserEntity extends \Database\Entity\AbstractEntity{
 	 * @return \AccessControl\Entity\AuthAccessEntity
 	 */
 	public function getUserAuthAccess(){
+		foreach(get_object_vars($this) as $sKey => $aVar){
+			/* TODO Remove Error log */error_log(print_r($sKey.' : '.(is_object($aVar)?get_class($aVar):gettype($aVar)),true));
+		}
 		return $this->user_auth_access;
 	}
 }

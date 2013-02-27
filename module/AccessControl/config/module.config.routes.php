@@ -46,6 +46,16 @@ return array(
 						)
 					)
 				),
+				'ResendConfirmationEmail' => array(
+					'type' => 'Zend\Mvc\Router\Http\Literal',
+					'options' => array(
+						'route' => '/resend-confirmation-email',
+						'defaults' => array(
+							'controller' => 'AccessControl\Controller\Registration',
+							'action' => 'resendConfirmationEmail'
+						)
+					)
+				),
 				'Authenticate' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
@@ -73,16 +83,6 @@ return array(
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Authentication',
 							'action' => 'resetCredential'
-						)
-					)
-				),
-				'ResendConfirmationEmail' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/resend-confirmation-email',
-						'defaults' => array(
-							'controller' => 'AccessControl\Controller\Registration',
-							'action' => 'resendConfirmationEmail'
 						)
 					)
 				),

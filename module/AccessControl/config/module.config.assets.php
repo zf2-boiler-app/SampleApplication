@@ -10,7 +10,7 @@ return array(
     		)),
     	),
     	'AccessControl\Controller\Authentication' => array(
-    		'authenticate' => array('js' => array(__DIR__ . '/../assets/js/Controller/AuthenticationAuthenticateController.js')),
+    		'js' => array(__DIR__ . '/../assets/js/Controller/AuthenticationAuthenticateController.js')
     	)
     )
 );

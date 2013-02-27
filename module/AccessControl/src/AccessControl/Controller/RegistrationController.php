@@ -75,4 +75,17 @@ class RegistrationController extends \Templating\Mvc\Controller\AbstractActionCo
 		}
 		return $this->view;
 	}
+
+
+	/**
+	 * Process ajax request to resend email confirmation
+	 * @throws \LogicException
+	 * @return \Zend\View\Model\JsonModel
+	 */
+	public function resendConfirmationEmailAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
+		if(!($sAuthAccessIdentity = $this->params()->fromPost('auth_access_identity')))throw new \LogicException('auth_access_identity param is missing');
+		$this->getServiceLocator()->get('RegistrationService')->resendConfirmationEmail($sAuthAccessIdentity);
+		return $this->view;
+	}
 }

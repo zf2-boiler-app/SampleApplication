@@ -45,9 +45,6 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 			is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
 		));
 
-		//Retrieve translator
-		$oTranslator = $this->getServiceLocator()->get('translator');
-
 		$oAuthAccessRepository = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository');
 		$aAvailableIdentities = $oAuthAccessRepository->getAvailableIdentities();
 		$oAuthAccess = null;
@@ -60,6 +57,10 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 				$sIdentityName => $sAuthAccessIdentity
 			));
 		}
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
 		if(!$oAuthAccess)return $oTranslator->translate('identity_does_not_match_any_registered_user');
 
 		//If AuthAccess is in pending state
@@ -156,40 +157,6 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 	 */
 	public function logout(){
 		$this->getServiceLocator()->get('AccessControlAuthenticationService')->clearIdentity();
-		return $this;
-	}
-
-	/**
-	 * @param string $sEmail
-	 * @throws \Exception
-	 * @return \AccessControl\Service\AccessControlService
-	 */
-	public function resendConfirmationEmail($sEmail){
-		if(empty($sEmail) || !is_string($sEmail))throw new \Exception('Email is not a string');
-		$oUser = $this->getServiceLocator()->get('UserModel')->getUserByEmail($sEmail);
-
-		//Create email view body
-		$oView = new \Zend\View\Model\ViewModel(array(
-				'user_registration_key' => $oUser->getUserRegistrationKey()
-		));
-
-		//Retrieve Messenger service
-		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
-
-		//Retrieve translator
-		$oTranslator = $this->getServiceLocator()->get('translator');
-
-		//Render view & send email to user
-		$oMessengerService->renderView($oView->setTemplate('email/user/confirm-email'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
-			$oMessage = new \Messenger\Message();
-			$oMessengerService->sendMessage(
-					$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
-					->setTo($oUser)
-					->setSubject($oTranslator->translate('register'))
-					->setBody($sHtml),
-					\Messenger\Service\MessengerService::MEDIA_EMAIL
-			);
-		});
 		return $this;
 	}
 }

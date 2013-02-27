@@ -1,18 +1,18 @@
-var UserControllerUserLogin = {
+var AccessControlControllerAuthentication = {
 	Extends: Controller,
 	
 	/**
 	 * @param string eUserEmail
 	 * @return UserControllerUserLogin
 	 */
-	sendConfirmationEmail : function(sUserEmail){
-		if('string' !== typeof sUserEmail)throw 'User email expects string';
+	sendConfirmationEmail : function(sAuthAccessIdentity){
+		if('string' !== typeof sAuthAccessIdentity)throw 'AuthAccess identity expects string';
 		new Modal.Popup({
 			'title':this.translate('resend_confirmation_email'),
-			'url':this.url('User/resend-confirmation-email'),
-			'data':{'email':sUserEmail},
+			'url':this.url('AccessControl/ResendConfirmationEmail'),
+			'data':{'auth_access_identity':sAuthAccessIdentity},
 			'method':'post'
 		});		
 	}
 };
-UserControllerUserLogin = new Class(UserControllerUserLogin);
+AccessControlControllerAuthentication = new Class(AccessControlControllerAuthentication);

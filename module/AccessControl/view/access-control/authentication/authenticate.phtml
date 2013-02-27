@@ -4,7 +4,7 @@
 </div>
 <?php
 	if(!empty($this->error)){
-		if($this->error === $this->translate('auth_access_state_pending'))$this->error .= '
+		if($this->error === $this->translate('auth_access_pending'))$this->error .= '
 			<br/><br/>
 			<a href="javascript:oController.sendConfirmationEmail('.$this->escapeHtmlAttr($this->escapeJson($this->form->get('user_email')->getValue())).');">
 				'.$this->translate('resend_confirmation_email').'

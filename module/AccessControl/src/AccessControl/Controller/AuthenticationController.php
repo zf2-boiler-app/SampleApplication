@@ -81,18 +81,6 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 	}
 
 	/**
-	 * Process ajax request to resend email confirmation
-	 * @throws \LogicException
-	 * @return \Zend\View\Model\JsonModel
-	 */
-	public function resendConfirmationEmailAction(){
-		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
-		if(!($sEmail = $this->params()->fromPost('email')))throw new \LogicException('Email param is missing');
-		$this->getServiceLocator()->get('AccessControlService')->resendConfirmationEmail($sEmail);
-		return $this->view;
-	}
-
-	/**
 	 * Show Reset credential form, or process form submit request
 	 * @throws \LogicException
 	 * @return \Zend\View\Model\ViewModel

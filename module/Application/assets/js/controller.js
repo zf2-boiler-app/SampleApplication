@@ -25,17 +25,21 @@ var Controller = {
 		//Overide request
 		Class.refactor(Request,{
 			'onFailure': function(oXhr){
+				var sError;
 				if(oXhr != null && oXhr.responseText != null){
     				try{
     					var oResponse = JSON.decode(oXhr.responseText,true);
-    					if(oResponse != null && 'string' === typeof oResponse.error){
-    						alert(oResponse.error);
-    						return this.fireEvent('complete').fireEvent('failure', this.xhr);
-    					}
+    					if(oResponse != null && 'string' === typeof oResponse.error)sError = oResponse.error;
     				}
     				catch(oException){}
     			}
-    			alert(that.translate('error_occurred'));
+    			
+				if(!sError && this.xhr != null)switch(this.xhr.status){
+    				case 404:
+    					sError = that.translate('404_error');
+    					break;
+    			}
+				alert(sError?sError:that.translate('error_occurred'));
 				return this.fireEvent('complete').fireEvent('failure', this.xhr);
 			}
 		});

@@ -118,4 +118,64 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 
 		return true;
 	}
+
+	/**
+	 * @param string $sAuthAccessIdentity
+	 * @throws \InvalidArgumentException
+	 * @return \AccessControl\Service\AccessControlService
+	 */
+	public function resendConfirmationEmail($sAuthAccessIdentity){
+		if(empty($sAuthAccessIdentity) || !is_string($sAuthAccessIdentity))throw new \InvalidArgumentException(sprintf(
+				'AuthAccess identity expects a not empty string, "%s" given',
+				is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
+		));
+
+		$oAuthAccessRepository = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository');
+		$aAvailableIdentities = $oAuthAccessRepository->getAvailableIdentities();
+		$oAuthAccess = null;
+
+		//Try retrieving existing AuthAccess for the giving identities
+		while(!$oAuthAccess && $aAvailableIdentities){
+			$sIdentityName = array_shift($aAvailableIdentities);
+			if($sIdentityName === 'auth_access_email_identity' && !filter_var($sAuthAccessIdentity,FILTER_VALIDATE_EMAIL))continue;
+			$oAuthAccess = $oAuthAccessRepository->findOneBy(array(
+				$sIdentityName => $sAuthAccessIdentity
+			));
+		}
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		if(!$oAuthAccess)return $oTranslator->translate('identity_does_not_match_any_registered_user');
+
+		//Reset public key
+		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
+		$oAuthAccess->setAuthAccessPublicKey($oBCrypt->create($sPublicKey = $this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey()));
+		$oAuthAccessRepository->update($oAuthAccess);
+
+		//Create email view body
+		$oView = new \Zend\View\Model\ViewModel(array(
+			'auth_access_public_key' => $sPublicKey,
+			'auth_access_email_identity' => $oAuthAccess->getAuthAccessEmailIdentity()
+		));
+
+		//Retrieve Messenger service
+		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
+
+		//Retrieve translator
+		$oTranslator = $this->getServiceLocator()->get('translator');
+
+		//Render view & send email to user
+		$oMessengerService->renderView($oView->setTemplate('email/registration/confirm-email'),function($sHtml)use($oMessengerService,$oTranslator,$oAuthAccess){
+			$oMessage = new \Messenger\Message();
+			$oMessengerService->sendMessage(
+				$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
+				->setTo($oAuthAccess->getAuthAccessUser())
+				->setSubject($oTranslator->translate('register'))
+				->setBody($sHtml),
+				\Messenger\Service\MessengerService::MEDIA_EMAIL
+			);
+		});
+		return $this;
+	}
 }

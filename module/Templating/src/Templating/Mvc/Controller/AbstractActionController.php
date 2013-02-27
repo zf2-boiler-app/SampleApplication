@@ -17,7 +17,9 @@ abstract class AbstractActionController extends \AssetsBundle\Mvc\Controller\Abs
 
 	public function onDispatch(\Zend\Mvc\MvcEvent $oEvent){
 		$this->view = $this->acceptableViewModelSelector($this->acceptCriteria);
-		if($this->getRequest()->isXmlHttpRequest())$this->view->setTerminal(true);
+
+		$oRequest = $oEvent->getRequest();
+		if(!($oRequest instanceof \Zend\Http\Request) || $oRequest->isXmlHttpRequest())$this->view->setTerminal(true);
 		return parent::onDispatch($oEvent);
 	}
 }

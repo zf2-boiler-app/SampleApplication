@@ -15,6 +15,13 @@ class Module{
     	//Add translation for validators
     	\Zend\Validator\AbstractValidator::setDefaultTranslator($oServiceManager->get('translator'),'validator');
 
+    	$oEventManager->attach(
+    		'*',
+    		function($oEvent){
+    			/* TODO Remove Error log */error_log(print_r($oEvent->getName(),true));
+    		}
+    	);
+
     	//Process for render MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
     		\Zend\Mvc\MvcEvent::EVENT_RENDER,
@@ -33,11 +40,14 @@ class Module{
      */
     public function onRender(\Zend\Mvc\MvcEvent $oEvent){
     	$oRequest = $oEvent->getRequest();
-    	if($oRequest instanceof \Zend\Http\Request && !$oRequest->isXmlHttpRequest()
-    	&& (
-    		!(($oView = $oEvent->getResult()) instanceof \Zend\View\Model\ModelInterface)
-    		|| !$oView->terminate()
-    	)){
+
+    	if(!($oRequest instanceof \Zend\Http\Request) || $oRequest->isXmlHttpRequest()){
+    		if(($oView = $oEvent->getResult()) instanceof \Zend\View\Model\ModelInterface)$oEvent->setResult($oView->setTerminal(true));
+    	}
+    	elseif(
+    		($oView = $oEvent->getResult()) instanceof \Zend\View\Model\ModelInterface
+    		&& !$oView->terminate()
+    	){
 	    	//Js Controller view helper
 	    	$oServiceManager = $oEvent->getApplication()->getServiceManager();
 	    	$aConfiguration = $oServiceManager->get('Config');

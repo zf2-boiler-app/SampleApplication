@@ -46,7 +46,7 @@ class AuthAccessEntity extends \Database\Entity\AbstractEntity{
 
 	/**
 	 * @var \User\Entity\UserEntity
-	 * @\Doctrine\ORM\Mapping\OneToOne(targetEntity="User\Entity\UserEntity")
+	 * @\Doctrine\ORM\Mapping\OneToOne(targetEntity="User\Entity\UserEntity", inversedBy="user_auth_access")
      * @\Doctrine\ORM\Mapping\JoinColumn(name="auth_access_user_id", referencedColumnName="user_id")
 	 */
 	protected $auth_access_user;
