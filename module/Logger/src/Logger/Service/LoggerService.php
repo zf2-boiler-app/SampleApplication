@@ -35,7 +35,7 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 
 		//Mvc
 		$this->getSharedManager()->attach('Zend\Mvc\Application', \Zend\Mvc\MvcEvent::EVENT_ROUTE,array($this,'logMvcAction'));
-		$this->getSharedManager()->attach('Zend\Mvc\Application', \Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,array($this,'logError'));
+		$this->getSharedManager()->attach('Zend\Mvc\Application', array(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR),array($this,'logError'));
 	}
 
 	/**
@@ -248,7 +248,7 @@ class LoggerService implements \Zend\EventManager\SharedEventManagerAwareInterfa
 	 * @return \Logger\Service\LoggerService
 	 */
 	public function logError(\Zend\Mvc\MvcEvent $oEvent){
-		if(!($oException = $oEvent->getParam('exception')) instanceof \Exception)$oException = new \Exception();
+		if(!($oException = $oEvent->getParam('exception')) instanceof \Exception)$oException = new \Exception($oEvent->getError());
 		self::$currentId = $this->getAdapter(self::LOG_TYPE_ERROR)->log(
 			self::$currentId,
 			new \DateTime(),

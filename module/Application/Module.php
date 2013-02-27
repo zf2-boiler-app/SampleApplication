@@ -23,7 +23,7 @@ class Module{
 
     	//Process for error MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
-    		\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,
+    		array(\Zend\Mvc\MvcEvent::EVENT_DISPATCH_ERROR,\Zend\Mvc\MvcEvent::EVENT_RENDER_ERROR),
     		array($this, 'onError')
     	);
     }
@@ -56,6 +56,10 @@ class Module{
      */
      public function onError(\Zend\Mvc\MvcEvent $oEvent){
      	$oRequest = $oEvent->getRequest();
+     	if($oEvent->getName() === 'render.error'){
+     		if(!($oException = $oEvent->getParam('exception')) instanceof \Exception)$oException = new \Exception($oEvent->getError());
+     		error_log(print_r($oException->__toString(),true));
+     	}
      	if(!($oRequest instanceof \Zend\Http\Request) || $oRequest->isXmlHttpRequest())$oEvent->getResult()->setTerminal(true);
     }
 

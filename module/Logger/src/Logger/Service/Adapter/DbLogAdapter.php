@@ -214,10 +214,11 @@ class DbLogAdapter extends \Zend\Db\TableGateway\TableGateway implements \Logger
 	 */
 	protected function setRequest(\Zend\Stdlib\RequestInterface $oRequest){
 		if(!isset(self::$logs[$this->logId]))throw new \Exception('Log "'.$this->logId.'" is not initialized');
+		/* @var $oRequest \Zend\Http\Request */
 		if($oRequest instanceof \Zend\Http\Request)self::$logs[$this->logId] = array_merge(self::$logs[$this->logId],array(
 			'log_request_uri' => $oRequest->getRequestUri(),
 			'log_request_method' => $oRequest->getMethod(),
-			'log_user_agent' => $oRequest->getHeader('User-Agent')->getFieldValue(),
+			'log_user_agent' => $oRequest->getHeaders()->has('User-Agent')?$oRequest->getHeader('User-Agent')->getFieldValue():'',
 			'log_is_ajax' => $oRequest->isXmlHttpRequest(),
 			'log_user_id' => $this->getUserId()
 		));

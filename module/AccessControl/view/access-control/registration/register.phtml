@@ -7,8 +7,8 @@
 ?>
 <fieldset>
 	<legend><?=$this->translate('or_use_another_service')?></legend>
-    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Register',array('service'=>'facebook'))?>"><i class="icon-facebook"></i> Facebook</a>
-    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Register',array('service'=>'twitter'))?>"><i class="icon-twitter"></i> Twitter</a>
-    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Register',array('service'=>'google'))?>"><i class="icon-google-plus"></i> Google+</a>
+    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Authenticate',array('service'=>'facebook'))?>"><i class="icon-facebook"></i> Facebook</a>
+    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Authenticate',array('service'=>'twitter'))?>"><i class="icon-twitter"></i> Twitter</a>
+    <a class="btn btn-mini" href="<?=$this->url('AccessControl/Authenticate',array('service'=>'google'))?>"><i class="icon-google-plus"></i> Google+</a>
 </fieldset>
 <?php } ?>

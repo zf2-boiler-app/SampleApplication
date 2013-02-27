@@ -1,7 +1,7 @@
 <?php
 namespace AccessControl\Authentication;
 class AccessControlAuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
-	const AUTH_RESULT_USER_STATE_PENDING = -1;
+	const AUTH_RESULT_AUTH_ACCESS_STATE_PENDING = -1;
 	const AUTH_RESULT_EMAIL_OR_PASSWORD_WRONG = 0;
 	const AUTH_RESULT_VALID = 1;
 
@@ -185,7 +185,7 @@ class AccessControlAuthenticationService implements \Zend\ServiceManager\Service
 			$this->getAuthenticationService()->getStorage()->write($iUserId);
 			return self::AUTH_RESULT_VALID;
 		}
-		else return self::AUTH_RESULT_USER_STATE_PENDING;
+		else return self::AUTH_RESULT_AUTH_ACCESS_STATE_PENDING;
 	}
 
 	/**

@@ -6,11 +6,11 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 	 * @throws \UnexpectedValueException
 	 * @return \Zend\View\Model\ViewModel
 	 */
-	public function authenticationAction(){
+	public function authenticateAction(){
 		//If user is already logged in, redirect him
 		if($this->getServiceLocator()->get('AccessControlAuthenticationService')->hasIdentity()){
 			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
-			?$this->url()->fromRoute('home')
+			?$this->url()->fromRoute('Home')
 			:$this->getServiceLocator()->get('Session')->redirect;
 			unset($this->getServiceLocator()->get('Session')->redirect);
 			return $this->redirect()->toUrl($sRedirectUrl);
@@ -20,7 +20,7 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('sign_in');
 
 		//Assign form
-		$this->view->form = $this->getServiceLocator()->get('LoginForm');
+		$this->view->form = $this->getServiceLocator()->get('AuthenticateForm');
 
 		$oFlashMessenger = $this->flashMessenger()->setNamespace(__CLASS__);
 		if($oFlashMessenger->hasCurrentMessages()){
@@ -43,7 +43,7 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 			)) === true
 		)){
 			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
-			?$this->url()->fromRoute('home')
+			?$this->url()->fromRoute('Home')
 			:$this->getServiceLocator()->get('Session')->redirect;
 			unset($this->getServiceLocator()->get('Session')->redirect);
 			return $this->redirect()->toUrl($sRedirectUrl);
@@ -81,37 +81,49 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 	}
 
 	/**
-	 * Show forgotten password form, or process form submit request
+	 * Process ajax request to resend email confirmation
+	 * @throws \LogicException
+	 * @return \Zend\View\Model\JsonModel
+	 */
+	public function resendConfirmationEmailAction(){
+		if(!$this->getRequest()->isXmlHttpRequest())throw new \LogicException('Only ajax requests are allowed for this action');
+		if(!($sEmail = $this->params()->fromPost('email')))throw new \LogicException('Email param is missing');
+		$this->getServiceLocator()->get('AccessControlService')->resendConfirmationEmail($sEmail);
+		return $this->view;
+	}
+
+	/**
+	 * Show Reset credential form, or process form submit request
 	 * @throws \LogicException
 	 * @return \Zend\View\Model\ViewModel
 	 */
-	public function forgottenpasswordAction(){
+	public function forgottenCredentialAction(){
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
 
 		//Assign form
-		$this->view->form = $this->getServiceLocator()->get('ResetPasswordForm');
+		$this->view->form = $this->getServiceLocator()->get('ResetCredentialForm');
 
 		if($this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
-			($bReturn = $this->getServiceLocator()->get('AccessControlService')->sendConfirmationResetPassword($this->params()->fromPost('user_email'))) === true
-		)$this->view->passwordReset = true;
+			($bReturn = $this->getServiceLocator()->get('AuthenticationService')->sendConfirmationResetCredential($this->params()->fromPost('auth_access_identity'))) === true
+		)$this->view->credentialReset = true;
 		elseif(isset($bReturn)){
 			if(is_string($bReturn))$this->view->error = $bReturn;
-			else throw new \LogicException('Reset password process return expects string, "'.gettype($bReturn).'" given');
+			else throw new \LogicException('Reset credential process return expects string, "'.gettype($bReturn).'" given');
 		}
 		return $this->view;
 	}
 
 	/**
-	 * Process reset password request
+	 * Process reset credential request
 	 * @throws \LogicException
 	 * @return \Zend\View\Model\ViewModel
 	 */
-	public function resetpasswordAction(){
+	public function resetCredentialAction(){
 		if(!($sResetKey = $this->params('reset_key')))throw new \LogicException('Reset key param is missing');
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
-		$this->getServiceLocator()->get('AccessControlService')->resetPassword($sResetKey);
+		$this->getServiceLocator()->get('AccessControlService')->resetCredential($sResetKey);
 		return $this->view;
 	}
 
@@ -127,7 +139,7 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 			&& ($sHttpReferer = $this->getRequest()->getServer('HTTP_REFERER'))
 			&& is_array($aInfosUrl = parse_url($sHttpReferer))
 			&& $this->getRequest()->getServer('HTTP_HOST') === $aInfosUrl['host']
-		)?$this->redirect()->toUrl($sHttpReferer):$this->redirect()->toRoute('home');
+		)?$this->redirect()->toUrl($sHttpReferer):$this->redirect()->toRoute('Home');
 		else throw new \RuntimeException('Error occured during logout process');
 	}
 }

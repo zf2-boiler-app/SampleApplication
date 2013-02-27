@@ -1,30 +1,30 @@
 <?php
 return array(
 	'routes' => array(
-		'home' => array(
+		'Home' => array(
 			'type' => 'Zend\Mvc\Router\Http\Literal',
 			'options' => array(
-				'route'    => '/',
+				'route' => '/',
 				'defaults' => array(
 					'controller' => 'Application\Controller\Index',
-					'action'     => 'index'
+					'action' => 'index'
 				)
 			)
 		),
-		'terms' => array(
+		'Terms' => array(
 			'type' => 'Zend\Mvc\Router\Http\Literal',
 			'options' => array(
-				'route'    => '/terms',
+				'route' => '/terms',
 				'defaults' => array(
 					'controller' => 'Application\Controller\Index',
 					'action' => 'terms'
 				)
 			)
 		),
-		'privacy' => array(
+		'Privacy' => array(
 			'type' => 'Zend\Mvc\Router\Http\Literal',
 			'options' => array(
-				'route'    => '/privacy',
+				'route' => '/privacy',
 				'defaults' => array(
 					'controller' => 'Application\Controller\Index',
 					'action' => 'privacy'

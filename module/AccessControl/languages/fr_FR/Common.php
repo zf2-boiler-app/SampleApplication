@@ -1,5 +1,6 @@
 <?php
 return array(
+	'auth_access_pending' => 'Le compte est en attente de confirmation',
 	'authentification_provider_unavailable' => 'Le service d\'authentification "%s" est indisponible.',
 
 	'confirm_email' => 'Confirmation de mon adresse email',
@@ -8,16 +9,17 @@ return array(
 	'email' => 'Adresse email',
 	'email_already_confirmed' => 'Votre adresse email est déjà confirmée',
 	'email_confirmation_sent' => 'Vous allez recevoir un email vous permettant de valider votre accès.',
-	'email_does_not_match_any_registered_user' => 'Cette adresse email ne correspond à aucun utilisateur enregistré',
 	'email_or_password_wrong' => 'L\'adresse email et/ou le mot de passe semblent incorrects',
+	'email_or_username' => 'Adresse email ou identifiant',
 
 	'forgot_your_password' => 'Mot de passe oublié',
 
+	'identity_does_not_match_any_registered_user' => 'Cette adresse email / identifiant ne correspond à aucun utilisateur enregistré',
 	'im_not_a_robot' => 'Je ne suis pas un robot',
 
 	'logout' => 'Déconnexion',
 
-	'new_user' => 'Nouveau sur ZF2 App',
+	'new_user' => 'Nouveau sur ZF2 Skeleton App',
 
 	'or' => 'ou',
 	'or_use_another_service' => 'Ou utiliser un autre service',
@@ -46,7 +48,6 @@ return array(
 	'unregistered_user_please_sign_in' => 'Votre compte %s doit être enregistré sur ZF2Base, merci de vous inscrire.',
 	'user_must_be_logged_in_to_access_this_page' => 'Vous devez être connecté pour accèder à cette page',
 	'user_not_connected_to_authentification_provider' => 'Vous n\'êtes pas connecté à %s',
-	'user_state_pending' => 'Le compte est en attente de confirmation',
 	'username' => 'Identifiant',
 
 	'welcome_to' => 'Bienvenue sur'

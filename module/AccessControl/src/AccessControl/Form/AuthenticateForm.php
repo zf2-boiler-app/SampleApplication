@@ -1,6 +1,6 @@
 <?php
 namespace AccessControl\Form;
-class LoginForm extends \Application\Form\AbstractForm{
+class AuthenticateForm extends \Application\Form\AbstractForm{
 
 	/**
 	 * Constructor
@@ -9,13 +9,11 @@ class LoginForm extends \Application\Form\AbstractForm{
 	 * @throws \Exception
 	 */
 	public function __construct($sName = null,$aOptions = null){
-		parent::__construct('login',$aOptions);
-		$oInputFilter = new \Zend\InputFilter\InputFilter();
-		$this->setAttribute('method', 'post')
-		->add(array(
-			'name' => 'identity',
+		parent::__construct($sName,$aOptions);
+		$this->add(array(
+			'name' => 'auth_access_identity',
 			'attributes' => array(
-				'placeholder' => 'email_or_user_name',
+				'placeholder' => 'email_or_username',
 				'required' => true,
 				'class' => 'required input-xlarge',
 				'autofocus' => 'autofocus'
@@ -23,7 +21,7 @@ class LoginForm extends \Application\Form\AbstractForm{
 			'options'=>array('twb'=>array('prepend'=>array('type'=>'icon','icon'=>'icon-user')))
 		))
 		->add(array(
-			'name' => 'credential',
+			'name' => 'auth_access_credential',
 			'attributes' => array(
 				'type'  => 'password',
 				'placeholder' => 'password',
@@ -35,18 +33,14 @@ class LoginForm extends \Application\Form\AbstractForm{
 		->add(array(
 			'name' => 'submit',
 			'attributes' => array(
-				'type'  => 'submit',
+				'type' => 'submit',
 				'value' => 'sign_in',
 				'class' => 'btn-large btn-primary'
 			),
-			'options' => array('twb'=>array('formAction' => true))
-		))
-		->setInputFilter($oInputFilter->add(array(
-			'name' => 'identity',
-			'required' => true
-		))->add(array(
-			'name' => 'credential',
-			'required' => true
-		)));
+			'options' => array(
+				'ignore' => true,
+				'twb' => array('formAction' => true)
+			)
+		));
 	}
 }

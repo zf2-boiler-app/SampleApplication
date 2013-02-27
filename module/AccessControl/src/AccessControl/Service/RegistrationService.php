@@ -49,7 +49,7 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 
 		//Set crypted credential
 		->setAuthAccessCredential($oBCrypt->create(md5($sCredential)))
-		->setAuthAccessPublicKey($sPublicKey = $this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey())
+		->setAuthAccessPublicKey($oBCrypt->create($sPublicKey = $this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey()))
 		->setAuthAccessState(\AccessControl\Repository\AuthAccessRepository::AUTH_ACCESS_PENDING_STATE)
 		->setAuthAccessUser($oUser);
 
@@ -90,17 +90,32 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 
 	/**
 	 * @param string $sRegistrationKey
-	 * @throws \Exception
+	 * @throws \InvalidArgumentException
 	 * @return boolean|string
 	 */
-	public function confirmEmail($sRegistrationKey){
-		if(empty($sRegistrationKey) || !is_string($sRegistrationKey))throw new \Exception('User\'s registration key ('.gettype($sRegistrationKey).') is not a string or is empty');
-		$oUserModel = $this->getServiceLocator()->get('UserModel');
+	public function confirmEmail($sPublicKey, $sEmailIdentity){
+		if(empty($sPublicKey) || !is_string($sPublicKey))throw new \InvalidArgumentException('Public key expects a not empty string , "'.gettype($sPublicKey).'" given');
+		if(empty($sEmailIdentity) || !is_string($sEmailIdentity))throw new \InvalidArgumentException('Email identity expects a not empty string , "'.gettype($sEmailIdentity).'" given');
 
-		$oUser = $oUserModel->getUserByRegistrationKey($sRegistrationKey);
-		if($oUser->isUserActive())return $this->getServiceLocator()->get('translator')->translate('email_already_confirmed');
-		//Active user
-		$oUserModel->activeUser($oUser);
+		if(!($oAuthAccess = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->findOneBy(array(
+			'auth_access_email_identity' => $sEmailIdentity
+		))))throw new \LogicException(sprintf(
+			'AuthAccess with email identity "%s" does not exist',
+			$sEmailIdentity
+		));
+
+		//Crypter
+		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
+		if(!$oBCrypt->verify($sPublicKey, $oAuthAccess->getAuthAccessPublicKey()))throw new \LogicException(sprintf(
+			'Public key "%s" is not valid for email identity "%s"',
+			$sPublicKey,$sEmailIdentity
+		));
+		elseif($oAuthAccess->getAuthAccessState() === \AccessControl\Repository\AuthAccessRepository::AUTH_ACCESS_ACTIVE_STATE)return $this->getServiceLocator()->get('translator')->translate('email_already_confirmed');
+
+		//Active AuthAccess
+		$oAuthAccess->setAuthAccessState(\AccessControl\Repository\AuthAccessRepository::AUTH_ACCESS_ACTIVE_STATE);
+		$this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->update($oAuthAccess);
+
 		return true;
 	}
 }

@@ -2,7 +2,7 @@
 return array(
 	'404_error' => 'Une erreur 404 s\'est produite',
 
-	'application_name' => 'ZF2 App',
+	'application_name' => 'ZF2 Skeleton App',
 	'application_description' => 'Projet de base pour construire une application ZF2',
 
 	'close_modal' => 'Fermer la fenêtre',

@@ -72,11 +72,10 @@ class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareIn
 	}
 
 	/**
-	 * Generate a random public crypted key
+	 * Generate a random public key
 	 * @return string
 	 */
 	public function generateAuthAccessPublicKey(){
-		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
-		return $oBCrypt->create(str_shuffle(uniqid(str_shuffle(uniqid()))));
+		return str_ireplace('.', '', str_shuffle(uniqid(str_shuffle(uniqid()))));
 	}
 }

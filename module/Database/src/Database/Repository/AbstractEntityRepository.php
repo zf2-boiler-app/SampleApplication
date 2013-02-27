@@ -6,7 +6,7 @@ abstract class AbstractEntityRepository extends \Doctrine\ORM\EntityRepository{
      * @return \Database\Entity\AbstractEntity
      */
     public function create(\Database\Entity\AbstractEntity $oEntity){
-    	$this->_em->persist($oEntity);
+    	$this->_em->persist($oEntity->setEntityCreate(new \DateTime()));
         $this->_em->flush();
         return $oEntity;
     }
@@ -16,6 +16,7 @@ abstract class AbstractEntityRepository extends \Doctrine\ORM\EntityRepository{
      * @return \Database\Entity\AbstractEntity
      */
     public function update(\Database\Entity\AbstractEntity $oEntity){
+    	$oEntity->setEntityUpdate(new \DateTime());
     	$this->_em->flush();
         return $oEntity;
     }

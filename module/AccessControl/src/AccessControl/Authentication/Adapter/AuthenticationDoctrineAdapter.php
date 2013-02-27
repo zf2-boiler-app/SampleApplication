@@ -48,21 +48,22 @@ class AuthenticationDoctrineAdapter extends \Zend\Authentication\Adapter\Abstrac
 		$this->resultRow = null;
 
 		$aAvailableIdentities = $this->getAuthAcessRepository()->getAvailableIdentities();
-		$oUser = null;
+		$oAuthAccess = null;
 
-		//Try retrieving existing user for the giving identities
-		while(!$oUser && $aAvailableIdentities){
-			$sIdentityName = array_pop($aAvailableIdentities);
-			if($oAuthAcess = $this->getAuthAcessRepository()->findOneBy(array(
+		//Try retrieving existing AuthAccess for the giving identities
+		while(!$oAuthAccess && $aAvailableIdentities){
+			$sIdentityName = array_shift($aAvailableIdentities);
+			if($sIdentityName === 'auth_access_email_identity' && !filter_var($sAuthAccessIdentity,FILTER_VALIDATE_EMAIL))continue;
+			$oAuthAccess = $this->getAuthAcessRepository()->findOneBy(array(
 				$sIdentityName => $this->getIdentity(),
 				'auth_access_credential' => $this->getCredential()
-			)))$oUser = $oAuthAcess->getUser();
+			));
 		}
-		if(!$oUser)return new \Zend\Authentication\Result(\Zend\Authentication\Result::FAILURE_CREDENTIAL_INVALID);
+		if(!$oAuthAccess)return new \Zend\Authentication\Result(\Zend\Authentication\Result::FAILURE_CREDENTIAL_INVALID);
 
 		$this->resultRow = array(
-			'user_id' => $oUser->getUserId(),
-			'user_state' => $oAuthAcess->getAuthAcessState()
+			'user_id' => $oAuthAccess->getAuthAcessUser()->getUserId(),
+			'user_state' => $oAuthAccess->getAuthAcessState()
 		);
 		return new \Zend\Authentication\Result(\Zend\Authentication\Result::SUCCESS,$this->resultRow['user_id']);
 	}

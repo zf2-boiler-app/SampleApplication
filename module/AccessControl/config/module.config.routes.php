@@ -32,27 +32,17 @@ return array(
 						'route' => '/check-username-identity-availability',
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Registration',
-							'action' => 'checkusernameidentityavailability'
+							'action' => 'checkUsernameIdentityAvailability'
 						)
 					)
 				),
 				'ConfirmEmail' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
-						'route' => '/confirm-email/:email_identity/:public_key',
+						'route' => '/confirm-email/:public_key/:email_identity',
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Registration',
-							'action' => 'confirmemail'
-						)
-					)
-				),
-				'ResendConfirmationEmail' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/resend-confirmation-email',
-						'defaults' => array(
-							'controller' => 'AccessControl\Controller\Registration',
-							'action' => 'resendconfirmationemail'
+							'action' => 'confirmEmail'
 						)
 					)
 				),
@@ -66,6 +56,36 @@ return array(
 						)
 					)
 				),
+				'ForgottenCredential' => array(
+					'type' => 'Zend\Mvc\Router\Http\Literal',
+					'options' => array(
+						'route' => '/forgotten-credential',
+						'defaults' => array(
+							'controller' => 'AccessControl\Controller\Authentication',
+							'action' => 'forgottenCredential'
+						)
+					)
+				),
+				'ResetCredential' => array(
+					'type' => 'Zend\Mvc\Router\Http\Segment',
+					'options' => array(
+						'route' => '/reset-credential/:reset_key',
+						'defaults' => array(
+							'controller' => 'AccessControl\Controller\Authentication',
+							'action' => 'resetCredential'
+						)
+					)
+				),
+				'ResendConfirmationEmail' => array(
+					'type' => 'Zend\Mvc\Router\Http\Literal',
+					'options' => array(
+						'route' => '/resend-confirmation-email',
+						'defaults' => array(
+							'controller' => 'AccessControl\Controller\Registration',
+							'action' => 'resendConfirmationEmail'
+						)
+					)
+				),
 				'HybridAuth' => array(
 					'type' => 'Zend\Mvc\Router\Http\Literal',
 					'options' => array(
@@ -73,26 +93,6 @@ return array(
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Authentication',
 							'action' => 'hybridauth'
-						)
-					)
-				),
-				'ForgottenPassword' => array(
-					'type' => 'Zend\Mvc\Router\Http\Literal',
-					'options' => array(
-						'route' => '/forgotten-password',
-						'defaults' => array(
-							'controller' => 'AccessControl\Controller\Authentication',
-							'action' => 'forgottenpassword'
-						)
-					)
-				),
-				'ResetPassword' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
-					'options' => array(
-						'route' => '/reset-password/:reset_key',
-						'defaults' => array(
-							'controller' => 'AccessControl\Controller\Authentication',
-							'action' => 'resetpassword'
 						)
 					)
 				),

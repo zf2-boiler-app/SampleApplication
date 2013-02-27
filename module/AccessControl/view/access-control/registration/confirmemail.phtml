@@ -1,6 +1,0 @@
-<h3><?=$this->layout()->title?></h3>
-<?=empty($this->error)?$this->alert(
-	$this->translate('registration_validated_now_connect').PHP_EOL.'<a class="btn" href="'.$this->url('User/login').'">'.$this->translate('sign_in').'</a>',
-	'alert-success',
-	false
-):$this->alert($this->error,'alert-error',false)?>

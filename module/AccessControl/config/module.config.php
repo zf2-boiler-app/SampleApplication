@@ -8,8 +8,8 @@ return array(
 		'view_manager' => array(
 			'template_map' => array(
 				'email/registration/confirm-email' => __DIR__ . '/../view/email/registration/confirm-email.phtml',
-				'email/authentication/confirm-reset-password' => __DIR__ . '/../view/email/authentication/confirm-reset-password.phtml',
-				'email/authentication/password-reset' => __DIR__ . '/../view/email/authentication/password-reset.phtml'
+				'email/authentication/confirm-reset-credential' => __DIR__ . '/../view/email/authentication/confirm-reset-credential.phtml',
+				'email/authentication/credential-reset' => __DIR__ . '/../view/email/authentication/credential-reset.phtml'
 			)
 		)
 	),
@@ -53,6 +53,7 @@ return array(
 	'service_manager' => array(
 		'invokables' => array(
 			'AccessControlService' => 'AccessControl\Service\AccessControlService',
+			'AuthenticationService' => 'AccessControl\Service\AuthenticationService',
 			'RegistrationService' => 'AccessControl\Service\RegistrationService'
 		),
 		'factories' => array(
@@ -60,7 +61,9 @@ return array(
 			'AuthenticationStorage' => 'AccessControl\Factory\AuthenticationStorageFactory',
 			'AuthenticationDoctrineAdapter' => 'AccessControl\Factory\AuthenticationDoctrineAdapterFactory',
 			'AuthenticationHybridAuthAdapter' => 'AccessControl\Factory\AuthenticationHybridAuthAdapterFactory',
-			'RegisterForm' => 'AccessControl\Factory\RegisterFormFactory'
+			'AuthenticateForm' => 'AccessControl\Factory\AuthenticateFormFactory',
+			'RegisterForm' => 'AccessControl\Factory\RegisterFormFactory',
+			'ResetCredentialForm' => 'AccessControl\Factory\ResetCredentialFormFactory',
 		)
 	),
 	'view_manager' => array(

@@ -33,7 +33,7 @@ class Smtp extends OriginalSmtp{
 	 */
 	protected function processImageSrc(array $aMatches){
 		if(empty($aMatches[1]))throw new \Exception('Image "src" match is empty: '.print_r($aMatches));
-		$oAttachment = $this->addAttachment($aMatches[1],\Zend\Mime\Mime::DISPOSITION_INLINE);
+		$oAttachment = $this->addAttachment(urldecode($aMatches[1]),\Zend\Mime\Mime::DISPOSITION_INLINE);
 		return 'src="cid:'.$oAttachment->id.'"';
 	}
 
@@ -43,7 +43,7 @@ class Smtp extends OriginalSmtp{
 	 * @return \Zend\Mime\Part
 	 */
 	protected function addAttachment($sFilePath,$sDisposition = \Zend\Mime\Mime::DISPOSITION_ATTACHMENT){
-		if(($sFileContent = file_get_contents($sFilePath)) === false)throw new \Exception('Attachment file not found : '.$sFilePath);
+		if(!file_exists($sFilePath) || ($sFileContent = file_get_contents($sFilePath)) === false)throw new \Exception('Attachment file not found : '.$sFilePath);
 
 		$oAttachment = new \Zend\Mime\Part($sFileContent);
 		$oFInfo = new \finfo(FILEINFO_MIME_TYPE);
