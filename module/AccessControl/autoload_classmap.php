@@ -12,6 +12,7 @@ return array(
     'AccessControl\Entity\AuthAccessEntity'                                => __DIR__ . '/src/AccessControl/Entity/AuthAccessEntity.php',
     'AccessControl\Entity\AuthProviderEntity'                              => __DIR__ . '/src/AccessControl/Entity/AuthProviderEntity.php',
     'AccessControl\Factory\AccessControlAuthenticationServiceFactory'      => __DIR__ . '/src/AccessControl/Factory/AccessControlAuthenticationServiceFactory.php',
+    'AccessControl\Factory\AuthenticationDoctrineAdapterFactory'           => __DIR__ . '/src/AccessControl/Factory/AuthenticationDoctrineAdapterFactory.php',
     'AccessControl\Factory\AuthenticationHybridAuthAdapterFactory'         => __DIR__ . '/src/AccessControl/Factory/AuthenticationHybridAuthAdapterFactory.php',
     'AccessControl\Factory\AuthenticationStorageFactory'                   => __DIR__ . '/src/AccessControl/Factory/AuthenticationStorageFactory.php',
     'AccessControl\Factory\AuthenticateFormFactory'                        => __DIR__ . '/src/AccessControl/Factory/AuthenticateFormFactory.php',

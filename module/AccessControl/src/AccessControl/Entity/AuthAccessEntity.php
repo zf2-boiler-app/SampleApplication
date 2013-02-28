@@ -28,7 +28,7 @@ class AuthAccessEntity extends \Database\Entity\AbstractEntity{
 
 	/**
 	 * @var string
-	 * @\Doctrine\ORM\Mapping\Column(type="md5hash")
+	 * @\Doctrine\ORM\Mapping\Column(type="string",length=60)
 	 */
 	protected $auth_access_credential;
 
@@ -97,6 +97,13 @@ class AuthAccessEntity extends \Database\Entity\AbstractEntity{
 	public function setAuthAccessCredential($sCredential){
 		$this->auth_access_credential = $sCredential;
 		return $this;
+	}
+
+	/**
+	 * @return string $sCredential
+	 */
+	public function getAuthAccessCredential(){
+		return $this->auth_access_credential;
 	}
 
 	/**

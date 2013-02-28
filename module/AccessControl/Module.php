@@ -4,6 +4,7 @@ class Module{
 
 	/**
 	 * @param \Zend\Mvc\MvcEvent $oEvent
+	 * @throws \RuntimeException
 	 */
 	public function onBootstrap(\Zend\Mvc\MvcEvent $oEvent){
 		/* @var $oServiceManager \Zend\ServiceManager\ServiceManager */
@@ -11,13 +12,19 @@ class Module{
 
 		//Set logged user to layout if exists
 		if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer){
-			try{
-				if($oServiceManager->get('AccessControlAuthenticationService')->hasIdentity())$oEvent->getViewModel()->loggedUser = $oServiceManager->get('AccessControlService')->getLoggedUser();
+			if($oServiceManager->get('AccessControlAuthenticationService')->hasIdentity()){
+				//Prevents session error
+				try{
+					$oEvent->getViewModel()->loggedUser = $oServiceManager->get('AccessControlService')->getLoggedUser();
+				}
+				catch(\Exception $oException){
+					$oServiceManager->get('AuthenticationService')->logout();
+					unset($oEvent->getViewModel()->loggedUser);
+					throw new \RuntimeException('An error occurred when retrieving logged user',$oException->getCode(),$oException);
+				}
 			}
-			catch(\Exception $oException){}
 		}
 	}
-
 
 	/**
      * @return array

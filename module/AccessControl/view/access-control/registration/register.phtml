@@ -1,6 +1,6 @@
 <h3><?=$this->layout()->title?></h3>
 <?php
-	if($this->isValid === true)echo $this->alert('registration_completed_now_confirm_email','alert-alert-success',false);
+	if($this->isValid === true)echo $this->alert('registration_completed_now_confirm_email','alert-success',false);
 	else{
 		if(!empty($this->error))echo $this->alert($this->error,'alert-error',false);
 		echo $this->form($this->form);

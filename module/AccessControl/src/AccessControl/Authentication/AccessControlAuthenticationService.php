@@ -120,7 +120,11 @@ class AccessControlAuthenticationService implements \Zend\ServiceManager\Service
 	public function getAdapter($sAdapterName){
 		if(!is_string($sAdapterName))throw new \Exception('Adapter\'s name expects string, '.gettype($sAdapterName));
 		if(!isset($this->adapters[$sAdapterName]))throw new \Exception('Adapter "'.$sAdapterName.'" is undefined');
-		if(!($this->adapters[$sAdapterName] instanceof \User\Authentication\Adapter\AuthenticationAdapterInterface)){
+		if(!($this->adapters[$sAdapterName] instanceof \AccessControl\Authentication\Adapter\AuthenticationAdapterInterface)){
+			if(!is_string($this->adapters[$sAdapterName]))throw new \InvalidArgumentException(sprintf(
+				'Adapter "%s" expects \AccessControl\Authentication\Adapter\AuthenticationAdapterInterface or string, "%s" given',
+				$sAdapterName,is_object($this->adapters[$sAdapterName])?get_class($this->adapters[$sAdapterName]):gettype($sAdapterName)
+			));
 			if($this->getServiceLocator()->has($this->adapters[$sAdapterName]))$this->adapters[$sAdapterName] = $this->getServiceLocator()->get($this->adapters[$sAdapterName]);
 			elseif(class_exists($this->adapters[$sAdapterName]))$this->adapters[$sAdapterName] = new $this->adapters[$sAdapterName]();
 			else throw new \Exception($this->adapters[$sAdapterName].' is not an available service or an existing class');

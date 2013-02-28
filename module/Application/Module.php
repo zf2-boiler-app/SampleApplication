@@ -15,13 +15,6 @@ class Module{
     	//Add translation for validators
     	\Zend\Validator\AbstractValidator::setDefaultTranslator($oServiceManager->get('translator'),'validator');
 
-    	$oEventManager->attach(
-    		'*',
-    		function($oEvent){
-    			/* TODO Remove Error log */error_log(print_r($oEvent->getName(),true));
-    		}
-    	);
-
     	//Process for render MVC event
     	if($oServiceManager->get('ViewRenderer') instanceof \Zend\View\Renderer\PhpRenderer)$oEventManager->attach(
     		\Zend\Mvc\MvcEvent::EVENT_RENDER,

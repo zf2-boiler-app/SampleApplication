@@ -29,17 +29,17 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 		}
 		elseif((
 			$this->params('service') &&
-			($bReturn = $this->getServiceLocator()->get('AccessControlService')->login(
-				\AccessControl\Service\AccessControlService::HYBRID_AUTH_AUTHENTICATION,
+			($bReturn = $this->getServiceLocator()->get('AuthenticationService')->authenticate(
+				\AccessControl\Service\AuthenticationService::HYBRID_AUTH_AUTHENTICATION,
 				$this->params('service')
 			)) === true
 		) ||
 		(
 			$this->getRequest()->isPost() && $this->view->form->setData($this->params()->fromPost())->isValid() &&
-			($bReturn = $this->getServiceLocator()->get('AccessControlService')->login(
-				\AccessControl\Service\AccessControlService::LOCAL_AUTHENTICATION,
-				$this->params()->fromPost('identity'),
-				$this->params()->fromPost('credential')
+			($bReturn = $this->getServiceLocator()->get('AuthenticationService')->authenticate(
+				\AccessControl\Service\AuthenticationService::LOCAL_AUTHENTICATION,
+				$this->params()->fromPost('auth_access_identity'),
+				$this->params()->fromPost('auth_access_credential')
 			)) === true
 		)){
 			$sRedirectUrl = empty($this->getServiceLocator()->get('Session')->redirect)
@@ -108,10 +108,12 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 	 * @return \Zend\View\Model\ViewModel
 	 */
 	public function resetCredentialAction(){
-		if(!($sResetKey = $this->params('reset_key')))throw new \LogicException('Reset key param is missing');
+		if(!($sPublicKey = $this->params('public_key')))throw new \LogicException('Public key param is missing');
+		if(!($sEmailIdentity = $this->params('email_identity')))throw new \LogicException('Email identity param is missing');
+
 		//Define title
 		$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('reset_password');
-		$this->getServiceLocator()->get('AccessControlService')->resetCredential($sResetKey);
+		$this->getServiceLocator()->get('AuthenticationService')->resetCredential($sPublicKey,$sEmailIdentity);
 		return $this->view;
 	}
 
@@ -121,7 +123,7 @@ class AuthenticationController extends \Templating\Mvc\Controller\AbstractAction
 	 */
 	public function logoutAction(){
 		if(!$this->getServiceLocator()->get('AccessControlAuthenticationService')->hasIdentity()
-		|| $this->getServiceLocator()->get('AccessControlService')->logout())return (
+		|| $this->getServiceLocator()->get('AuthenticationService')->logout())return (
 			//Try to define redirect url
 			empty($this->getServiceLocator()->get('Session')->redirect)
 			&& ($sHttpReferer = $this->getRequest()->getServer('HTTP_REFERER'))

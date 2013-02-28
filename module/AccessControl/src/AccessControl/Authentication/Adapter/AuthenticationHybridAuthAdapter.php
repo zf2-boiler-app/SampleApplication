@@ -196,7 +196,7 @@ class AuthenticationHybridAuthAdapter implements \AccessControl\Authentication\A
 		if(null !== $aReturnColumns){
 			$aAvailableColumns = array_keys($this->resultRow);
 			foreach((array) $aReturnColumns as $sReturnColumn){
-				if(in_array($sReturnColumn, $aAvailableColumns))$returnObject->{$sReturnColumn} = $this->resultRow[$sReturnColumn];
+				if(in_array($sReturnColumn, $aAvailableColumns))$oReturnObject->{$sReturnColumn} = $this->resultRow[$sReturnColumn];
 			}
 			return $oReturnObject;
 

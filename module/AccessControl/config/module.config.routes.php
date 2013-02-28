@@ -79,7 +79,7 @@ return array(
 				'ResetCredential' => array(
 					'type' => 'Zend\Mvc\Router\Http\Segment',
 					'options' => array(
-						'route' => '/reset-credential/:reset_key',
+						'route' => '/reset-credential/:public_key/:email_identity',
 						'defaults' => array(
 							'controller' => 'AccessControl\Controller\Authentication',
 							'action' => 'resetCredential'

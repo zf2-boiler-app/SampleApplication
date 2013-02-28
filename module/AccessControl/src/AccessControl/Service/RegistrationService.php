@@ -6,7 +6,7 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 	/**
 	 * @param array $aRegisterData
 	 * @throws \InvalidArgumentException
-	 * @return \User\Service\UserService
+	 * @return \AccessControl\Service\RegistrationService
 	 */
 	public function register(array $aRegisterData){
 		if(!isset(
@@ -89,9 +89,10 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 	}
 
 	/**
-	 * @param string $sRegistrationKey
+	 * @param string $sPublicKey
+	 * @param string $sEmailIdentity
 	 * @throws \InvalidArgumentException
-	 * @return boolean|string
+	 * @return string|boolean : true if function succeed
 	 */
 	public function confirmEmail($sPublicKey, $sEmailIdentity){
 		if(empty($sPublicKey) || !is_string($sPublicKey))throw new \InvalidArgumentException('Public key expects a not empty string , "'.gettype($sPublicKey).'" given');
@@ -122,36 +123,23 @@ class RegistrationService implements \Zend\ServiceManager\ServiceLocatorAwareInt
 	/**
 	 * @param string $sAuthAccessIdentity
 	 * @throws \InvalidArgumentException
-	 * @return \AccessControl\Service\AccessControlService
+	 * @return \AccessControl\Service\RegistrationService
 	 */
 	public function resendConfirmationEmail($sAuthAccessIdentity){
 		if(empty($sAuthAccessIdentity) || !is_string($sAuthAccessIdentity))throw new \InvalidArgumentException(sprintf(
-				'AuthAccess identity expects a not empty string, "%s" given',
-				is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
+			'AuthAccess identity expects a not empty string, "%s" given',
+			is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
 		));
 
-		$oAuthAccessRepository = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository');
-		$aAvailableIdentities = $oAuthAccessRepository->getAvailableIdentities();
-		$oAuthAccess = null;
-
-		//Try retrieving existing AuthAccess for the giving identities
-		while(!$oAuthAccess && $aAvailableIdentities){
-			$sIdentityName = array_shift($aAvailableIdentities);
-			if($sIdentityName === 'auth_access_email_identity' && !filter_var($sAuthAccessIdentity,FILTER_VALIDATE_EMAIL))continue;
-			$oAuthAccess = $oAuthAccessRepository->findOneBy(array(
-				$sIdentityName => $sAuthAccessIdentity
-			));
-		}
-
-		//Retrieve translator
-		$oTranslator = $this->getServiceLocator()->get('translator');
-
-		if(!$oAuthAccess)return $oTranslator->translate('identity_does_not_match_any_registered_user');
+		if(!($oAuthAccess = $this->getServiceLocator()->get('AccessControlService')->getAuthAccessFromIdentity($sAuthAccessIdentity)))throw new \LogicException(sprintf(
+			'AuthAccess with identity "%s" does not exist',
+			$sAuthAccessIdentity
+		));
 
 		//Reset public key
 		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
 		$oAuthAccess->setAuthAccessPublicKey($oBCrypt->create($sPublicKey = $this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey()));
-		$oAuthAccessRepository->update($oAuthAccess);
+		$this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->update($oAuthAccess);
 
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(

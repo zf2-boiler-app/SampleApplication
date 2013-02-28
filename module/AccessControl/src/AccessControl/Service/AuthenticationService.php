@@ -45,23 +45,10 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 			is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
 		));
 
-		$oAuthAccessRepository = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository');
-		$aAvailableIdentities = $oAuthAccessRepository->getAvailableIdentities();
-		$oAuthAccess = null;
-
-		//Try retrieving existing AuthAccess for the giving identities
-		while(!$oAuthAccess && $aAvailableIdentities){
-			$sIdentityName = array_shift($aAvailableIdentities);
-			if($sIdentityName === 'auth_access_email_identity' && !filter_var($sAuthAccessIdentity,FILTER_VALIDATE_EMAIL))continue;
-			$oAuthAccess = $oAuthAccessRepository->findOneBy(array(
-				$sIdentityName => $sAuthAccessIdentity
-			));
-		}
-
 		//Retrieve translator
 		$oTranslator = $this->getServiceLocator()->get('translator');
 
-		if(!$oAuthAccess)return $oTranslator->translate('identity_does_not_match_any_registered_user');
+		if(!($oAuthAccess = $this->getServiceLocator()->get('AccessControlService')->getAuthAccessFromIdentity($sAuthAccessIdentity)))return $oTranslator->translate('identity_does_not_match_any_registered_user');
 
 		//If AuthAccess is in pending state
 		if($oAuthAccess->getAuthAccessState() !== \AccessControl\Repository\AuthAccessRepository::AUTH_ACCESS_ACTIVE_STATE)return $this->getServiceLocator()->get('translator')->translate('auth_access_pending');
@@ -69,11 +56,12 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 		//Reset public key
 		$oBCrypt = new \Zend\Crypt\Password\Bcrypt();
 		$oAuthAccess->setAuthAccessPublicKey($oBCrypt->create($sPublicKey = $this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey()));
-		$oAuthAccessRepository->update($oAuthAccess);
+		$this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->update($oAuthAccess);
 
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
-			'auth_access_public_key' => $sPublicKey
+			'auth_access_public_key' => $sPublicKey,
+			'auth_access_email_identity' => $oAuthAccess->getAuthAccessEmailIdentity()
 		));
 
 		//Retrieve Messenger service
@@ -96,7 +84,7 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 	/**
 	 * @param string $sResetKey
 	 * @throws \Exception
-	 * @return \AccessControl\Service\AccessControlService
+	 * @return \AccessControl\Service\AuthenticationService
 	 */
 	public function resetCredential($sPublicKey, $sEmailIdentity){
 		if(empty($sPublicKey) || !is_string($sPublicKey))throw new \InvalidArgumentException('Public key expects a not empty string , "'.gettype($sPublicKey).'" given');
@@ -121,14 +109,18 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 			$oAuthAccess->getAuthAccessId()
 		));
 
+		//Update AuthAccess entity
+
+		$this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository')->update($oAuthAccess
 		//Reset credential
-		$sCredential = md5(date('Y-m-d').str_shuffle(uniqid()));
-		$oAuthAccess->setAuthAccessCredential($oBCrypt->create(md5($sCredential)));
+		->setAuthAccessCredential($oBCrypt->create(md5($sCredential = md5(date('Y-m-d').str_shuffle(uniqid())))))
+		//Reset public key
+		->setAuthAccessPublicKey($oBCrypt->create($this->getServiceLocator()->get('AccessControlService')->generateAuthAccessPublicKey())));
 
 		//Create email view body
 		$oView = new \Zend\View\Model\ViewModel(array(
-			'auth_access_username_identity' => $sUsernameIdentity,
-			'auth_access_credential' => $sCredential,
+			'auth_access_username_identity' => $oAuthAccess->getAuthAccessUsernameIdentity(),
+			'auth_access_credential' => $sCredential
 		));
 
 		//Retrieve translator
@@ -138,14 +130,14 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 		$oMessengerService = $this->getServiceLocator()->get('MessengerService');
 
 		//Render view & send email to user
-		$oMessengerService->renderView($oView->setTemplate('email/user/password-reset'),function($sHtml)use($oMessengerService,$oTranslator,$oUser){
+		$oMessengerService->renderView($oView->setTemplate('email/authentication/credential-reset'),function($sHtml)use($oMessengerService,$oTranslator,$oAuthAccess){
 			$oMessage = new \Messenger\Message();
 			$oMessengerService->sendMessage(
-					$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
-					->setTo($oUser)
-					->setSubject($oTranslator->translate('reset_password'))
-					->setBody($sHtml),
-					\Messenger\Service\MessengerService::MEDIA_EMAIL
+				$oMessage->setFrom(\Messenger\Message::SYSTEM_USER)
+				->setTo($oAuthAccess->getAuthAccessUser())
+				->setSubject($oTranslator->translate('reset_password'))
+				->setBody($sHtml),
+				\Messenger\Service\MessengerService::MEDIA_EMAIL
 			);
 		});
 		return $this;
@@ -153,7 +145,7 @@ class AuthenticationService implements \Zend\ServiceManager\ServiceLocatorAwareI
 
 	/**
 	 * Log out current logged user
-	 * @return \AccessControl\Service\AccessControlService
+	 * @return \AccessControl\Service\AuthenticationService
 	 */
 	public function logout(){
 		$this->getServiceLocator()->get('AccessControlAuthenticationService')->clearIdentity();

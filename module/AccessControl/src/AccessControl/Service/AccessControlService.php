@@ -3,9 +3,6 @@ namespace AccessControl\Service;
 class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareInterface{
 	use \Zend\ServiceManager\ServiceLocatorAwareTrait;
 
-	const LOCAL_AUTHENTICATION = 'LocalAuth';
-	const HYBRID_AUTH_AUTHENTICATION = 'HybridAuth';
-
 	/**
 	 * @throws \RuntimeException
 	 * @throws \LogicException
@@ -20,12 +17,38 @@ class AccessControlService implements \Zend\ServiceManager\ServiceLocatorAwareIn
 		}
 		catch(\Exception $oException){
 			$this->logout();
-			throw new \RuntimeException('An error occurred when retrieving logged user');
+			throw new \RuntimeException('An error occurred when retrieving logged user',$oException->getCode(),$oException);
 		}
-		if(!$oUser->isUserActive())throw new \LogicException('User is not active');
+		if($oUser->getUserAuthAccess()->getAuthAccessState() !== \AccessControl\Repository\AuthAccessRepository::AUTH_ACCESS_ACTIVE_STATE)throw new \LogicException(sprintf(
+			'User\'s "%s" AuthAccess is not active',
+			$oUser->getUserId()
+		));
 		return $oUser;
 	}
 
+	/**
+	 * @param string $sAuthAccessIdentity
+	 * @throws \InvalidArgumentException
+	 * @return \AccessControl\Entity\AuthAccessEntity|NULL
+	 */
+	public function getAuthAccessFromIdentity($sAuthAccessIdentity){
+		if(empty($sAuthAccessIdentity) || !is_string($sAuthAccessIdentity))throw new \InvalidArgumentException(sprintf(
+			'AuthAccess identity expects a not empty string, "%s" given',
+			is_scalar($sAuthAccessIdentity)?$sAuthAccessIdentity:gettype($sAuthAccessIdentity)
+		));
+
+		$oAuthAccessRepository = $this->getServiceLocator()->get('AccessControl\Repository\AuthAccessRepository');
+
+		//Try retrieving existing AuthAccess for the giving identities
+		$aAvailableIdentities = $oAuthAccessRepository->getAvailableIdentities();
+		$oAuthAccess = null;
+		while(!$oAuthAccess && $aAvailableIdentities){
+			$sIdentityName = array_shift($aAvailableIdentities);
+			if($sIdentityName === 'auth_access_email_identity' && !filter_var($sAuthAccessIdentity,FILTER_VALIDATE_EMAIL))continue;
+			$oAuthAccess = $oAuthAccessRepository->findOneBy(array($sIdentityName => $sAuthAccessIdentity));
+		}
+		return $oAuthAccess;
+	}
 
 	/**
 	 * @param string $sEmailIdentity
