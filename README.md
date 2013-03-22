@@ -87,31 +87,10 @@ In app features
 * Password recovring
 * Account management
 
-###### Blog :
-
-* Editable home page
-* Feeds
-* Social sharing
-* News :
-	- CRUD
-	- Administration
-	- Private / public
-* Articles :
-	- CRUD
-	- Administration
-	- Private / public
-* Photo galleries :
-	- CRUD
-	- Administration
-	- Private / public
-* Statistics
-
 ###### Commons
 
 * Social integration
-* Twitter bootstrap
 * CkEditor
-* Multi translations files 
 
 ###### Js
 
