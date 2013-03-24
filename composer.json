@@ -7,76 +7,14 @@
         }
     ],
     "minimum-stability" : "dev",
-    "repositories":[
-        {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "fortawesome/font-awesome",
-                "source": {"url": "https://github.com/FortAwesome/Font-Awesome.git","type": "git","reference": "master"}
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "fabiomcosta/mootools-meio-mask",
-                "source": {"url": "https://github.com/fabiomcosta/mootools-meio-mask.git","type": "git","reference": "master"}
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "arian/iFrameFormRequest",
-                "source": {"url": "https://github.com/arian/iFrameFormRequest.git","type": "git","reference": "master"}
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "version": "dev-stable/standard",
-                "name": "ckeditor/ckeditor-releases",
-                "source": {"url": "https://github.com/ckeditor/ckeditor-releases.git","type": "git","reference": "stable/standard"}
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "nak5ive/Form.PasswordStrength",
-                "source": {"url": "https://github.com/nak5ive/Form.PasswordStrength.git","type": "git","reference": "master"}
-            }
-        },
+    "repositories":[        
         {
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"
-	    },
-	    {
-	        "type": "vcs",
-	        "url": "http://github.com/neilime/CssMin"
 	    }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "ext-fileinfo": "*",
-        "ext-pdo_mysql": "*",
-        "ext-mbstring": "*",
+        "zf2-boiler-app/app-display": "dev-master"
         
-        "zendframework/zendframework": "dev-master",
-        "doctrine/doctrine-orm-module": "dev-master",
-        "zendframework/zftool": "dev-master",
-        
-        "neilime/zf2-assets-bundle": "dev-master",
-        "neilime/zf2-twb-bundle": "dev-master",
-        "dino/dompdf-module": "dev-master",
-        "hybridauth/hybridauth": "dev-master",
-        "neilime/zf2-ckeditor-bundle" : "dev-master",
-        "inlinestyle/inlinestyle": "dev-master",
-        
-        "fortawesome/font-awesome": "dev-master",
-        "fabiomcosta/mootools-meio-mask": "dev-master",
-        "arian/iFrameFormRequest": "dev-master",
-       	"nak5ive/Form.PasswordStrength": "dev-master"
     }
 }

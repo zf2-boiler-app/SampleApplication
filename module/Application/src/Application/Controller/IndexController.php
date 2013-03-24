@@ -1,6 +1,6 @@
 <?php
 namespace Application\Controller;
-class IndexController extends \Templating\Mvc\Controller\AbstractActionController{
+class IndexController extends \BoilerAppDisplay\Mvc\Controller\AbstractActionController{
     public function indexAction(){
     	//Define title
     	$this->layout()->title = $this->getServiceLocator()->get('Translator')->translate('home');

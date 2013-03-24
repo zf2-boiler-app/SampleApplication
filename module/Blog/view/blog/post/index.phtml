@@ -1,9 +1,0 @@
-<?php
-if(count($this->posts)){
-	$this->partialLoop()->setObjectKey('post');
-?>
-<div id="posts-container">
-<?=$this->partialLoop('blog/post/partial.phtml',$this->posts)?>
-</div>
-<div class="pagination"><?=$this->paginationControl($this->posts,'Elastic','blog/post/pagination.phtml')?></div>
-<?php } else echo $this->alert('no_posts','alert-info',false)?>
