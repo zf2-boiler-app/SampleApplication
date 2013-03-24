@@ -63,7 +63,6 @@ return array(
 	),
 	'service_manager' => array(
 		'factories' => array(
-			'SessionManager' => 'Application\Factory\SessionManagerFactory',
 			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				$aConfiguration = $oServiceManager->get('config');
 				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');

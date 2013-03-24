@@ -1,6 +1,6 @@
 {
     "name": "neilime/zf2-skeleton-app",
-    "description": "ZF2 skeleton application",
+    "description": "ZF2 Boiler App Sample application",
     "authors": [
         {
             "name": "Neilime"
@@ -14,7 +14,6 @@
 	    }
     ],
     "require": {
-        "zf2-boiler-app/app-display": "dev-master"
-        
+        "zf2-boiler-app/app-display": "dev-master"        
     }
 }
