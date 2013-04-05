@@ -1,7 +1,7 @@
 <?php
 return array(
-	'application_name' => 'ZF2 Skeleton App',
-	'application_description' => 'Projet de base pour construire une application ZF2',
+	'application_name' => 'ZF2 BoilerApp Sample',
+	'application_description' => 'Projet de base pour construire une application "ZF2 BoilerApp"',
 
 	'home' => 'Accueil',
 

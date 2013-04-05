@@ -11,8 +11,14 @@
  * file.
  */
 return array(
+	'translator' => array(
+		'locale' => 'fr_FR'
+	),
 	'asset_bundle' => array(
-		'production' => false
+		'production' => false,
+		'cachePath' => '@zfRootPath/public/assets/cache',
+		'assetsPath' => '@zfRootPath/public/assets',
+		'cacheUrl' => '@zfBaseUrl/assets/cache/'
 	),
 	'social' => array(
 		//https://code.google.com/apis/console/
@@ -36,7 +42,7 @@ return array(
 	'db' => array(
 		'username' => 'root',
 		'password' => '',
-		'dsn' => 'mysql:dbname=zf2base;host=localhost'
+		'dsn' => 'mysql:dbname=sample-app;host=localhost'
 	),
 	'doctrine' => array(
 		'connection' => array(
@@ -54,7 +60,7 @@ return array(
 	'messenger' => array(
 		'system_user' => array(
 			'email' => 'email@mail.com',
-			'name' => 'ZF2Base'
+			'name' => 'Sample-App'
 		)
 	),
 	'service_manager' => array(

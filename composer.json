@@ -11,9 +11,43 @@
         {
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"
-	    }
+	    },
+	    {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "fortawesome/font-awesome",
+                "source": {"url": "https://github.com/FortAwesome/Font-Awesome.git","type": "git","reference": "master"}
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "fabiomcosta/mootools-meio-mask",
+                "source": {"url": "https://github.com/fabiomcosta/mootools-meio-mask.git","type": "git","reference": "master"}
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "arian/iFrameFormRequest",
+                "source": {"url": "https://github.com/arian/iFrameFormRequest.git","type": "git","reference": "master"}
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "version": "dev-master",
+                "name": "nak5ive/Form.PasswordStrength",
+                "source": {"url": "https://github.com/nak5ive/Form.PasswordStrength.git","type": "git","reference": "master"}
+            }
+        }
     ],
     "require": {
-        "zf2-boiler-app/app-display": "dev-master"        
+        "zf2-boiler-app/app-display": "dev-master",
+        "zf2-boiler-app/app-access-control": "dev-master",
+        "firephp/firephp-core": "dev-master"            
     }
 }

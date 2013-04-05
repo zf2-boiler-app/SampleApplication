@@ -7,7 +7,7 @@ class Module{
      */
     public function onBootstrap(\Zend\Mvc\MvcEvent $oEvent){
     	$oModuleRouteListener = new \Zend\Mvc\ModuleRouteListener();
-    	$oModuleRouteListener->attach($oEventManager = $oEvent->getApplication()->getEventManager());
+    	$oModuleRouteListener->attach($oEvent->getApplication()->getEventManager());
     }
 
     /**
