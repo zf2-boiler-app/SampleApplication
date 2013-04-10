@@ -4,6 +4,7 @@ return array(
     	//Display
     	'BoilerAppDisplay',
     	'AssetsBundle',
+    	'TreeLayoutStack',
 
     	//Access Control
     	'BoilerAppAccessControl',
