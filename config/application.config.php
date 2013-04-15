@@ -9,7 +9,7 @@ return array(
     	//Access Control
     	'BoilerAppAccessControl',
 
-    	//Sample Application Mdules
+    	//Sample Application Modules
     	'Application',
     ),
     'module_listener_options' => array(
