@@ -1,13 +1,20 @@
 <?php
 return array(
     'modules' => array(
+    	//Db
+    	'BoilerAppDb',
+    	'DoctrineModule',
+    	'DoctrineORMModule',
+
     	//Display
     	'BoilerAppDisplay',
     	'AssetsBundle',
     	'TreeLayoutStack',
+    	'TwbBundle',
 
     	//Access Control
     	'BoilerAppAccessControl',
+    	'BoilerAppUser',
 
     	//Sample Application Modules
     	'Application'
