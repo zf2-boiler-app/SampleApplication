@@ -10,7 +10,7 @@ return array(
     	'BoilerAppAccessControl',
 
     	//Sample Application Modules
-    	'Application',
+    	'Application'
     ),
     'module_listener_options' => array(
         'config_glob_paths' => array( 'config/autoload/{,*.}{global,local,private}.php'),

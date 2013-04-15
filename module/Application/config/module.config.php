@@ -7,8 +7,8 @@ return array(
 			'Application\Controller\Index' => 'Application\Controller\IndexController'
 		)
 	),
-	'templating' => array(
-		'template_map' => array(
+	'tree_layout_stack' => array(
+		'layout_tree' => array(
 			'default' => array(
 				'template' => 'layout/layout',
 				'children' => array(
