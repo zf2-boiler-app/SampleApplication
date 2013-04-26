@@ -1,25 +1,21 @@
 {
-    "name": "neilime/zf2-skeleton-app",
+    "name": "zf2-boiler-app/sample-app",
     "description": "ZF2 Boiler App Sample application",
     "authors": [
         {
-            "name": "Neilime"
+            "name": "Neilime",
+            "role": "Developer"
         }
     ],
+    "support": {
+        "issues": "https://github.com/zf2-boiler-app/SampleApplication/issues"
+    },
     "minimum-stability" : "dev",
     "repositories":[        
         {
 	        "type": "vcs",
 	        "url": "http://github.com/Nodge/lessphp"
 	    },
-	    {
-            "type": "package",
-            "package": {
-                "version": "dev-master",
-                "name": "fortawesome/font-awesome",
-                "source": {"url": "https://github.com/FortAwesome/Font-Awesome.git","type": "git","reference": "master"}
-            }
-        },
         {
             "type": "package",
             "package": {
@@ -46,8 +42,10 @@
         }
     ],
     "require": {
-        "zf2-boiler-app/app-display": "dev-master",
-        "zf2-boiler-app/app-access-control": "dev-master",
-        "firephp/firephp-core": "dev-master"            
-    }
+    	"zf2-boiler-app/app-access-control": "1.0.*@dev"
+            
+    },
+    "require-dev":{
+    	"firephp/firephp-core": "dev-master"
+    }    
 }
