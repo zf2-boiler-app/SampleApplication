@@ -49,15 +49,15 @@ return array(
 		)
 	),
 	'messenger' => array(
-		'template_map' => array(
-			'email/layout' => __DIR__.'/../view/email/layout.phtml',
-			'email/header' => __DIR__.'/../view/email/header.phtml',
-			'email/footer' => __DIR__.'/../view/email/footer.phtml',
-			'email/default' => __DIR__.'/../view/email/default.phtml'
-		),
-		'template_path_stack' => array(__DIR__.'/../view'),
-		'templating' => array(
+		'view_manager' => array(
 			'template_map' => array(
+				'email/layout' => __DIR__.'/../view/email/layout.phtml',
+				'email/header' => __DIR__.'/../view/email/header.phtml',
+				'email/footer' => __DIR__.'/../view/email/footer.phtml',
+			)
+		),
+		'tree_layout_stack' => array(
+			'layout_tree' => array(
 				'default' => array(
 					'template' => 'email/layout',
 					'children' => array(
@@ -66,6 +66,6 @@ return array(
 					)
 				)
 			)
-		),
+		)
 	)
 );

@@ -16,6 +16,9 @@ return array(
     	'BoilerAppAccessControl',
     	'BoilerAppUser',
 
+    	//Messenger
+    	'BoilerAppMessenger',
+
     	//Sample Application Modules
     	'Application'
     ),

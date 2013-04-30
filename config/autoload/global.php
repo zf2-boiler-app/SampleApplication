@@ -73,8 +73,8 @@ return array(
 					'connection_class'  => 'plain',
 					'connection_config' => array(
 						'ssl' => 'tls',
-						'username' => 'email@gmail.com',
-						'password' => 'password'
+						'username' => 'escalle.emilien@gmail.com',
+						'password' => '3mi1i3n87'
 					)
 				)));
 				return $oTransporter;
