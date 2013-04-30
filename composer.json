@@ -42,10 +42,9 @@
         }
     ],
     "require": {
-    	"zf2-boiler-app/app-access-control": "1.0.*@dev"
-            
+    	"zf2-boiler-app/app-access-control": "1.0.*"
     },
     "require-dev":{
     	"firephp/firephp-core": "dev-master"
-    }    
+    }
 }

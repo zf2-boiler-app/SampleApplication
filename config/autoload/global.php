@@ -52,7 +52,7 @@ return array(
 					'host'     => 'localhost',
 					'user'     => 'root',
 					'password' => '',
-					'dbname'   => 'zf2base'
+					'dbname'   => 'sample-application'
 				)
 			)
 		)
