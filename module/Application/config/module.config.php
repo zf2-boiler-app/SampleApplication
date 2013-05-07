@@ -16,7 +16,7 @@ return array(
 						'template' => 'layout/default',
 						'children' => array(
 							'header' => function(\Zend\Mvc\MvcEvent $oEvent){
-								return $oEvent->getViewModel()->loggedUser?'header/logged':'header/unlogged';
+								return $oEvent->getViewModel()->authenticatedUser?'header/logged':'header/unlogged';
 							},
 							'footer' => 'footer/footer'
 						)
@@ -45,24 +45,26 @@ return array(
 			'header/logged' => __DIR__ . '/../view/application/header/logged.phtml',
 			'header/unlogged' => __DIR__ . '/../view/application/header/unlogged.phtml',
 			'footer/footer' => __DIR__ . '/../view/application/footer/footer.phtml',
-			'application/index/index' => __DIR__ . '/../view/application/index/index.phtml'
+			'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
+			'application/index/terms' => __DIR__ . '/../view/application/index/terms.phtml',
+			'application/index/privacy' => __DIR__ . '/../view/application/index/privacy.phtml'
 		)
 	),
-	'messenger' => array(
-		'view_manager' => array(
+	'medias' => array(
+		\BoilerAppMessenger\Media\Mail\MailMessageRenderer::MEDIA => array(
 			'template_map' => array(
-				'email/layout' => __DIR__.'/../view/email/layout.phtml',
-				'email/header' => __DIR__.'/../view/email/header.phtml',
-				'email/footer' => __DIR__.'/../view/email/footer.phtml',
-			)
-		),
-		'tree_layout_stack' => array(
-			'layout_tree' => array(
-				'default' => array(
-					'template' => 'email/layout',
-					'children' => array(
-						'header' => 'email/header',
-						'footer' => 'email/footer'
+				'mail/layout' => __DIR__.'/../view/mail/layout.phtml',
+				'mail/header' => __DIR__.'/../view/mail/header.phtml',
+				'mail/footer' => __DIR__.'/../view/mail/footer.phtml'
+			),
+			'tree_layout_stack' => array(
+				'layout_tree' => array(
+					'default' => array(
+						'template' => 'mail/layout',
+						'children' => array(
+							'header' => 'mail/header',
+							'footer' => 'mail/footer'
+						)
 					)
 				)
 			)

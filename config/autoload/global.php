@@ -59,26 +59,14 @@ return array(
 	),
 	'messenger' => array(
 		'system_user' => array(
-			'email' => 'email@mail.com',
-			'name' => 'Sample-App'
+			'email' => 'system@sample-application.com',
+			'display_name' => 'Sample Application'
 		)
 	),
-	'service_manager' => array(
-		'factories' => array(
-			//Transporters
-			'EmailTransporter' => function(){
-				//Send email with Gmail SMTP (need openssl php extension)
-				$oTransporter = new \Messenger\Mail\Transport\Smtp(new \Zend\Mail\Transport\SmtpOptions(array(
-					'host' => 'smtp.gmail.com',
-					'connection_class'  => 'plain',
-					'connection_config' => array(
-						'ssl' => 'tls',
-						'username' => 'xxx@gmail.com',
-						'password' => 'xxx'
-					)
-				)));
-				return $oTransporter;
-			}
-		)
-	)
+	'style_inliner' => array(
+		'processor' => 'CssToInlineStylesProcessor'
+	),
+	'authentication' => array(
+		'defaultRedirect' => 'Home'
+	),
 );

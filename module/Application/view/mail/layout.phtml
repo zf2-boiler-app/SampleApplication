@@ -3,12 +3,19 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<title><?=$this->layout()->objet?></title>
+	<title><?=$this->layout()->subject?></title>
 	<?=$this->headLink()?>
 </head>
 <body>
-	<?=$this->layout()->header?>
-	<div class="hero-unit"><?=$this->layout()->content?></div>
-	<?=$this->layout()->footer?>
+	<table cellpadding="0" cellspacing="0" border="0" id="backgroundTable">
+		<tr>
+			<td valign="top"><?=$this->header?></td>
+		</tr>
+		<tr>
+			<td valign="top"><div class="hero-unit"><?=$this->layout()->content?></div></td>
+		</tr>
+		<tr>
+			<td valign="top"><?=$this->footer?></td>
+		</tr>
 </body>
 </html>
