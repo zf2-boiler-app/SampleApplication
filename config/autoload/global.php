@@ -49,10 +49,10 @@ return array(
 			'orm_default' => array(
 				'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
 				'params' => array(
-					'host'     => 'localhost',
-					'user'     => 'root',
+					'host' => 'localhost',
+					'user' => 'root',
 					'password' => '',
-					'dbname'   => 'sample-application'
+					'dbname' => 'sample-application'
 				)
 			)
 		)
@@ -65,8 +65,5 @@ return array(
 	),
 	'style_inliner' => array(
 		'processor' => 'CssToInlineStylesProcessor'
-	),
-	'authentication' => array(
-		'defaultRedirect' => 'Home'
-	),
+	)
 );

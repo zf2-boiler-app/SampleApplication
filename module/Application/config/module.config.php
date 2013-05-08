@@ -33,8 +33,9 @@ return array(
 				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
 			},
 			'Logger' => function(){
-				$oLogger = new \Zend\Log\Logger();
-				return $oLogger->addWriter(new Zend\Log\Writer\FirePHP());
+				$oLogger = new \Zend\Log\Logger(array('writers' => array(
+					array('name' => 'Zend\Log\Writer\Stream','options' => array('stream' => STDERR))
+				)));
 			}
 		)
 	),
@@ -69,5 +70,8 @@ return array(
 				)
 			)
 		)
+	),
+	'authentication' => array(
+		'defaultRedirect' => 'Home'
 	)
 );
