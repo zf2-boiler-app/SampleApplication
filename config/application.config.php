@@ -6,15 +6,15 @@ return array(
     	'DoctrineModule',
     	'DoctrineORMModule',
 
+    	//Access Control
+    	'BoilerAppAccessControl',
+    	'BoilerAppUser',
+
     	//Display
     	'BoilerAppDisplay',
     	'AssetsBundle',
     	'TreeLayoutStack',
     	'TwbBundle',
-
-    	//Access Control
-    	'BoilerAppAccessControl',
-    	'BoilerAppUser',
 
     	//Messenger
     	'BoilerAppMessenger',

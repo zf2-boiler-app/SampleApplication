@@ -29,12 +29,14 @@ return array(
 		'factories' => array(
 			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
 				$aConfiguration = $oServiceManager->get('config');
-				if(!isset($aConfiguration['social']))throw new \Exception('Social configuration is undefined');
+				if(!isset($aConfiguration['social']))throw new \LogicException('Social configuration is undefined');
 				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
 			},
 			'Logger' => function(){
-				$oLogger = new \Zend\Log\Logger(array('writers' => array(
-					array('name' => 'Zend\Log\Writer\Stream','options' => array('stream' => STDERR))
+				if(defined('STDERR'))$sStream = STDERR;
+				elseif(!($sStream = ini_get('error_log')))throw new \LogicException('Unable to defined logger output stream');
+				return new \Zend\Log\Logger(array('writers' => array(
+					array('name' => 'Zend\Log\Writer\Stream','options' => array('stream' => $sStream))
 				)));
 			}
 		)
