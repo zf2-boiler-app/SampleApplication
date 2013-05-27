@@ -44,7 +44,8 @@
     "require": {
     	"zf2-boiler-app/app-access-control": "1.0.*"
     },
-    "require-dev":{
+    "require-dev":{    	
+    	"codeception/codeception": "dev-master",
     	"firephp/firephp-core": "dev-master"
     }
 }

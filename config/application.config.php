@@ -11,10 +11,10 @@ return array(
     	'BoilerAppUser',
 
     	//Display
-    	'BoilerAppDisplay',
+    	'TwbBundle',
     	'AssetsBundle',
     	'TreeLayoutStack',
-    	'TwbBundle',
+    	'BoilerAppDisplay',
 
     	//Messenger
     	'BoilerAppMessenger',
