@@ -51,8 +51,24 @@ Edit config/autoload/local.php file to set your own configuration
 ##### Database
 
 Create databas shema (ensure that "sample-application" database exists)
-	
+
+- On Unix :
 ```ssh
 cd my/project/dir
+./vendor/bin/doctrine-module orm:schema-tool:create
+```
+
+- On Windows :
+```ssh
+cd my\project\dir
 .\vendor\bin\doctrine-module.bat orm:schema-tool:create
+```
+
+##### Assets
+
+Render all needed assets
+
+```ssh
+cd my/project/dir
+php public/index.php render
 ```

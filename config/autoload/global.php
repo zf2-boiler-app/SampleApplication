@@ -15,7 +15,7 @@ return array(
 		'locale' => 'fr_FR'
 	),
 	'asset_bundle' => array(
-		'production' => false,
+		'production' => APPLICATION_ENV === ENV_PRODUCTION,
 		'cachePath' => '@zfRootPath/public/assets/cache',
 		'assetsPath' => '@zfRootPath/public/assets',
 		'cacheUrl' => '@zfBaseUrl/assets/cache/'
