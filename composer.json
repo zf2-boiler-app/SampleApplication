@@ -42,7 +42,7 @@
         }
     ],
     "require": {
-    	"zf2-boiler-app/app-access-control": "1.0.*"
+    	"zf2-boiler-app/app-access-control": "dev-master"
     },
     "require-dev":{    	
     	"codeception/codeception": "dev-master",
