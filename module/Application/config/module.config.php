@@ -27,11 +27,6 @@ return array(
 	),
 	'service_manager' => array(
 		'factories' => array(
-			'social' => function(\Zend\ServiceManager\ServiceManager $oServiceManager){
-				$aConfiguration = $oServiceManager->get('config');
-				if(!isset($aConfiguration['social']))throw new \LogicException('Social configuration is undefined');
-				return new \Application\View\Helper\SocialHelper($aConfiguration['social']);
-			},
 			'Logger' => function(){
 				if(defined('STDERR'))$sStream = STDERR;
 				elseif(!($sStream = ini_get('error_log')))throw new \LogicException('Unable to defined logger output stream');

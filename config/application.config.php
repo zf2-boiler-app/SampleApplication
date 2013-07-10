@@ -16,6 +16,7 @@ return array(
     	'BoilerAppUser',
 
     	//Display
+    	'Neilime\Browscap',
     	'TwbBundle',
     	'AssetsBundle',
     	'TreeLayoutStack',
