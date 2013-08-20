@@ -13,10 +13,6 @@
     "minimum-stability" : "dev",
     "repositories":[        
         {
-	        "type": "vcs",
-	        "url": "http://github.com/Nodge/lessphp"
-	    },
-        {
             "type": "package",
             "package": {
                 "version": "dev-master",
