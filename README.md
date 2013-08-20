@@ -72,3 +72,14 @@ Render all needed assets
 cd my/project/dir
 php public/index.php render
 ```
+
+##### Browser capabilities
+
+Load & parse "browscap.ini" file 
+
+```ssh
+cd my/project/dir
+php public/index.php load-browscap
+```
+
+This action should be performed regularly to keep "browscap.ini" updated
