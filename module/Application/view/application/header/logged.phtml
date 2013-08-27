@@ -1,9 +1,8 @@
-<ul class="nav pull-right">
-	<li class="menu">
-		<a data-toggle="dropdown" class="dropdown-toggle" href="#"><?=$this->layout()->authenticatedUser->getUserDisplayName()?> <b class="caret"></b></a>
-		<ul class="dropdown-menu menu-dropdown">
+<ul class="nav navbar-nav navbar-right">
+	<li class="dropdown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->layout()->authenticatedUser->getUserDisplayName()?> <b class="caret"></b></a>
+		<ul class="dropdown-menu pull-right" role="menu">
 			<li><a href="<?=$this->url('User/Account')?>"><?=$this->translate('account')?></a></li>
-			<li class="divider"></li>
 			<li><a href="<?=$this->url('AccessControl/Logout')?>"><?=$this->translate('logout')?></a></li>
 		</ul>
 	</li>

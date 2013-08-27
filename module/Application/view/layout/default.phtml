@@ -1,8 +1,10 @@
 <header data-behavior="BS.Dropdown BS.DismissPopup">
-	<div class="navbar">
-		<div class="navbar-inner">
-			<a class="brand" href="<?=$this->url('Home')?>"><?=$this->translate('application_name')?></a>
-			<ul class="nav">
+	<div class="navbar navbar-default" role="navigation">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="<?=$this->url('Home')?>"><?=$this->translate('application_name')?></a>
+		</div>
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav">
 				<li<?=$this->layout()->matchedRouteName === 'Home'?' class="active"':''?>><a href="<?=$this->url('Home')?>"><?=$this->translate('home')?></a></li>
 			</ul>
 			<?=$this->header?>
@@ -11,9 +13,10 @@
 </header>
 <div class="container" data-behavior="BS.Dropdown BS.DismissPopup">
 	<!--[if lt IE 7]><p class="chromeframe"><?=$this->translate('outdated_browser')?></p><![endif]-->
-	<div class="row-fluid">
-		<div class="span12"><?=$this->layout()->content?></div>
-	</div>
+	<div class="well">
+  		<h2><?=$this->layout()->title?></h2>
+  		<?=$this->layout()->content?>
+  	</div>
 	<hr>
 	<footer><?=$this->footer?></footer>
 </div>
